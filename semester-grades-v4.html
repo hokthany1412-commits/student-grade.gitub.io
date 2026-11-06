@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ប្រព័ន្ធគ្រប់គ្រងពិន្ទុសិស្ស - តារាងពិន្ទុឆមាសទី១</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <button class="btn btn-secondary" onclick="window.history.back()" style="margin-right: auto; padding: 0.5rem 1rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    ត្រឡប់ក្រោយ
+                </button>
+                <div id="global-class-selector" style="margin-right: 15px;"></div>
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <h1 id="page-title">តារាងពិន្ទុប្រចាំឆមាសទី១</h1>
+            </div>
+            <p class="subtitle">Semester 1 Grade Table</p>
+        </header>
+
+        <main class="main-content">
+            <section class="table-section glass-panel" style="overflow-x: auto; padding: 1.5rem;">
+                <div class="section-header" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <h2 style="font-size: 1.25rem; font-weight: 700; color: #1e293b;">ពិន្ទុ និងលទ្ធផលប្រចាំឆមាស</h2>
+                    </div>
+                    <div class="search-box">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="search-input" placeholder="ស្វែងរកសិស្ស (ឈ្មោះ ឬអត្តលេខ)...">
+                    </div>
+                </div>
+                
+                <div class="table-actions" style="margin-bottom: 1.5rem; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
+                    <button type="button" id="save-sem-grades-btn" class="btn" onclick="manualSaveSemesterGrades()" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; font-weight: 700; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35); display: flex; align-items: center; gap: 6px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        រក្សាទុកទិន្នន័យ (Save)
+                    </button>
+                    <button type="button" class="btn" style="background-color: #eab308; color: #000; font-weight: 600;" onclick="const s = new URLSearchParams(window.location.search).get('sem') || '1'; window.location.href='semester-honor-roll-v4.html?sem=' + s;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><path d="M12 15l-2 5l9-9l-9-9l2 5l-12 12l12-12"/></svg>
+                        មើលតារាងកិត្តិយស (Honor Roll)
+                    </button>
+                    <button type="button" class="btn" style="background-color: #3b82f6; color: white; font-weight: 600;" onclick="const s = new URLSearchParams(window.location.search).get('sem') || '1'; window.location.href='semester-ranking-v4.html?sem=' + s;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        មើលតារាងចំណាត់ថ្នាក់ (Ranking)
+                    </button>
+                    <button type="button" id="download-template-btn" class="btn btn-secondary" onclick="downloadSemesterExcelTemplate()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        ទាញទម្រង់នាំចូល
+                    </button>
+                    <button type="button" id="import-excel-btn" class="btn btn-secondary" onclick="document.getElementById('excel-file-input').click()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        នាំចូលពី Excel
+                    </button>
+                    <input type="file" id="excel-file-input" accept=".xlsx, .xls" style="display: none;">
+                    <button type="button" id="clear-btn" class="btn btn-secondary">ជម្រះទិន្នន័យទាំងអស់</button>
+                </div>
+                
+                <div class="official-table-container">
+                    <table class="official-grade-table" id="students-table">
+                        <thead>
+                            <!-- Header Row 1: Main Groups -->
+                            <tr>
+                                <th rowspan="2" style="width: 40px; text-align: center;">ល.រ</th>
+                                <th rowspan="2" style="width: 80px; text-align: center;">អត្តលេខ</th>
+                                <th rowspan="2" style="width: 200px; text-align: left;">គោត្តនាម និងនាម</th>
+                                <th rowspan="2" style="width: 50px; text-align: center;">ភេទ</th>
+                                
+                                <th colspan="13" style="background-color: #f1f5f9; color: #000; border-bottom: 1px solid #94a3b8;">ពិន្ទុប្រឡងឆមាសទី១</th>
+                                
+                                <th colspan="5" style="background-color: #e2e8f0; color: #000; border-bottom: 1px solid #94a3b8;">លទ្ធផលប្រចាំឆមាសទី១</th>
+                                
+                                <th colspan="3" style="background-color: #f8fafc; color: #000; border-bottom: 1px solid #94a3b8;">និទ្ទេសតាមផ្នែក</th>
+                            </tr>
+                            
+                            <!-- Header Row 2: Sub Subjects & Metrics -->
+                            <tr>
+                                <!-- Subjects (12) -->
+                                <th class="vertical-text" style="background-color: #d1d5db; color: #000;"><span>អំណាន</span></th>
+                                <th class="vertical-text" style="background-color: #d1d5db; color: #000;"><span>ស្តាប់ និង និយាយ</span></th>
+                                <th class="vertical-text" style="background-color: #d1d5db; color: #000;"><span>សរសេរតាមអាន</span></th>
+                                <th class="vertical-text" style="background-color: #d1d5db; color: #000;"><span>តែងសេចក្តី</span></th>
+                                
+                                <th class="vertical-text" style="background-color: #d1d5db; color: #000;"><span>គណិតវិទ្យា</span></th>
+                                <th class="vertical-text" style="background-color: #d1d5db; color: #000;"><span>វិទ្យាសាស្ត្រ</span></th>
+                                <th class="vertical-text" style="background-color: #d1d5db; color: #000;"><span>សីលធម៌ ពលរដ្ឋវិជ្ជា</span></th>
+                                <th class="vertical-text" style="background-color: #d1d5db; color: #000;"><span>ផែនដីវិទ្យា</span></th>
+                                <th class="vertical-text" style="background-color: #d1d5db; color: #000;"><span>ប្រវត្តិវិទ្យា</span></th>
+                                <th class="vertical-text" style="background-color: #d1d5db; color: #000;"><span>គេហវិទ្យា បំណិន</span></th>
+                                <th class="vertical-text" style="background-color: #d1d5db; color: #000;"><span>អប់រំកាយ កីឡា</span></th>
+                                <th class="vertical-text" style="background-color: #d1d5db; color: #000;"><span>អប់រំសិល្បៈ</span></th>
+                                <th class="vertical-text" style="background-color: #d1d5db; color: #000;"><span>ភាសាបរទេស</span></th>
+                                
+                                <!-- Results (5) -->
+                                <th class="vertical-text" style="background-color: #cbd5e1; color: #000;"><span>មធ្យមភាគប្រឡងឆមាស</span></th>
+                                <th class="vertical-text" style="background-color: #cbd5e1; color: #000;"><span>មធ្យមភាគប្រចាំខែ</span></th>
+                                <th class="vertical-text" style="background-color: #cbd5e1; color: #000;"><span>មធ្យមភាគប្រចាំឆមាស</span></th>
+                                <th class="vertical-text" style="background-color: #cbd5e1; color: #000;"><span>ចំណាត់ថ្នាក់</span></th>
+                                <th class="vertical-text" style="background-color: #cbd5e1; color: #000;"><span>ចំណាត់ថ្នាក់និទ្ទេស</span></th>
+                                
+                                <!-- Evaluations (3) -->
+                                <th class="vertical-text" style="background-color: #e2e8f0; color: #000;"><span>បំណិន ចំណេះដឹង</span></th>
+                                <th class="vertical-text" style="background-color: #e2e8f0; color: #000;"><span>កាយ សីលធម៌</span></th>
+                                <th class="vertical-text" style="background-color: #e2e8f0; color: #000;"><span>មនោសញ្ចេតនា កាយវិការ</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Rows rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="empty-state" class="empty-state hidden">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                    <p>មិនទាន់មានទិន្នន័យនៅឡើយទេ</p>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script>
+        if (window.classManager && document.getElementById("global-class-selector")) {
+            window.classManager.renderClassSelector("global-class-selector");
+        }
+    </script>
+    <script src="semester-grades-new.js"></script>
+</body>
+</html>

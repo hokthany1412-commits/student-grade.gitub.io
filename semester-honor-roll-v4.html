@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>តារាងកិត្តិយស - Honor Roll</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul&family=Koulen&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+            body {
+                background: white !important;
+                margin: 0;
+                padding: 0;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .honor-container {
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 15mm !important;
+                width: 100% !important;
+                height: 100vh !important;
+                max-width: none !important;
+                page-break-inside: avoid;
+            }
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            font-family: 'Battambang', sans-serif;
+            margin: 0;
+        }
+
+        .honor-container {
+            width: 210mm; /* A4 width */
+            height: 297mm; /* A4 height */
+            margin: 2rem auto;
+            background: white;
+            padding: 15mm;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+            color: #1e293b;
+            position: relative;
+            background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.5" fill="%23f1f5f9"/></pattern></defs><rect width="100%" height="100%" fill="url(%23dots)"/></svg>');
+        }
+
+        .border-frame {
+            position: absolute;
+            top: 10mm; left: 10mm; right: 10mm; bottom: 10mm;
+            border: 4px double #d4af37; /* Gold border */
+            border-radius: 10px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .inner-frame {
+            position: absolute;
+            top: 14mm; left: 14mm; right: 14mm; bottom: 14mm;
+            border: 1px solid #d4af37;
+            border-radius: 6px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header Section --- */
+        .official-header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .national-title {
+            font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+            color: #b91c1c; /* Dark red */
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+
+        .national-title h1 {
+            font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+            font-size: 20pt;
+            font-weight: normal;
+            margin: 0 0 5px 0;
+            line-height: 1.35;
+        }
+
+        .national-title h2 {
+            font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+            font-size: 16pt;
+            font-weight: normal;
+            margin: 0;
+            display: block;
+            line-height: 1.35;
+        }
+
+        .national-title h2::before {
+            display: none;
+        }
+
+        .school-info {
+            text-align: left;
+            font-size: 12pt;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .honor-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .honor-title h1 {
+            font-family: 'Koulen', cursive;
+            font-size: 38pt;
+            color: #d4af37;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            letter-spacing: 2px;
+        }
+
+        .honor-title p {
+            font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+            font-size: 14pt;
+            font-weight: normal;
+            margin: 10px 0 0 0;
+            color: #475569;
+        }
+
+        /* --- Students Section (Pyramid Layout) --- */
+        .students-list {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 40px;
+            padding: 0px 40px;
+            justify-items: center;
+            align-content: center;
+        }
+
+        .student-card {
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .student-card.honor-rank-1 {
+            grid-column: 1 / span 2;
+            margin-bottom: 5px;
+        }
+
+        .khmer-number {
+            font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+            font-size: 30pt;
+            font-weight: normal;
+            margin-bottom: -5px;
+            text-shadow: 2px 2px 0px #fff;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- Themes --- */
+        .honor-container.theme-3 .border-frame { border: 4px double #d4af37; }
+        .honor-container.theme-3 .inner-frame { border: 1px solid #d4af37; }
+        .honor-container.theme-3 .honor-rank-1 .card-box { border-color: #ef4444; } 
+        .honor-container.theme-3 .honor-rank-2 .card-box { border-color: #8b5cf6; } 
+        .honor-container.theme-3 .honor-rank-3 .card-box { border-color: #10b981; } 
+        .honor-container.theme-3 .honor-rank-4 .card-box { border-color: #f97316; } 
+        .honor-container.theme-3 .honor-rank-5 .card-box { border-color: #eab308; }
+        .honor-container.theme-3 .khmer-number { color: #3b82f6; } 
+        .honor-container.theme-3 .honor-title h1 { color: #16a34a; text-shadow: 2px 2px 0px #fff, 3px 3px 0px #ccc; }
+        .honor-container.theme-3 .honor-title p { color: #ef4444; }
+
+        .honor-container.theme-1 .border-frame { border: 4px double #be185d; }
+        .honor-container.theme-1 .inner-frame { border: 1px dashed #f472b6; }
+        .honor-container.theme-1 .honor-rank-1 .khmer-number { color: #3b82f6; } 
+        .honor-container.theme-1 .honor-rank-2 .khmer-number { color: #f59e0b; } 
+        .honor-container.theme-1 .honor-rank-3 .khmer-number { color: #10b981; } 
+        .honor-container.theme-1 .honor-rank-4 .khmer-number { color: #ef4444; } 
+        .honor-container.theme-1 .honor-rank-5 .khmer-number { color: #8b5cf6; }
+        .honor-container.theme-1 .card-box { border-color: #f472b6; background-image: radial-gradient(#fdf2f8 1px, transparent 1px); background-size: 10px 10px; }
+        .honor-container.theme-1 .honor-title h1 { color: #9ca3af; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .honor-container.theme-1 .honor-title p { color: #ea580c; }
+
+        .honor-container.theme-2 .border-frame { border: 4px double #15803d; }
+        .honor-container.theme-2 .inner-frame { border: 1px solid #86efac; }
+        .honor-container.theme-2 .khmer-number { color: #2563eb; } 
+        .honor-container.theme-2 .card-box { border-color: #bef264; border-width: 6px; border-style: ridge; }
+        .honor-container.theme-2 .honor-title h1 { color: #16a34a; text-shadow: 2px 2px 0px #bbf7d0; }
+        .honor-container.theme-2 .honor-title p { color: #ef4444; }
+
+        .card-box {
+            border: 4px solid;
+            border-radius: 12px;
+            padding: 10px 10px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .student-name {
+            font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+            font-size: 14pt;
+            font-weight: normal;
+            color: #1e293b;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .student-details {
+            font-size: 11pt;
+            color: #475569;
+            margin-top: 8px;
+            font-weight: bold;
+        }
+
+        /* --- Footer Section --- */
+        .honor-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+        }
+
+        .signature-block {
+            text-align: center;
+            width: 40%;
+        }
+
+        .signature-block .date {
+            font-size: 11pt;
+            margin-bottom: 25px;
+        }
+        
+        .signature-block .role {
+            font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+            font-size: 12pt;
+            font-weight: normal;
+            margin-bottom: 40px;
+        }
+
+        .signature-block .name {
+            font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+            font-size: 12pt;
+            font-weight: normal;
+            border-bottom: 1px dotted #000;
+            padding-bottom: 5px;
+            display: inline-block;
+            min-width: 150px;
+            text-align: right;
+        }
+
+        /* Top Bar for App UI */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+    </style>
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+
+</head>
+<body>
+    <div class="top-bar no-print" style="align-items: center;">
+        <button class="btn btn-secondary" onclick="history.back()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            ត្រឡប់ក្រោយ
+        </button>
+        
+        <div style="display: flex; gap: 10px;">
+            <select id="month-select" class="form-control" style="width: auto;" onchange="changeMonth()">
+                <option value="មករា">មករា</option>
+                <option value="កុម្ភៈ">កុម្ភៈ</option>
+                <option value="មីនា">មីនា</option>
+                <option value="មេសា">មេសា</option>
+                <option value="ឧសភា">ឧសភា</option>
+                <option value="មិថុនា">មិថុនា</option>
+                <option value="កក្កដា">កក្កដា</option>
+                <option value="សីហា">សីហា</option>
+                <option value="កញ្ញា">កញ្ញា</option>
+                <option value="តុលា">តុលា</option>
+                <option value="វិច្ឆិកា">វិច្ឆិកា</option>
+                <option value="ធ្នូ">ធ្នូ</option>
+            </select>
+            <select id="theme-select" class="form-control" style="width: auto;" onchange="changeTheme()">
+                <option value="theme-1">ទម្រង់ទី១ (ស៊ុមស៊ីជម្ពូ)</option>
+                <option value="theme-2">ទម្រង់ទី២ (ស៊ុមបៃតង)</option>
+                <option value="theme-3" selected>ទម្រង់ទី៣ (ស៊ុមចម្រុះ)</option>
+            </select>
+            <select id="top-n-select" class="form-control" style="width: auto;" onchange="renderHonorRoll()">
+                <option value="3">Top 3</option>
+                <option value="5" selected>Top 5</option>
+                <option value="10">Top 10</option>
+            </select>
+            
+            <button class="btn btn-primary" onclick="window.print()" style="display: flex; align-items: center; gap: 8px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                បោះពុម្ព (Print)
+            </button>
+        </div>
+    </div>
+
+    <div class="settings-panel no-print" style="background: white; padding: 15px; margin: 0 2rem 15px 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <h3 style="margin-top: 0; font-size: 14px; margin-bottom: 10px;">កែប្រែកាលបរិច្ឆេទ (Date Settings)</h3>
+        
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <!-- Lunar Date Selectors -->
+            <div style="flex: 1; min-width: 300px;">
+                <label style="font-size: 12px; color: #666; display: block; margin-bottom: 5px;">ថ្ងៃខែឆ្នាំចន្ទគតិ (Lunar Date)</label>
+                <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                    <select id="lunar-day-week" class="form-control" style="width: auto; padding: 5px 8px; font-size: 13px;" onchange="updateLunar()">
+                        <option value="ចន្ទ">ចន្ទ</option><option value="អង្គារ">អង្គារ</option><option value="ពុធ">ពុធ</option><option value="ព្រហស្បតិ៍">ព្រហស្បតិ៍</option><option value="សុក្រ">សុក្រ</option><option value="សៅរ៍" selected>សៅរ៍</option><option value="អាទិត្យ">អាទិត្យ</option>
+                    </select>
+                    <select id="lunar-phase" class="form-control" style="width: auto; padding: 5px 8px; font-size: 13px;" onchange="updateLunar()">
+                        <!-- Options generated in JS -->
+                    </select>
+                    <select id="lunar-month" class="form-control" style="width: auto; padding: 5px 8px; font-size: 13px;" onchange="updateLunar()">
+                        <option value="មិគសិរ">មិគសិរ</option><option value="បុស្ស">បុស្ស</option><option value="មាឃ">មាឃ</option><option value="ផល្គុន">ផល្គុន</option><option value="ចេត្រ">ចេត្រ</option><option value="ពិសាខ">ពិសាខ</option><option value="ជេស្ឋ" selected>ជេស្ឋ</option><option value="អាសាឍ">អាសាឍ</option><option value="បឋមាសាឍ">បឋមាសាឍ</option><option value="ទុតិយាសាឍ">ទុតិយាសាឍ</option><option value="ស្រាពណ៍">ស្រាពណ៍</option><option value="ភទ្របទ">ភទ្របទ</option><option value="អស្សុជ">អស្សុជ</option><option value="កត្តិក">កត្តិក</option>
+                    </select>
+                    <select id="lunar-zodiac" class="form-control" style="width: auto; padding: 5px 8px; font-size: 13px;" onchange="updateLunar()">
+                        <option value="ជូត">ជូត</option><option value="ឆ្លូវ">ឆ្លូវ</option><option value="ខាល">ខាល</option><option value="ថោះ">ថោះ</option><option value="រោង" selected>រោង</option><option value="ម្សាញ់">ម្សាញ់</option><option value="មមី">មមី</option><option value="មមែ">មមែ</option><option value="វក">វក</option><option value="រកា">រកា</option><option value="ច">ច</option><option value="កុរ">កុរ</option>
+                    </select>
+                    <select id="lunar-era" class="form-control" style="width: auto; padding: 5px 8px; font-size: 13px;" onchange="updateLunar()">
+                        <option value="ឯកស័ក">ឯកស័ក</option><option value="ទោស័ក">ទោស័ក</option><option value="ត្រីស័ក">ត្រីស័ក</option><option value="ចត្វាស័ក">ចត្វាស័ក</option><option value="បញ្ចស័ក">បញ្ចស័ក</option><option value="ឆស័ក" selected>ឆស័ក</option><option value="សប្តស័ក">សប្តស័ក</option><option value="អដ្ឋស័ក">អដ្ឋស័ក</option><option value="នព្វស័ក">នព្វស័ក</option><option value="សំរឹទ្ធិស័ក">សំរឹទ្ធិស័ក</option>
+                    </select>
+                    <input type="text" id="lunar-be" value="ព.ស២៥៦៨" class="form-control" style="width: 80px; padding: 5px 8px; font-size: 13px;" oninput="updateLunar()">
+                </div>
+            </div>
+            
+            <!-- Solar Date Selectors -->
+            <div style="flex: 1; min-width: 300px;">
+                <label style="font-size: 12px; color: #666; display: block; margin-bottom: 5px;">ថ្ងៃខែឆ្នាំសុរិយគតិ (Solar Date)</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span style="font-size: 13px;">ទីកន្លែង:</span>
+                    <input type="text" id="solar-location" value="ផ្លុង" class="form-control" style="width: 80px; padding: 5px 8px; font-size: 13px;" oninput="triggerSolarUpdate()">
+                    <span style="font-size: 13px;">កាលបរិច្ឆេទ:</span>
+                    <input type="date" id="solar-picker" class="form-control" style="width: 130px; padding: 5px 8px; font-size: 13px;" onchange="updateSolarDate(this.value)">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="honor-container theme-3" id="main-honor-container">
+        <div class="border-frame"></div>
+        <div class="inner-frame"></div>
+        
+        <div class="content-wrapper">
+            <!-- Official Header -->
+            <div class="official-header">
+                <div class="national-title">
+                    <h1>ព្រះរាជាណាចក្រកម្ពុជា</h1>
+                    <h2>ជាតិ សាសនា ព្រះមហាក្សត្រ</h2>
+                </div>
+            </div>
+            
+            <div class="school-info">
+                <p id="header-district">ការិយាល័យអប់រំយុវជន និងកីឡាស្រុក.....</p>
+                <p id="header-cluster">កម្រង អូរក្រូច</p>
+                <p id="header-school">សាលាបឋមសិក្សា <strong>ផ្លុង</strong></p>
+            </div>
+
+            <div class="honor-title">
+                <h1>តារាងកិត្តិយស</h1>
+                <p id="report-month">ប្រចាំខែ ...</p>
+                <p id="class-info-display" style="font-family: 'Battambang', sans-serif; font-size: 12pt; font-weight: bold; margin-top: 5px;"></p>
+            </div>
+
+            <!-- Students List -->
+            <div class="students-list" id="honor-list">
+                <!-- Data will be injected here -->
+            </div>
+
+            <!-- Footer -->
+            <div class="honor-footer">
+                <div class="signature-block">
+                    <div style="font-size: 11pt; margin-bottom: 5px; margin-top: 30px;">បានឃើញ និងឯកភាព</div>
+                    <div class="role">នាយកសាលា</div>
+                    <div class="name"></div>
+                </div>
+                <div class="signature-block" style="width: 50%;">
+                    <div class="date" id="lunar-date" style="margin-bottom: 5px; white-space: nowrap;">ថ្ងៃចន្ទ ១រោច ខែជេស្ឋ ឆ្នាំរោង ឆស័ក ព.ស២៥៦៨</div>
+                    <div class="date" id="solar-date" style="margin-bottom: 5px;">ផ្លុង, ថ្ងៃទី......... ខែ........... ឆ្នាំ២០២....</div>
+                    <div class="role">គ្រូបន្ទុកថ្នាក់</div>
+                    <div class="name" id="teacher-name-display"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="chhankitek.js"></script>
+    <script src="semester-honor-roll-new.js"></script>
+
+    <script>
+        function changeTheme() {
+            const theme = document.getElementById('theme-select').value;
+            const container = document.getElementById('main-honor-container');
+            container.className = 'honor-container ' + theme;
+            if (typeof renderHonorRoll === 'function') renderHonorRoll();
+        }
+        if (window.classManager && document.getElementById("global-class-selector")) {
+            window.classManager.renderClassSelector("global-class-selector");
+        }
+    </script>
+</body>
+</html>

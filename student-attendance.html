@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បញ្ជីវត្តមានសិស្ស - Student Attendance List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Battambang:wght@400;700&family=Moul&family=Khmer+OS+Muol+Light&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .moul-font { font-family: 'Khmer OS Muol Light', 'Moul', cursive; }
+        
+        .print-area {
+            background: white;
+            color: black;
+            width: 100%;
+            margin: 0 auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .letter-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .nation-header {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .school-info-area {
+            text-align: left;
+            font-family: 'Battambang', sans-serif;
+            font-size: 12px;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .title-area {
+            text-align: center;
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .meta-info-area {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Battambang', sans-serif;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Battambang', sans-serif;
+            font-size: 11px;
+        }
+
+        .attendance-table th, .attendance-table td {
+            border: 1px solid #000;
+            padding: 4px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .attendance-table th {
+            font-weight: bold;
+        }
+        
+        .attendance-table td.name-col {
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .attendance-table .day-col {
+            width: 20px;
+            min-width: 20px;
+            max-width: 20px;
+            padding: 4px 0;
+        }
+        
+        .attendance-table .sunday {
+            background-color: #ffcccc !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .attendance-table input.attendance-input {
+            width: 100%;
+            border: none;
+            text-align: center;
+            font-family: 'Battambang', sans-serif;
+            font-size: 11px;
+            background: transparent;
+            padding: 0;
+            text-transform: uppercase;
+        }
+        
+        .attendance-table input.attendance-input:focus {
+            outline: 1px solid #3b82f6;
+            background-color: white;
+        }
+
+        .attendance-table .red-text {
+            color: red;
+            font-weight: bold;
+        }
+
+        .attendance-table th.sunday {
+            color: red;
+        }
+
+        @media print {
+            @page { size: A4 landscape; margin: 10mm; }
+            .app-header, .form-control-panel, .sidebar { display: none !important; }
+            html, body { 
+                background: white; 
+                padding: 0; 
+                margin: 0 !important; 
+            }
+            .app-container { max-width: 100%; padding: 0; margin: 0; display: block; }
+            .main-content { margin: 0 !important; padding: 0 !important; display: block;}
+            .print-area { 
+                padding: 0;
+                box-shadow: none;
+            }
+            .attendance-table input.attendance-input {
+                border: none;
+            }
+            .attendance-table .sunday {
+                background-color: #ffcccc !important;
+            }
+        }
+    </style>
+
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>ប្រព័ន្ធគ្រប់គ្រងសាលា</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-group">
+                    <h3>ម៉ឺនុយមុខងារ</h3>
+                    <a href="index.html" class="nav-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        ទំព័រដើម
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="app-header">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <a href="index.html" class="btn btn-secondary" style="text-decoration: none; display: flex; align-items: center; gap: 5px; padding: 0.5rem 1rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        ត្រឡប់ក្រោយ
+                    </a>
+                    <h1 style="margin: 0;">បញ្ជីវត្តមានសិស្ស</h1>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div id="global-class-selector"></div>
+                    <button class="btn btn-secondary" onclick="openImportModal()" style="background: #10b981; color: white; border: none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        នាំចូល Excel
+                    </button>
+                    <button class="btn btn-primary" onclick="saveAttendance()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 5px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        រក្សាទុក (Save)
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.print()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 5px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                        បោះពុម្ព (Print)
+                    </button>
+                </div>
+            </header>
+
+            <div class="form-control-panel">
+                <div style="display: flex; gap: 15px; align-items: end; flex-wrap: wrap;">
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label for="month-select" style="font-weight: 500; font-size: 0.9rem;">ជ្រើសរើសខែ៖</label>
+                        <select id="month-select" class="form-control" style="min-width: 150px; font-family: 'Battambang', sans-serif;">
+                            <option value="1">មករា</option>
+                            <option value="2">កុម្ភៈ</option>
+                            <option value="3">មីនា</option>
+                            <option value="4">មេសា</option>
+                            <option value="5">ឧសភា</option>
+                            <option value="6">មិថុនា</option>
+                            <option value="7">កក្កដា</option>
+                            <option value="8">សីហា</option>
+                            <option value="9">កញ្ញា</option>
+                            <option value="10">តុលា</option>
+                            <option value="11">វិច្ឆិកា</option>
+                            <option value="12">ធ្នូ</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label for="year-select" style="font-weight: 500; font-size: 0.9rem;">ឆ្នាំ៖</label>
+                        <input type="number" id="year-select" class="form-control" style="width: 100px;">
+                    </div>
+                    <button class="btn btn-primary" onclick="generateGrid()" style="white-space: nowrap;">បង្ហាញតារាង (Generate)</button>
+                </div>
+            </div>
+
+            <div class="print-area">
+                <div class="letter-header">
+                    <div class="nation-header">
+                        ព្រះរាជាណាចក្រកម្ពុជា<br>
+                        ជាតិ សាសនា ព្រះមហាក្សត្រ<br>
+                    </div>
+                </div>
+
+                <div class="school-info-area">
+                    មន្ទីរអប់រំ យុវជន និងកីឡា រាជធានី/ខេត្ត <span id="print-province" contenteditable="true" style="outline: none; border-bottom: 1px dashed #cbd5e1; min-width: 150px; display: inline-block; cursor: text;" title="ចុចដើម្បីកែប្រែ" onblur="saveCustomHeader('print-province')">.................................</span><br>
+                    ការិយាល័យអប់រំ យុវជន និងកីឡាស្រុក/ខណ្ឌ <span id="print-district" contenteditable="true" style="outline: none; border-bottom: 1px dashed #cbd5e1; min-width: 150px; display: inline-block; cursor: text;" title="ចុចដើម្បីកែប្រែ" onblur="saveCustomHeader('print-district')">.......................................</span><br>
+                    សាលាបឋមសិក្សា <span id="print-school" contenteditable="true" style="outline: none; border-bottom: 1px dashed #cbd5e1; min-width: 150px; display: inline-block; cursor: text;" title="ចុចដើម្បីកែប្រែ" onblur="saveCustomHeader('print-school')">.......................................</span>
+                </div>
+
+                <div class="title-area">
+                    បញ្ជីវត្តមានសិស្ស<br>
+                    <span style="font-family: 'Battambang', sans-serif; font-size: 14px;">ថ្នាក់: <span id="print-grade" contenteditable="true" style="outline: none; border-bottom: 1px dashed #cbd5e1; min-width: 50px; display: inline-block; cursor: text;" title="ចុចដើម្បីកែប្រែ" onblur="saveCustomHeader('print-grade')">..........</span></span>
+                </div>
+
+                <div class="meta-info-area">
+                    <div>ប្រចាំខែ: <span id="print-month-year">...........................</span></div>
+                    <div>សិស្សសរុប: <span id="print-total-students">...</span> នាក់ ស្រី: <span id="print-female-students">...</span> នាក់</div>
+                </div>
+
+                <table class="attendance-table" id="attendanceTable">
+                    <thead>
+                        <tr id="table-header-row-1">
+                            <!-- Generated via JS -->
+                        </tr>
+                        <tr id="table-header-row-2">
+                            <!-- Generated via JS -->
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Generated via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="import-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div style="background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 600px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <h2 style="margin-top: 0; margin-bottom: 1rem;">នាំចូលអវត្តមានពី Excel (Import from Excel)</h2>
+            <p style="color: #64748b; margin-bottom: 1rem; font-size: 0.9rem;">
+                អ្នកអាច <strong>ជ្រើសរើសឯកសារ Excel/CSV</strong> ឬ <strong>Copy</strong> ទិន្នន័យ (រាប់ចាប់ពីជួរឈរ ល.រ ដល់ថ្ងៃទី៣១) រួច <strong>Paste</strong> បញ្ចូលប្រអប់ខាងក្រោម។<br>
+                ប្រព័ន្ធនឹងផ្ទៀងផ្ទាត់សិស្សតាមរយៈ <strong>អត្តលេខ (ជួរឈរទី២)</strong> ឬ <strong>ឈ្មោះ (ជួរឈរទី៣)</strong>។
+            </p>
+            
+            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #cbd5e1;">
+                <label style="font-weight: 500; display: block; margin-bottom: 8px;">ជម្រើសទី១៖ ជ្រើសរើសឯកសារ Excel ឬ CSV</label>
+                <input type="file" id="import-file" accept=".csv, .xlsx" class="form-control" style="width: 100%;">
+            </div>
+            
+            <label style="font-weight: 500; display: block; margin-bottom: 8px;">ជម្រើសទី២៖ Paste ទិន្នន័យនៅទីនេះ</label>
+            <textarea id="import-textarea" rows="5" class="form-control" placeholder="Paste ទិន្នន័យ Excel នៅទីនេះ..." style="width: 100%; margin-bottom: 1rem; font-family: monospace; padding: 10px; white-space: pre; overflow: auto;"></textarea>
+            
+            <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center;">
+                <button type="button" class="btn btn-secondary" onclick="downloadTemplate()" style="margin-right: auto; color: #3b82f6; border-color: #3b82f6;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>ទាញយកគំរូ
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="closeImportModal()">បោះបង់</button>
+                <button type="button" class="btn btn-primary" onclick="processImport()">នាំចូលឥឡូវនេះ</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+    <script src="student-attendance.js"></script>
+</body>
+</html>

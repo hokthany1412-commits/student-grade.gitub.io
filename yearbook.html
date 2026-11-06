@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>កម្រងអនុស្សាវរីយ៍សាលាបឋមសិក្សា - School Yearbook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700;900&family=Moul&family=Kantumruy+Pro:wght@400;500;600;700&family=Khmer+OS+Muol+Light&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- External Libraries for PDF / Print / Image Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+
+    <!-- Firebase Cloud Sync & Core Modules -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+    <script src="khmer-calendar.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #0b3c8f;
+            --primary-hover: #072a66;
+            --accent-gold: #c59b27;
+            --font-khmer-title: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            --font-khmer-body: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-khmer-body);
+            background-color: #cbd5e1;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .moul-font {
+            font-family: var(--font-khmer-title);
+        }
+
+        /* Top Action Toolbar */
+        .action-toolbar {
+            background: #ffffff;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .toolbar-left, .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #334155;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family: var(--font-khmer-body);
+            text-decoration: none;
+        }
+
+        .btn-action:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+            border-color: #94a3b8;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0b3c8f, #1d4ed8);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 3px 10px rgba(11, 60, 143, 0.25);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #072a66, #1e40af);
+            color: #ffffff;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25);
+        }
+        .btn-gold:hover {
+            background: linear-gradient(135deg, #b45309, #92400e);
+            color: #ffffff;
+        }
+
+        /* Control Selectors */
+        .select-input {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1.5px solid #cbd5e1;
+            background: #ffffff;
+            font-family: var(--font-khmer-body);
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #1e293b;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Main Preview Container */
+        .preview-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 24px 16px 50px 16px;
+            overflow-x: auto;
+        }
+
+        /* Yearbook Canvas: A4/A3 Landscape & Portrait */
+        .yearbook-canvas {
+            width: 297mm;
+            height: 210mm;
+            min-height: 210mm;
+            max-height: 210mm;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.18);
+            margin: auto;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease, height 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .yearbook-canvas.size-a4-portrait {
+            width: 210mm;
+            height: 297mm;
+            min-height: 297mm;
+            max-height: 297mm;
+        }
+
+        .yearbook-canvas.size-a3 {
+            width: 420mm;
+            height: 297mm;
+            min-height: 297mm;
+            max-height: 297mm;
+        }
+
+        .yearbook-canvas.size-a3-portrait {
+            width: 297mm;
+            height: 420mm;
+            min-height: 420mm;
+            max-height: 420mm;
+        }
+
+        /* Certificate Royal Kbach Frame Overlay */
+        .yearbook-border-frame-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            pointer-events: none;
+            z-index: 1;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: high-quality;
+        }
+
+        /* Watermark Background (Big Translucent Logo in Center) */
+        .yearbook-watermark {
+            position: absolute;
+            top: 52%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 130mm;
+            height: 130mm;
+            background-image: url('images/moeys-logo.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .yearbook-canvas.size-a4-portrait .yearbook-watermark {
+            width: 110mm;
+            height: 110mm;
+            top: 55%;
+        }
+
+        /* Inner Printable Content */
+        .yearbook-inner-content {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            padding: 30mm 24mm 24mm 24mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+
+        .yearbook-canvas.size-a4-portrait .yearbook-inner-content {
+            padding: 28mm 20mm 24mm 20mm;
+        }
+
+        .yearbook-canvas.size-a3 .yearbook-inner-content {
+            padding: 44mm 32mm 34mm 32mm;
+        }
+
+        .yearbook-canvas.size-a3-portrait .yearbook-inner-content {
+            padding: 42mm 28mm 36mm 28mm;
+        }
+
+        /* Header Section: Relative Container */
+        .yearbook-header {
+            position: relative;
+            width: 100%;
+            margin-bottom: 0px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Top Left Header Box: Buddhist Religion Flag */
+        .header-top-left-flag {
+            position: absolute;
+            left: 34mm;
+            top: 0mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 16;
+        }
+
+        /* Top Right Header Box: Cambodia National Flag & Royal Arms */
+        .header-top-right-flags {
+            position: absolute;
+            right: 32mm;
+            top: 0mm;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 16;
+        }
+
+        .flag-box-item {
+            width: 64px;
+            height: 42px;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1.2px solid rgba(11, 60, 143, 0.28);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+
+        .flag-box-item:hover {
+            transform: scale(1.05);
+        }
+
+        .flag-box-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Portrait Adaptations for Flags */
+        .yearbook-canvas.size-a4-portrait .header-top-left-flag {
+            left: 18mm;
+            top: 0mm;
+        }
+        .yearbook-canvas.size-a4-portrait .header-top-right-flags {
+            right: 18mm;
+            top: 0mm;
+            gap: 6px;
+        }
+        .yearbook-canvas.size-a4-portrait .flag-box-item {
+            width: 52px;
+            height: 35px;
+        }
+
+        .yearbook-canvas.size-a3 .header-top-left-flag {
+            left: 48mm;
+            top: 1mm;
+        }
+        .yearbook-canvas.size-a3 .header-top-right-flags {
+            right: 45mm;
+            top: 1mm;
+            gap: 12px;
+        }
+        .yearbook-canvas.size-a3 .flag-box-item {
+            width: 90px;
+            height: 58px;
+            border-radius: 7px;
+        }
+
+        .yearbook-canvas.size-a3-portrait .header-top-left-flag {
+            left: 26mm;
+            top: 2mm;
+        }
+        .yearbook-canvas.size-a3-portrait .header-top-right-flags {
+            right: 26mm;
+            top: 2mm;
+            gap: 8px;
+        }
+        .yearbook-canvas.size-a3-portrait .flag-box-item {
+            width: 74px;
+            height: 48px;
+        }
+
+        /* Left MoEYS Logo & Hierarchy (Ministry / District / School) */
+        .header-left-hierarchy {
+            position: absolute;
+            left: 12mm;
+            top: 27mm;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            z-index: 15;
+        }
+
+        .logo-img-left {
+            width: 58px;
+            height: 58px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.15));
+            margin-bottom: 3px;
+        }
+
+        .hierarchy-text-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.35;
+        }
+
+        .hierarchy-line-1 {
+            font-family: var(--font-khmer-title);
+            font-size: 6.8pt;
+            color: #0b3c8f;
+            white-space: nowrap;
+        }
+
+        .hierarchy-line-2 {
+            font-family: var(--font-khmer-title);
+            font-size: 6.2pt;
+            color: #0b3c8f;
+            white-space: nowrap;
+        }
+
+        .hierarchy-line-3 {
+            font-family: var(--font-khmer-title);
+            font-size: 6.2pt;
+            color: #0b3c8f;
+            white-space: nowrap;
+        }
+
+        .yearbook-canvas.size-a4-portrait .header-left-hierarchy {
+            left: 8mm;
+            top: 22mm;
+        }
+        .yearbook-canvas.size-a4-portrait .logo-img-left {
+            width: 50px;
+            height: 50px;
+        }
+        .yearbook-canvas.size-a4-portrait .hierarchy-line-1 { font-size: 6.2pt; }
+        .yearbook-canvas.size-a4-portrait .hierarchy-line-2 { font-size: 5.6pt; }
+        .yearbook-canvas.size-a4-portrait .hierarchy-line-3 { font-size: 5.6pt; }
+
+        .yearbook-canvas.size-a3 .header-left-hierarchy {
+            left: 16mm;
+            top: 38mm;
+        }
+        .yearbook-canvas.size-a3 .logo-img-left {
+            width: 82px;
+            height: 82px;
+        }
+        .yearbook-canvas.size-a3 .hierarchy-line-1 { font-size: 9.5pt; }
+        .yearbook-canvas.size-a3 .hierarchy-line-2 { font-size: 8.8pt; }
+        .yearbook-canvas.size-a3 .hierarchy-line-3 { font-size: 8.8pt; }
+
+        .yearbook-canvas.size-a3-portrait .header-left-hierarchy {
+            left: 12mm;
+            top: 32mm;
+        }
+        .yearbook-canvas.size-a3-portrait .logo-img-left {
+            width: 70px;
+            height: 70px;
+        }
+
+        .header-title-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* Kingdom & Motto: Prominent, Sharp, Large Font with Underline Symbol */
+        .country-title {
+            font-family: var(--font-khmer-title);
+            font-size: 11.5pt;
+            font-weight: normal;
+            color: var(--primary-color);
+            line-height: 1.4;
+            letter-spacing: 0.5px;
+        }
+
+        .country-motto {
+            font-family: var(--font-khmer-title);
+            font-size: 11pt;
+            font-weight: normal;
+            color: var(--primary-color);
+            line-height: 1.4;
+            margin-top: 1px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Underline Royal Ribbon Divider Symbol */
+        .header-motto-divider {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2px 0 3px 0;
+            line-height: 1;
+        }
+
+        .header-motto-divider img {
+            height: 11px;
+            max-width: 140px;
+            object-fit: contain;
+        }
+
+        .divider-tactical-khmer {
+            font-size: 13pt;
+            letter-spacing: 2px;
+            color: var(--primary-color);
+        }
+
+        .main-title {
+            font-family: var(--font-khmer-title);
+            font-size: 16.5pt;
+            color: var(--primary-color);
+            line-height: 1.35;
+            letter-spacing: 0.5px;
+            margin: 1px 0;
+            text-shadow: 0 1px 2px rgba(11, 60, 143, 0.18);
+        }
+
+        .sub-title {
+            font-family: var(--font-khmer-body);
+            font-size: 8.8pt;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1.35;
+        }
+
+        /* Photo Grid System */
+        .photo-gallery-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            width: 100%;
+            flex: 1;
+            justify-content: space-around;
+        }
+
+        .photo-row {
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+            flex-wrap: nowrap;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: transparent;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+            position: relative;
+        }
+
+        .profile-card:hover {
+            transform: scale(1.04);
+        }
+
+        .photo-box {
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            border-radius: 3px;
+            overflow: hidden;
+            border: 1.2px solid #cbd5e1;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            background: #f1f5f9;
+            position: relative;
+        }
+
+        .photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photo-placeholder-icon {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            color: #94a3b8;
+        }
+
+        /* Fully Visible Khmer Name (No Vowel Clipping) */
+        .profile-name {
+            font-family: var(--font-khmer-body);
+            font-weight: 700;
+            color: #0f172a;
+            white-space: nowrap;
+            overflow: visible;
+            text-overflow: clip;
+            width: 120%;
+            max-width: 120%;
+            margin-left: -10%;
+            margin-right: -10%;
+            line-height: 1.5;
+            padding-top: 1px;
+            padding-bottom: 2px;
+            letter-spacing: -0.2px;
+        }
+
+        .profile-role {
+            font-family: var(--font-khmer-body);
+            color: #475569;
+            white-space: nowrap;
+            overflow: visible;
+            text-overflow: clip;
+            width: 120%;
+            max-width: 120%;
+            margin-left: -10%;
+            margin-right: -10%;
+            line-height: 1.4;
+            padding-bottom: 1px;
+        }
+
+        /* --- ជួរទី១: គ្រូបន្ទុកថ្នាក់ ១ រូបគត់ (ធំជាងគេ) --- */
+        .row-single-teacher {
+            justify-content: center;
+        }
+
+        .row-single-teacher .profile-card {
+            width: 7.8%;
+            max-width: 62px;
+        }
+
+        .yearbook-canvas.size-a4-portrait .row-single-teacher .profile-card {
+            width: 12%;
+            max-width: 68px;
+        }
+
+        .row-single-teacher .photo-box {
+            border-color: #0284c7;
+            border-width: 1.8px;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.22);
+        }
+
+        .row-single-teacher .profile-name {
+            font-size: 6.5pt;
+            margin-top: 1px;
+            color: #0b3c8f;
+        }
+
+        .row-single-teacher .profile-role {
+            font-size: 5.6pt;
+            font-weight: 700;
+            color: #0284c7;
+        }
+
+        /* --- ជួរទី២: ប្រធានថ្នាក់, អនុប្រធានទី១, អនុប្រធានទី២ (៣ រូបគត់ - មធ្យម) --- */
+        .row-class-leaders {
+            justify-content: center;
+            gap: 2%;
+        }
+
+        .row-class-leaders .profile-card {
+            width: 6.2%;
+            max-width: 50px;
+        }
+
+        .yearbook-canvas.size-a4-portrait .row-class-leaders .profile-card {
+            width: 9.8%;
+            max-width: 55px;
+        }
+
+        .row-class-leaders .photo-box {
+            border-color: #f59e0b;
+            border-width: 1.5px;
+            box-shadow: 0 1.5px 5px rgba(245, 158, 11, 0.2);
+        }
+
+        .row-class-leaders .profile-name {
+            font-size: 5.6pt;
+            margin-top: 1px;
+            color: #0f172a;
+        }
+
+        .row-class-leaders .profile-role {
+            font-size: 4.8pt;
+            font-weight: 700;
+        }
+
+        /* --- ជួរសិស្សទូទៅ (Adaptive Dynamic Grid: Center Aligned) --- */
+        .row-students-dynamic {
+            justify-content: center;
+            gap: 0.6%;
+        }
+
+        .row-students-dynamic .photo-box {
+            border-color: #94a3b8;
+            border-width: 0.9px;
+        }
+
+        .row-students-dynamic .profile-name {
+            font-size: 4.5pt;
+            margin-top: 0.8px;
+        }
+
+        .yearbook-canvas.size-a4-portrait .row-students-dynamic .profile-name {
+            font-size: 4.6pt;
+        }
+
+        .row-students-dynamic .profile-role {
+            display: none;
+        }
+
+        /* Roles Color Styling */
+        .role-monitor {
+            color: #dc2626 !important;
+        }
+        .role-vice-1 {
+            color: #0284c7 !important;
+        }
+        .role-vice-2 {
+            color: #7c3aed !important;
+        }
+
+        /* A3 Upscaling Adjustments */
+        .yearbook-canvas.size-a3 .country-title { font-size: 15pt; }
+        .yearbook-canvas.size-a3 .country-motto { font-size: 14pt; }
+        .yearbook-canvas.size-a3 .main-title { font-size: 26pt; }
+        .yearbook-canvas.size-a3 .sub-title { font-size: 14pt; }
+        .yearbook-canvas.size-a3 .row-single-teacher .profile-name { font-size: 10.5pt; }
+        .yearbook-canvas.size-a3 .row-single-teacher .profile-role { font-size: 9pt; }
+        .yearbook-canvas.size-a3 .row-class-leaders .profile-name { font-size: 9pt; }
+        .yearbook-canvas.size-a3 .row-class-leaders .profile-role { font-size: 7.8pt; }
+        .yearbook-canvas.size-a3 .row-students-dynamic .profile-name { font-size: 7.2pt; }
+
+        /* Modal for editing a profile member */
+        .edit-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .edit-modal-content {
+            background: #ffffff;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            padding: 24px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .edit-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1.5px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .form-group input, .form-group select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1.5px solid #cbd5e1;
+            font-family: var(--font-khmer-body);
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Print Media Query */
+        @media print {
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .action-toolbar, .edit-modal {
+                display: none !important;
+            }
+
+            .preview-wrapper {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .yearbook-canvas {
+                width: 100vw !important;
+                height: 100vh !important;
+                min-height: 100vh !important;
+                max-height: 100vh !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Action Toolbar -->
+    <header class="action-toolbar">
+        <div class="toolbar-left">
+            <a href="index.html" class="btn-action" title="ត្រឡប់ទៅផ្ទាំងដើម">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                ទំព័រដើម
+            </a>
+            <div id="global-class-selector"></div>
+
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <label for="borderStyleSelect" style="font-size: 0.86rem; font-weight: 700; color: #475569;">រចនាបថស៊ុមក្បាច់៖</label>
+                <select id="borderStyleSelect" class="select-input" onchange="changeBorderStyle(this.value)">
+                    <option value="images/praise_frame_style_1.png" selected>✨ ស៊ុមមាសរាជវាំង (Classic Gold)</option>
+                    <option value="images/praise_frame_border6.png">🌸 ស៊ុមមាសផ្កាភ្ញី (Floral Gold - Border 6)</option>
+                    <option value="images/praise_frame_style_3.png">💎 ស៊ុមខៀវផ្កាភ្ញី (Sapphire Blue)</option>
+                    <option value="images/praise_frame_style_4.png">⚜️ ស៊ុមមាស & ផ្កាខៀវ (Royal Azure)</option>
+                    <option value="images/praise_frame_style_5.png">🌿 ស៊ុមមាស & បៃតង (Emerald Gold)</option>
+                    <option value="images/praise_frame_style_7.png">🔷 ស៊ុមខៀវបុរាណ (Classic Navy)</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <label for="paperSizeSelect" style="font-size: 0.86rem; font-weight: 700; color: #475569;">ទម្រង់ក្រដាស៖</label>
+                <select id="paperSizeSelect" class="select-input" onchange="changePaperSize(this.value)">
+                    <option value="a4" selected>📄 A4 ផ្តេក (Landscape)</option>
+                    <option value="a4-portrait">📑 A4 បញ្ឈរ (Portrait)</option>
+                    <option value="a3">📄 A3 ផ្តេក (Landscape)</option>
+                    <option value="a3-portrait">📑 A3 បញ្ឈរ (Portrait)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="toolbar-right">
+            <button type="button" class="btn-action" onclick="openEditHeaderModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                កែសម្រួលក្បាលទំព័រ
+            </button>
+
+            <button type="button" class="btn-action" id="btnExportImg" onclick="exportYearbookImage()" style="background: linear-gradient(135deg, #059669, #047857); color: #ffffff; border: none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                ទាញយករូបភាព (Image)
+            </button>
+
+            <button type="button" class="btn-action btn-gold" onclick="exportYearbookJSON()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export JSON
+            </button>
+
+            <button type="button" class="btn-action btn-primary" onclick="printYearbook()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                បោះពុម្ព (Print)
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Canvas View -->
+    <main class="preview-wrapper">
+        <div class="yearbook-canvas" id="yearbookContainer">
+            
+            <!-- Royal Praise Certificate Border Image (Overlay Frame) -->
+            <img id="yearbookBorderImg" class="yearbook-border-frame-img" src="images/praise_frame_style_1.png" alt="Praise Royal Border" onerror="this.src='images/praise_border_6.png'" />
+
+            <!-- Watermark Background Emblem -->
+            <div class="yearbook-watermark"></div>
+
+            <!-- Inner Layout Content -->
+            <div class="yearbook-inner-content">
+                
+                <!-- ផ្នែកក្បាលទំព័រ -->
+                <header class="yearbook-header">
+                    <!-- Top Left Box: Buddhist Religion Flag -->
+                    <div class="header-top-left-flag">
+                        <div class="flag-box-item" title="ទង់ព្រះពុទ្ធសាសនា (សាសនា)">
+                            <img src="images/buddhist_flag.png" alt="Buddhist Flag" onerror="this.src='buddhist_flag.png'">
+                        </div>
+                    </div>
+
+                    <!-- Top Right Box: Cambodia National Flag & Royal Arms -->
+                    <div class="header-top-right-flags">
+                        <div class="flag-box-item" title="ទង់ជាតិកម្ពុជា (ជាតិ)">
+                            <img src="images/cambodia_flag.jpg" alt="Cambodia Flag" onerror="this.src='cambodia_flag.jpg'">
+                        </div>
+                        <div class="flag-box-item" title="ព្រះរាជសញ្ញា (ព្រះមហាក្សត្រ)">
+                            <img src="images/royal_arms.png" alt="Royal Arms" onerror="this.src='royal_arms.png'">
+                        </div>
+                    </div>
+
+                    <!-- Left MoEYS Logo & Hierarchy Shifted Down -->
+                    <div class="header-left-hierarchy">
+                        <img id="schoolLogoImg" class="logo-img-left" src="images/moeys-logo.png" alt="MoEYS Emblem" onerror="this.src='moeys-logo.png'">
+                        <div class="hierarchy-text-box">
+                            <div class="hierarchy-line-1" id="displayHierarchyLine1">ក្រសួងអប់រំ យុវជន និងកីឡា</div>
+                            <div class="hierarchy-line-2" id="displayHierarchyLine2">ការិយាល័យអប់រំ យុវជន និងកីឡា ស្រុកសន្ទុក</div>
+                            <div class="hierarchy-line-3" id="displayHierarchyLine3">សាលាបឋមសិក្សា ផ្លុង</div>
+                        </div>
+                    </div>
+                    
+                    <div class="header-title-box">
+                        <div class="country-title" id="displayCountryTitle">ព្រះរាជាណាចក្រកម្ពុជា</div>
+                        <div class="country-motto" id="displayCountryMotto">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+                        <div class="header-motto-divider">
+                            <img src="images/header-divider.png" alt="Tactical Divider" onerror="this.outerHTML='<span class=\'divider-tactical-khmer\'>៚៚៚ ៚ ៚៚៚</span>'">
+                        </div>
+                        <h1 class="main-title" id="displayMainTitle">កម្រងអនុស្សាវរីយ៍</h1>
+                        <div class="sub-title" id="displaySubTitle">សិស្សានុសិស្សសាលាបឋមសិក្សា ផ្លុង ឆ្នាំសិក្សា ២០២៥-២០២៦</div>
+                    </div>
+                </header>
+
+                <!-- ផ្នែករៀបចំជួររូបថត (Photo Gallery System) -->
+                <section class="photo-gallery-wrapper" id="photoRowsContainer">
+                    <!-- Dynamic Rows Rendered by JS -->
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Member Modal -->
+    <div id="memberEditModal" class="edit-modal" onclick="if(event.target===this) closeMemberModal()">
+        <div class="edit-modal-content">
+            <div class="edit-modal-header">
+                <h3 id="modalMemberTitle" style="font-size: 1.15rem; font-weight: 700; color: #0b3c8f;">កែសម្រួលព័ត៌មានរូបថត</h3>
+                <button type="button" onclick="closeMemberModal()" style="border:none; background:transparent; font-size:1.5rem; cursor:pointer; color:#64748b;">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label>ឈ្មោះ ៖</label>
+                <input type="text" id="inputMemberName" placeholder="បញ្ចូលឈ្មោះ..." />
+            </div>
+
+            <div class="form-group" id="groupMemberRole">
+                <label>តួនាទី / មុខវិជ្ជា / តួនាទីក្នុងថ្នាក់ ៖</label>
+                <select id="selectStudentRole" onchange="handleRoleSelectChange(this.value)" style="margin-bottom: 6px;">
+                    <option value="">សិស្សធម្មតា</option>
+                    <option value="គ្រូបន្ទុកថ្នាក់">គ្រូបន្ទុកថ្នាក់</option>
+                    <option value="ប្រធានថ្នាក់">ប្រធានថ្នាក់ (Class Monitor)</option>
+                    <option value="អនុប្រធានទី១">អនុប្រធានទី១ (Vice Monitor 1)</option>
+                    <option value="អនុប្រធានទី២">អនុប្រធានទី២ (Vice Monitor 2)</option>
+                    <option value="other">ផ្សេងៗ (វាយបញ្ចូលដោយដៃ)</option>
+                </select>
+                <input type="text" id="inputMemberRole" placeholder="ឧ. គ្រូបន្ទុកថ្នាក់, ប្រធានថ្នាក់..." />
+            </div>
+
+            <div class="form-group">
+                <label>តំណភ្ជាប់រូបថត (Image URL ឬ Upload File) ៖</label>
+                <input type="text" id="inputMemberPhoto" placeholder="បញ្ចូល URL រូបថត..." style="margin-bottom: 6px;" />
+                <input type="file" id="inputMemberPhotoFile" accept="image/*" onchange="handlePhotoUpload(event)" />
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                <button type="button" class="btn-action" onclick="closeMemberModal()">បោះបង់</button>
+                <button type="button" class="btn-action btn-primary" onclick="saveMemberData()">រក្សាទុក</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Header Modal -->
+    <div id="headerEditModal" class="edit-modal" onclick="if(event.target===this) closeHeaderModal()">
+        <div class="edit-modal-content">
+            <div class="edit-modal-header">
+                <h3 style="font-size: 1.15rem; font-weight: 700; color: #0b3c8f;">កែសម្រួលព័ត៌មានក្បាលទំព័រ</h3>
+                <button type="button" onclick="closeHeaderModal()" style="border:none; background:transparent; font-size:1.5rem; cursor:pointer; color:#64748b;">&times;</button>
+            </div>
+
+            <div class="form-group">
+                <label>បន្ទាត់ទី១ (ក្រសួង) ៖</label>
+                <input type="text" id="inputHierarchyLine1" value="ក្រសួងអប់រំ យុវជន និងកីឡា" />
+            </div>
+
+            <div class="form-group">
+                <label>បន្ទាត់ទី២ (ការិយាល័យស្រុក/ខណ្ឌ) ៖</label>
+                <input type="text" id="inputHierarchyLine2" value="ការិយាល័យអប់រំ យុវជន និងកីឡា ស្រុកសន្ទុក" />
+            </div>
+
+            <div class="form-group">
+                <label>បន្ទាត់ទី៣ (ឈ្មោះសាលា) ៖</label>
+                <input type="text" id="inputHierarchyLine3" value="សាលាបឋមសិក្សា ផ្លុង" />
+            </div>
+            
+            <div class="form-group">
+                <label>ប្រទេស ៖</label>
+                <input type="text" id="inputCountryTitle" value="ព្រះរាជាណាចក្រកម្ពុជា" />
+            </div>
+
+            <div class="form-group" id="inputCountryMottoGroup">
+                <label>បាវចនា ៖</label>
+                <input type="text" id="inputCountryMotto" value="ជាតិ សាសនា ព្រះមហាក្សត្រ" />
+            </div>
+
+            <div class="form-group">
+                <label>ចំណងជើងធំ ៖</label>
+                <input type="text" id="inputMainTitle" value="កម្រងអនុស្សាវរីយ៍" />
+            </div>
+
+            <div class="form-group" id="inputSubTitleGroup">
+                <label>ចំណងជើងរង ៖</label>
+                <input type="text" id="inputSubTitle" value="សិស្សានុសិស្សសាលាបឋមសិក្សា ផ្លុង ឆ្នាំសិក្សា ២០២៥-២០២៦" />
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                <button type="button" class="btn-action" onclick="closeHeaderModal()">បោះបង់</button>
+                <button type="button" class="btn-action btn-primary" onclick="saveHeaderData()">រក្សាទុក</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="yearbook.js"></script>
+</body>
+</html>

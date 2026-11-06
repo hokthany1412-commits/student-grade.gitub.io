@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ការងារឆមាសទី១ - Semester 1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Battambang:wght@400;700&family=Moul&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .card-icon-wrapper { 
+            font-size: 1.45rem; 
+            font-weight: 800; 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            color: #ffffff !important;
+            letter-spacing: -0.5px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+        }
+    </style>
+
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+
+</head>
+<body class="modern-dashboard-body">
+    <header class="modern-navbar">
+        <div class="nav-left">
+            <button class="nav-logout" onclick="window.location.href='index.html'" style="margin-right: 1rem; width:auto; padding: 0 1rem; border-radius: 8px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span style="margin-left: 0.5rem; font-weight: 700; font-family: 'Battambang';">ត្រឡប់ក្រោយ</span>
+            </button>
+            <div class="nav-titles">
+                <h1>ការងារឆមាសទី១</h1>
+                <h2>ជ្រើសរើសខែដើម្បីបញ្ចូលពិន្ទុ</h2>
+            </div>
+        </div>
+        <div class="nav-right" style="display: flex; align-items: center; gap: 10px;">
+            <div id="global-class-selector"></div>
+        </div>
+    </header>
+
+    <main class="modern-main">
+        <div class="cards-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="modern-card card-pink" onclick="window.location.href='grades.html?month=តុលា&title=តុលា'">
+                <div class="card-icon-wrapper pink-bg">10</div>
+                <div class="card-text">
+                    <h3>ខែតុលា</h3>
+                    <p>OCTOBER</p>
+                </div>
+            </div>
+            <div class="modern-card card-pink" onclick="window.location.href='grades.html?month=វិច្ឆិកា&title=វិច្ឆិកា'">
+                <div class="card-icon-wrapper pink-bg">11</div>
+                <div class="card-text">
+                    <h3>ខែវិច្ឆិកា</h3>
+                    <p>NOVEMBER</p>
+                </div>
+            </div>
+            <div class="modern-card card-pink" onclick="window.location.href='grades.html?month=ធ្នូ&title=ធ្នូ'">
+                <div class="card-icon-wrapper pink-bg">12</div>
+                <div class="card-text">
+                    <h3>ខែធ្នូ</h3>
+                    <p>DECEMBER</p>
+                </div>
+            </div>
+            <div class="modern-card card-pink" onclick="window.location.href='grades.html?month=មករា&title=មករា'">
+                <div class="card-icon-wrapper pink-bg">01</div>
+                <div class="card-text">
+                    <h3>ខែមករា</h3>
+                    <p>JANUARY</p>
+                </div>
+            </div>
+            <div class="modern-card card-pink" onclick="window.location.href='grades.html?month=កុម្ភៈ&title=កុម្ភៈ'">
+                <div class="card-icon-wrapper pink-bg">02</div>
+                <div class="card-text">
+                    <h3>ខែកុម្ភៈ</h3>
+                    <p>FEBRUARY</p>
+                </div>
+            </div>
+            <div class="modern-card card-pink" onclick="window.location.href='grades.html?month=មីនា&title=មីនា'">
+                <div class="card-icon-wrapper pink-bg">03</div>
+                <div class="card-text">
+                    <h3>ខែមីនា</h3>
+                    <p>MARCH</p>
+                </div>
+            </div>
+            <!-- Semester Summary -->
+            <div class="modern-card card-blue" onclick="window.location.href='semester-grades-v4.html'" style="grid-column: span 3; justify-content: center;">
+                <div class="card-icon-wrapper blue-bg">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <div class="card-text" style="flex: none; text-align: center;">
+                    <h3>ពិន្ទុប្រចាំឆមាសទី១</h3>
+                    <p>SEMESTER 1 SUMMARY</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

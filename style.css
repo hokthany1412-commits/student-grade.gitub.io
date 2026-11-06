@@ -1,0 +1,5524 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Battambang:wght@400;700;900&family=Moul&display=swap');
+
+:root {
+    /* Modern Khmer Typography System */
+    --font-primary: 'Kantumruy Pro', 'Battambang', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-heading: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+    --font-numbers: 'Poppins', 'Kantumruy Pro', sans-serif;
+    --font-ceremony: 'Khmer OS Muol Light', 'Moul', 'Kantumruy Pro', serif;
+    /* Brand & Accent Palette */
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: #eff6ff;
+    --primary-glow: rgba(37, 99, 235, 0.25);
+    
+    --secondary: #059669;
+    --secondary-hover: #047857;
+    --secondary-light: #ecfdf5;
+    
+    --accent-indigo: #6366f1;
+    --accent-purple: #8b5cf6;
+    --accent-rose: #f43f5e;
+    --accent-amber: #f59e0b;
+    --accent-sky: #0284c7;
+    
+    /* Neutral / Surfaces */
+    --bg-main: #f8fafc;
+    --bg-gradient: linear-gradient(180deg, #f0f4f8 0%, #f8fafc 100%);
+    --surface: #ffffff;
+    --surface-glass: rgba(255, 255, 255, 0.88);
+    --surface-border: #e2e8f0;
+    --surface-border-hover: #cbd5e1;
+    
+    /* Text Hierarchy */
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --text-light: #ffffff;
+    
+    /* Form Inputs */
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+    --input-focus-border: #2563eb;
+    --input-focus: rgba(37, 99, 235, 0.18);
+    
+    /* Grade & Status Colors */
+    --grade-a: #059669;
+    --grade-b: #2563eb;
+    --grade-c: #d97706;
+    --grade-d: #ea580c;
+    --grade-f: #dc2626;
+    
+    /* Elevations & Shadows */
+    --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+    --shadow-sm: 0 2px 4px -1px rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 6px 16px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 12px 28px -4px rgba(15, 23, 42, 0.1), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+    --shadow-xl: 0 20px 40px -8px rgba(15, 23, 42, 0.14);
+    --shadow-glow: 0 0 20px rgba(37, 99, 235, 0.2);
+    
+    /* Transitions */
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Modern Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+    border: 2px solid #f1f5f9;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+button, input, select, textarea, optgroup {
+    font-family: inherit;
+}
+
+html, body {
+    font-family: var(--font-primary, 'Kantumruy Pro', 'Battambang', sans-serif);
+    background-color: var(--bg-main);
+    background-image: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.03) 0px, transparent 50%),
+                      radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.03) 0px, transparent 50%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.app-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Header */
+.app-header {
+    text-align: center;
+    margin-bottom: 0.5rem;
+    animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.logo-icon {
+    background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+    color: white;
+    padding: 0.85rem;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px -3px var(--primary-glow);
+    transition: transform var(--transition-normal);
+}
+
+.logo-icon:hover {
+    transform: scale(1.05) rotate(3deg);
+}
+
+.app-header h1 {
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+}
+
+.app-header .subtitle {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    font-weight: 500;
+}
+
+/* Panels */
+.glass-panel {
+    background: var(--surface-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 24px;
+    padding: 2.2rem;
+    box-shadow: var(--shadow-md);
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+}
+
+.glass-panel:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--surface-border-hover);
+}
+
+.form-section {
+    animation-delay: 0.1s;
+}
+
+.table-section {
+    animation-delay: 0.2s;
+}
+
+h2 {
+    font-size: 1.45rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+h2::before {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 24px;
+    background: linear-gradient(180deg, var(--primary) 0%, #1d4ed8 100%);
+    border-radius: 4px;
+}
+
+/* Document headers and printable pages must NOT have the blue vertical bar */
+.nation-header-center h2::before,
+.national-motto-center h2::before,
+.national-motto-block h2::before,
+.nation-header h2::before,
+.kingdom-header h2::before,
+.a4-page h2::before,
+.sheet-border h2::before,
+.doc-header h2::before,
+.nation-header-center h2::after,
+.national-motto-center h2::after,
+.national-motto-block h2::after,
+.nation-header h2::after,
+.kingdom-header h2::after,
+.a4-page h2::after,
+.sheet-border h2::after,
+.doc-header h2::after {
+    display: none !important;
+    content: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.nation-header-center h2,
+.national-motto-center h2,
+.national-motto-block h2,
+.kingdom-header h2 {
+    display: block !important;
+    text-align: center !important;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.grades-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--surface-border);
+}
+
+label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+input {
+    background: var(--surface);
+    border: 2px solid var(--input-border);
+    color: var(--text-primary);
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--input-focus);
+    background: #fff;
+}
+
+/* Form Inputs & Controls */
+label {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+input, select, textarea {
+    background: var(--input-bg);
+    border: 1.5px solid var(--input-border);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.95rem;
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-xs);
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 3.5px var(--input-focus);
+    background: #ffffff;
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--text-muted);
+}
+
+/* Buttons */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 0.75rem 1.6rem;
+    border-radius: 12px;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    transition: all var(--transition-normal);
+    border: none;
+    letter-spacing: 0.2px;
+    user-select: none;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    box-shadow: 0 4px 14px -1px var(--primary-glow);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -2px var(--primary-glow);
+}
+
+.btn-secondary {
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    color: var(--text-secondary);
+    box-shadow: var(--shadow-xs);
+}
+
+.btn-secondary:hover {
+    background: #f8fafc;
+    color: var(--text-primary);
+    border-color: #94a3b8;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 14px -1px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -2px rgba(16, 185, 129, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 4px 14px -1px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -2px rgba(239, 68, 68, 0.4);
+}
+
+.btn-icon {
+    background: #fff1f2;
+    color: #e11d48;
+    border: 1px solid #fecdd3;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.btn-icon:hover {
+    background: #e11d48;
+    color: white;
+    border-color: #e11d48;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+}
+
+/* Table Styles */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.section-header h2 {
+    margin-bottom: 0;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-box svg {
+    position: absolute;
+    left: 1.1rem;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.search-box input {
+    padding-left: 2.8rem;
+    padding-right: 1.2rem;
+    width: 300px;
+    border-radius: 50px;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    font-size: 0.92rem;
+}
+
+.search-box input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3.5px var(--input-focus);
+}
+
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 18px;
+    border: 1px solid var(--surface-border);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 900px;
+}
+
+th, td {
+    padding: 1rem 1.1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--surface-border);
+    vertical-align: middle;
+}
+
+.official-grade-table th, .official-grade-table td {
+    padding: 0.45rem 0.55rem;
+}
+
+.inline-input {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    width: 100%;
+}
+
+th {
+    background: #f8fafc;
+    font-weight: 700;
+    color: #475569;
+    white-space: nowrap;
+    font-size: 0.86rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+tbody tr {
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Rank Medals */
+.rank {
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    box-shadow: var(--shadow-xs);
+}
+
+.rank-1 {
+    background: linear-gradient(135deg, #fef08a 0%, #fde047 100%);
+    color: #854d0e;
+    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.4);
+    border: 1px solid #facc15;
+}
+
+.rank-2 {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    color: #334155;
+    box-shadow: 0 4px 12px rgba(148, 163, 184, 0.3);
+    border: 1px solid #cbd5e1;
+}
+
+.rank-3 {
+    background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+    color: #9a3412;
+    box-shadow: 0 4px 12px rgba(251, 146, 60, 0.35);
+    border: 1px solid #fb923c;
+}
+
+/* Grade Badges */
+.grade-badge {
+    padding: 0.35rem 0.85rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-width: 46px;
+    box-shadow: var(--shadow-xs);
+}
+
+.grade-a { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+.grade-b { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+.grade-c { background: #fefce8; color: #ca8a04; border: 1px solid #fef08a; }
+.grade-d { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; }
+.grade-f { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--text-secondary);
+}
+
+.empty-state.hidden {
+    display: none;
+}
+
+.empty-state svg {
+    margin-bottom: 1rem;
+    opacity: 0.5;
+    width: 64px;
+    height: 64px;
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes deleteOut {
+    to { opacity: 0; transform: scale(0.95); background: #fee2e2; }
+}
+
+.deleting {
+    animation: deleteOut 0.3s ease forwards;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .app-header h1 { font-size: 1.8rem; }
+    .form-actions { flex-direction: column; }
+    .search-box input { width: 100%; }
+    .glass-panel { padding: 1.5rem; }
+}
+
+/* =========================================
+   MODERN DASHBOARD SPECIFIC STYLES
+   ========================================= */
+
+.modern-dashboard-body {
+    background: linear-gradient(160deg, #f0f4ff 0%, #e8f0fe 30%, #f0fdf4 60%, #fef9ee 100%);
+    background-attachment: fixed;
+    padding: 0;
+    color: #1f2937;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+/* Navbar */
+.modern-navbar {
+    background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 1.4rem;
+    box-shadow: 0 4px 20px -2px rgba(4, 120, 87, 0.4);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    gap: 0.75rem;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-titles {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.nav-titles h1 {
+    font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+    font-weight: normal;
+    font-size: 1.12rem;
+    margin: 0;
+    line-height: 1.45;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    color: #ffffff;
+}
+
+.nav-titles h2 {
+    font-size: 0.78rem;
+    font-weight: 500;
+    margin: 2px 0 0 0;
+    opacity: 0.85;
+    white-space: nowrap;
+    color: #e6fffa;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.nav-dropdown, .sync-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    padding: 0.45rem 0.85rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    backdrop-filter: blur(8px);
+}
+
+.nav-dropdown:hover, .sync-status-badge:hover {
+    background: rgba(255, 255, 255, 0.26);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+}
+
+/* Navigation Hub Button on Nav-Left */
+.nav-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.46rem 0.95rem;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #ffffff;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    backdrop-filter: blur(8px);
+}
+
+.nav-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.55);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.nav-menu-btn svg {
+    flex-shrink: 0;
+}
+
+/* Left-Side Mega Menu / Drawer Dropdown */
+.nav-menu-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.nav-menu-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 0.65rem;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 25px 55px -10px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(226, 232, 240, 0.9);
+    width: 780px;
+    max-width: 95vw;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.97);
+    transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1050;
+    padding: 18px 20px;
+}
+
+.nav-menu-wrapper.is-open .nav-menu-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.mega-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+    border-bottom: 1.5px solid #f1f5f9;
+}
+
+.mega-menu-title {
+    font-family: 'Khmer OS Muol Light', 'Moul', cursive;
+    font-size: 0.96rem;
+    color: #064e3b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.mega-menu-badge {
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    font-family: 'Battambang', sans-serif;
+}
+
+/* Two-column layout for Mega Menu: Left side categories tabs, Right side active category content */
+.nav-mega-container {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 16px;
+    min-height: 380px;
+}
+
+.nav-mega-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-right: 1.5px solid #f1f5f9;
+    padding-right: 12px;
+}
+
+.nav-cat-tab-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #334155;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.nav-cat-tab-btn:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #047857;
+}
+
+.nav-cat-tab-btn.is-active {
+    background: #ecfdf5;
+    border-color: #10b981;
+    color: #065f46;
+    box-shadow: 0 3px 8px rgba(16, 185, 129, 0.12);
+}
+
+.nav-cat-header-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-cat-badge-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.nav-cat-badge-dot.bg-blue { background: #2563eb; }
+.nav-cat-badge-dot.bg-amber { background: #d97706; }
+.nav-cat-badge-dot.bg-emerald { background: #059669; }
+.nav-cat-badge-dot.bg-purple { background: #9333ea; }
+.nav-cat-badge-dot.bg-slate { background: #475569; }
+
+.nav-cat-arrow {
+    display: flex;
+    align-items: center;
+    color: #94a3b8;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.nav-cat-tab-btn.is-active .nav-cat-arrow {
+    color: #059669;
+    transform: translateX(3px);
+}
+
+/* Right content panel */
+.nav-mega-content {
+    max-height: 480px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.nav-cat-pane {
+    display: none;
+    animation: fadeInCat 0.2s ease-out forwards;
+}
+
+.nav-cat-pane.is-active {
+    display: block;
+}
+
+@keyframes fadeInCat {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.nav-pane-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.nav-pane-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0f172a;
+    font-family: 'Battambang', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mega-menu-items-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.mega-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    color: #1e293b;
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 600;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    transition: all 0.18s ease;
+    border: 1px solid #f1f5f9;
+    background: #ffffff;
+}
+
+.mega-menu-link:hover {
+    background: #f0fdf4;
+    border-color: #86efac;
+    color: #047857;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+}
+
+.menu-item-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #1e293b;
+    line-height: 1.3;
+}
+
+.mega-menu-link:hover .menu-item-title {
+    color: #047857;
+}
+
+.menu-item-sub {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #64748b;
+    line-height: 1.2;
+}
+
+.mega-menu-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .nav-menu-dropdown {
+        width: 340px;
+        left: 0;
+        right: auto;
+    }
+    .nav-mega-container {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+    .nav-mega-sidebar {
+        border-right: none;
+        border-bottom: 1.5px solid #f1f5f9;
+        padding-right: 0;
+        padding-bottom: 10px;
+    }
+    .mega-menu-items-group {
+        grid-template-columns: 1fr;
+    }
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.6rem;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(226, 232, 240, 0.8);
+    min-width: 260px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.96);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    backdrop-filter: blur(20px);
+}
+
+.nav-dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.65rem 0.9rem;
+    border-radius: 12px;
+    color: #334155;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item svg {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: #f1f5f9;
+    color: var(--primary);
+    transform: translateX(4px);
+}
+
+.dropdown-item:hover svg {
+    transform: scale(1.15);
+}
+
+/* Light mode variant of class switcher for subpages */
+.app-header .nav-class-pill-btn,
+.light-page .nav-class-pill-btn,
+.page-top-bar .nav-class-pill-btn {
+    background: #ffffff;
+    color: #1e293b;
+    border: 1.5px solid #cbd5e1;
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.06);
+}
+
+.app-header .nav-class-pill-btn:hover,
+.light-page .nav-class-pill-btn:hover,
+.page-top-bar .nav-class-pill-btn:hover {
+    background: #f8fafc;
+    border-color: #0284c7;
+    box-shadow: 0 6px 16px -2px rgba(2, 132, 199, 0.15);
+}
+
+.app-header .nav-class-pill-icon,
+.light-page .nav-class-pill-icon,
+.page-top-bar .nav-class-pill-icon {
+    background: #eff6ff;
+    color: #0284c7;
+}
+
+.app-header .nav-class-pill-label,
+.light-page .nav-class-pill-label,
+.page-top-bar .nav-class-pill-label {
+    color: #64748b;
+}
+
+.app-header .nav-class-pill-name,
+.light-page .nav-class-pill-name,
+.page-top-bar .nav-class-pill-name {
+    color: #0f172a;
+}
+
+.app-header .nav-class-pill-arrow,
+.light-page .nav-class-pill-arrow,
+.page-top-bar .nav-class-pill-arrow {
+    color: #64748b;
+}
+
+/* Modern Page Top Bar & Hero Banner */
+.modern-page-header {
+    margin-bottom: 1.8rem;
+    animation: fadeInDown 0.5s ease-out;
+}
+
+.page-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.page-top-bar:last-child {
+    margin-bottom: 0;
+}
+
+.page-top-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.page-top-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-back-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.5rem 1.1rem;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 14px;
+    color: #334155;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+    transition: all 0.25s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-back-nav:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #0f172a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.1);
+}
+
+.page-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0.5rem 1rem;
+    border-radius: 14px;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.86rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.page-nav-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.page-nav-link.link-rose {
+    background: #fff1f2;
+    color: #e11d48;
+    border: 1.5px solid #fecdd3;
+}
+.page-nav-link.link-rose:hover {
+    background: #ffe4e6;
+    border-color: #fda4af;
+}
+
+.page-nav-link.link-emerald {
+    background: #ecfdf5;
+    color: #059669;
+    border: 1.5px solid #a7f3d0;
+}
+.page-nav-link.link-emerald:hover {
+    background: #d1fae5;
+    border-color: #6ee7b7;
+}
+
+.page-nav-link.link-blue {
+    background: #eff6ff;
+    color: #0284c7;
+    border: 1.5px solid #bfdbfe;
+}
+.page-nav-link.link-blue:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+}
+
+/* Hero Center Banner */
+.page-hero-banner {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0;
+}
+
+.page-hero-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 10px 25px -4px rgba(59, 130, 246, 0.4);
+    margin-bottom: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.page-hero-banner:hover .page-hero-icon {
+    transform: scale(1.08) rotate(3deg);
+}
+
+.page-hero-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    letter-spacing: -0.5px;
+}
+
+.page-hero-subtitle {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #64748b;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.nav-class-pill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.45rem 1rem;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    border-radius: 14px;
+    color: white;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.nav-class-pill-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.55);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nav-class-pill-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.nav-class-pill-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.nav-class-pill-label {
+    opacity: 0.85;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.nav-class-pill-name {
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 0.92rem;
+    letter-spacing: 0.2px;
+}
+
+.nav-class-pill-arrow {
+    transition: transform 0.25s ease;
+    opacity: 0.85;
+    margin-left: 2px;
+}
+
+.nav-class-switcher-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.nav-class-switcher-wrap.open .nav-class-pill-arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Menu Panel */
+.nav-class-dropdown-panel {
+    position: fixed;
+    width: 340px;
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.28), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    padding: 14px;
+    z-index: 9999999;
+    animation: modalZoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: none;
+    color: #1e293b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    box-sizing: border-box;
+}
+
+.nav-class-dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px 10px 10px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 8px;
+}
+
+.nav-class-dropdown-title {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #475569;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-class-list {
+    max-height: 250px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-right: 2px;
+    margin-bottom: 8px;
+}
+
+.nav-class-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.nav-class-item:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #0284c7;
+    transform: translateX(3px);
+}
+
+.nav-class-item.active {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: #ffffff;
+    border-color: #0284c7;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+}
+
+.nav-class-item.active .nav-class-badge {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.nav-class-badge {
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: #e2e8f0;
+    color: #64748b;
+    font-weight: 700;
+}
+
+.nav-class-actions {
+    display: flex;
+    gap: 6px;
+    padding-top: 8px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.nav-class-action-btn {
+    flex: 1;
+    padding: 7px 8px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #334155;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+.nav-class-action-btn:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.nav-class-action-btn.btn-edit:hover {
+    background: #f0f9ff;
+    border-color: #38bdf8;
+    color: #0284c7;
+}
+
+.nav-class-action-btn.btn-del:hover {
+    background: #fff1f2;
+    border-color: #fda4af;
+    color: #e11d48;
+}
+
+#stat-classes {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#stat-classes:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -4px rgba(4, 120, 87, 0.25);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: #334155;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+}
+
+.dropdown-item svg {
+    color: #64748b;
+    transition: color 0.2s;
+}
+
+.dropdown-item:hover {
+    background: #f1f5f9;
+    color: var(--primary);
+}
+
+.dropdown-item:hover svg {
+    color: var(--primary);
+}
+
+.dropdown-item:first-child {
+    border-radius: 8px 8px 0 0;
+}
+
+.dropdown-item:last-child {
+    border-radius: 0 0 8px 8px;
+}
+
+.nav-time {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    white-space: nowrap;
+    padding: 0 4px;
+}
+
+.time-main {
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.15;
+    color: #ffffff;
+}
+
+.date-sub {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.85);
+    white-space: nowrap;
+    margin-top: 2px;
+}
+
+.nav-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.35rem 0.85rem 0.35rem 1rem;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    border-radius: 999px;
+    white-space: nowrap;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-profile:hover {
+    background: rgba(255, 255, 255, 0.26);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.role-text {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+}
+
+.profile-circle {
+    width: 32px;
+    height: 32px;
+    background: #ffffff;
+    color: #047857;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.nav-logout {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(8px);
+}
+
+.nav-logout:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    transform: scale(1.06);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+}
+
+/* Main Content */
+.modern-main {
+    flex: 1;
+    padding: 2rem 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-title-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.title-line {
+    width: 6px;
+    height: 45px;
+    background: linear-gradient(180deg, #10b981, #059669);
+    border-radius: 4px;
+}
+
+.main-heading {
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    text-align: center;
+    letter-spacing: -0.5px;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cards Grid */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@media (min-width: 1024px) {
+    .cards-grid-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Dashboard Filter Tabs */
+.dashboard-filter-tabs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    background: #ffffff;
+    padding: 8px 12px;
+    border-radius: 18px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.04);
+}
+
+.filter-tab-btn {
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+}
+
+.filter-tab-btn:hover {
+    color: #1e293b;
+    background: #f1f5f9;
+}
+
+.filter-tab-btn.active {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+/* Dashboard Section Container */
+.dashboard-section-block {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 2rem 2.2rem;
+    margin-bottom: 2.2rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+    animation: fadeInUp 0.5s ease-out;
+    transition: all 0.3s ease;
+}
+
+.dashboard-section-block:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 14px 35px -10px rgba(0, 0, 0, 0.08);
+}
+
+/* Section Badge Header */
+.section-header-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.6rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 2px solid #f1f5f9;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.section-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.section-header-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 6px 16px -3px currentColor;
+    flex-shrink: 0;
+}
+
+.section-header-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+}
+
+.icon-blue-gradient { background: linear-gradient(135deg, #0284c7, #0369a1); color: rgba(2, 132, 199, 0.5); }
+.icon-amber-gradient { background: linear-gradient(135deg, #f59e0b, #d97706); color: rgba(245, 158, 11, 0.5); }
+.icon-purple-gradient { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: rgba(139, 92, 246, 0.5); }
+
+.section-header-titles h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: normal;
+    color: #0f172a;
+    font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+    line-height: 1.55;
+    letter-spacing: 0.2px;
+}
+
+.section-count-badge {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.1rem;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@media (max-width: 768px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.modern-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1.5px solid #e2e8f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 4.5px;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.modern-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px -4px rgba(15, 23, 42, 0.1), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+}
+
+.modern-card:hover::before {
+    opacity: 1;
+}
+
+/* Card Themes */
+.modern-card.card-blue::before { background: linear-gradient(180deg, #0284c7, #0369a1); }
+.modern-card.card-blue:hover { background-color: #fafbfc; border-color: #7dd3fc; }
+
+.modern-card.card-teal::before { background: linear-gradient(180deg, #10b981, #059669); }
+.modern-card.card-teal:hover { background-color: #fafbfc; border-color: #6ee7b7; }
+
+.modern-card.card-pink::before { background: linear-gradient(180deg, #f43f5e, #e11d48); }
+.modern-card.card-pink:hover { background-color: #fafbfc; border-color: #fda4af; }
+
+.modern-card.card-indigo::before { background: linear-gradient(180deg, #6366f1, #4f46e5); }
+.modern-card.card-indigo:hover { background-color: #fafbfc; border-color: #a5b4fc; }
+
+.modern-card.card-orange::before { background: linear-gradient(180deg, #f59e0b, #d97706); }
+.modern-card.card-orange:hover { background-color: #fafbfc; border-color: #fde68a; }
+
+.modern-card.card-purple::before { background: linear-gradient(180deg, #8b5cf6, #7c3aed); }
+.modern-card.card-purple:hover { background-color: #fafbfc; border-color: #d8b4fe; }
+
+.modern-card.card-black::before { background: linear-gradient(180deg, #475569, #1e293b); }
+.modern-card.card-black:hover { background-color: #fafbfc; border-color: #94a3b8; }
+
+.card-left-content {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    min-width: 0;
+    flex: 1;
+}
+
+.card-icon-wrapper {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff !important;
+    font-size: 1.35rem;
+    font-weight: 800;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+.modern-card:hover .card-icon-wrapper {
+    transform: scale(1.08);
+}
+
+.blue-bg { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); box-shadow: 0 6px 14px -2px rgba(2, 132, 199, 0.45); color: #ffffff; }
+.teal-bg { background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 6px 14px -2px rgba(16, 185, 129, 0.45); color: #ffffff; }
+.pink-bg { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); box-shadow: 0 6px 14px -2px rgba(244, 63, 94, 0.45); color: #ffffff; }
+.indigo-bg { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); box-shadow: 0 6px 14px -2px rgba(99, 102, 241, 0.45); color: #ffffff; }
+.orange-bg { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 6px 14px -2px rgba(245, 158, 11, 0.45); color: #ffffff; }
+.purple-bg { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); box-shadow: 0 6px 14px -2px rgba(139, 92, 246, 0.45); color: #ffffff; }
+.black-bg { background: linear-gradient(135deg, #475569 0%, #1e293b 100%); box-shadow: 0 6px 14px -2px rgba(30, 41, 59, 0.45); color: #ffffff; }
+
+.card-icon-wrapper svg {
+    color: white !important;
+    stroke: white !important;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.25));
+}
+
+.card-text {
+    min-width: 0;
+    flex: 1;
+}
+
+.card-text h3 {
+    font-size: 1.05rem;
+    font-weight: normal;
+    margin: 0;
+    color: #1e293b;
+    font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+    line-height: 1.55;
+    letter-spacing: 0.2px;
+}
+
+.card-text p {
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin: 0;
+    color: #64748b;
+    letter-spacing: 0.6px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.card-right-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.card-badge-pill {
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+}
+
+.badge-blue { background: #e0f2fe; color: #0284c7; }
+.badge-teal { background: #d1fae5; color: #059669; }
+.badge-pink { background: #ffe4e6; color: #e11d48; }
+.badge-indigo { background: #e0e7ff; color: #4f46e5; }
+.badge-orange { background: #fef3c7; color: #d97706; }
+.badge-purple { background: #f3e8ff; color: #7c3aed; }
+
+.card-arrow {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+.modern-card:hover .card-arrow {
+    transform: translateX(3px);
+    color: white;
+}
+
+.card-blue:hover .card-arrow { background: #0284c7; }
+.card-teal:hover .card-arrow { background: #059669; }
+.card-pink:hover .card-arrow { background: #e11d48; }
+.card-indigo:hover .card-arrow { background: #4f46e5; }
+.card-orange:hover .card-arrow { background: #f59e0b; }
+.card-purple:hover .card-arrow { background: #8b5cf6; }
+
+.modern-card:hover .card-arrow {
+    transform: translateX(4px);
+}
+
+.modern-card.card-blue:hover .card-arrow { background-color: #e0f2fe; }
+.modern-card.card-teal:hover .card-arrow { background-color: #ccfbf1; }
+.modern-card.card-pink:hover .card-arrow { background-color: #fce7f3; }
+.modern-card.card-indigo:hover .card-arrow { background-color: #e0e7ff; }
+.modern-card.card-black:hover .card-arrow { background-color: #e2e8f0; }
+.modern-card.card-orange:hover .card-arrow { background-color: #fef3c7; }
+.modern-card.card-purple:hover .card-arrow { background-color: #f3e8ff; }
+
+.arrow-blue { color: #0284c7; }
+.arrow-teal { color: #10b981; }
+.arrow-pink { color: #ec4899; }
+.arrow-indigo { color: #6366f1; }
+.arrow-purple { color: #8b5cf6; }
+.black-arrow-wrapper { background: #1e293b; }
+
+.utilities-section {
+    background: white;
+    border-radius: 24px;
+    padding: 2.2rem 2.5rem;
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.utils-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 1.8rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f1f5f9;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+/* Category Master Grid & Cards */
+.category-master-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.4rem;
+}
+
+.category-master-card {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 1.3rem 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.2rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.04);
+}
+
+.category-master-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 5px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.category-master-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 30px -8px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
+    background: #fafbfc;
+}
+
+.category-master-card:hover::after {
+    opacity: 1;
+}
+
+.cat-master-left {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.cat-master-icon-badge {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 18px -4px currentColor;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.category-master-card:hover .cat-master-icon-badge {
+    transform: scale(1.1) rotate(4deg);
+}
+
+.cat-master-icon-badge svg {
+    width: 28px;
+    height: 28px;
+    color: white !important;
+    stroke: white !important;
+}
+
+.cat-master-info h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: normal;
+    color: #1e293b;
+    font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+    line-height: 1.55;
+    letter-spacing: 0.2px;
+}
+
+.cat-master-info span {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    letter-spacing: 0.8px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.cat-master-right {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.cat-master-badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: #f1f5f9;
+    color: #475569;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    border: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.cat-master-arrow {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.category-master-card:hover .cat-master-arrow {
+    background: #1e293b;
+    color: #ffffff;
+    border-color: #1e293b;
+    transform: translateX(4px);
+}
+
+/* Category themes for master cards */
+.cat-reports.category-master-card::after { background: #6366f1; }
+.cat-reports .cat-master-icon-badge { background: linear-gradient(135deg, #6366f1, #4f46e5); color: rgba(99, 102, 241, 0.4); }
+.cat-reports:hover { border-color: #c7d2fe; }
+
+.cat-attendance.category-master-card::after { background: #f59e0b; }
+.cat-attendance .cat-master-icon-badge { background: linear-gradient(135deg, #f59e0b, #d97706); color: rgba(245, 158, 11, 0.4); }
+.cat-attendance:hover { border-color: #fde68a; }
+
+.cat-records.category-master-card::after { background: #3b82f6; }
+.cat-records .cat-master-icon-badge { background: linear-gradient(135deg, #3b82f6, #2563eb); color: rgba(59, 130, 246, 0.4); }
+.cat-records:hover { border-color: #bfdbfe; }
+
+.cat-system.category-master-card::after { background: #0284c7; }
+.cat-system .cat-master-icon-badge { background: linear-gradient(135deg, #0284c7, #0369a1); color: rgba(2, 132, 199, 0.4); }
+.cat-system:hover { border-color: #bae6fd; }
+
+/* Modal item cards & Grid */
+#cat-modal-items-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    max-height: 65vh;
+    overflow-y: auto;
+    padding: 4px 6px 10px 4px;
+}
+
+@media (max-width: 680px) {
+    #cat-modal-items-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cat-modal-item {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.04);
+}
+
+.cat-modal-item:hover {
+    background: #fafbfc;
+    border-color: #cbd5e1;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.1);
+}
+
+.cat-modal-item-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+    box-shadow: 0 6px 14px -3px rgba(0, 0, 0, 0.12);
+}
+
+.cat-modal-item:hover .cat-modal-item-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.cat-modal-item-icon svg {
+    width: 26px;
+    height: 26px;
+    color: white !important;
+    stroke: white !important;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+}
+
+.cat-modal-item-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.cat-modal-item-title {
+    margin: 0 0 4px 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1e293b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    line-height: 1.35;
+}
+
+.cat-modal-item-desc {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #64748b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    line-height: 1.4;
+}
+
+.cat-modal-item-arrow {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.cat-modal-item:hover .cat-modal-item-arrow {
+    background: #0284c7;
+    color: #ffffff;
+    transform: translateX(4px);
+}
+
+.cat-modal-item:hover .cat-modal-item-arrow {
+    transform: translateX(4px);
+    color: #1e293b;
+}
+
+@keyframes modalZoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Category Groups (for other contexts if needed) */
+.category-group {
+    margin-bottom: 2.2rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 1.5rem 1.6rem;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.category-group:last-child {
+    margin-bottom: 0;
+}
+
+.category-group:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 6px 20px -6px rgba(0, 0, 0, 0.05);
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.cat-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.cat-icon-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px -2px rgba(0,0,0,0.1);
+}
+
+.cat-icon-badge svg {
+    width: 22px;
+    height: 22px;
+}
+
+.cat-info h5 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1e293b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cat-info span {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #64748b;
+    letter-spacing: 0.8px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.cat-count-badge {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+/* Category Grid & Cards */
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+}
+
+.cat-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1.25rem 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s, box-shadow 0.25s, border-color 0.25s;
+    text-align: left;
+}
+
+.cat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: #94a3b8;
+    opacity: 0;
+    transition: opacity 0.25s, transform 0.25s;
+    transform: scaleY(0);
+}
+
+.cat-card:hover::before {
+    opacity: 1;
+    transform: scaleY(1);
+}
+
+.cat-card:hover {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+}
+
+.cat-card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cat-card:hover .cat-card-icon {
+    transform: scale(1.1) rotate(4deg);
+}
+
+.cat-card-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.cat-card-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.cat-card-title {
+    margin: 0 0 3px 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.2s;
+}
+
+.cat-card-desc {
+    margin: 0;
+    font-size: 0.78rem;
+    color: #64748b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cat-card-arrow {
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.25s, transform 0.25s;
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+
+.cat-card:hover .cat-card-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Category Specific Color Themes */
+/* 1. Reports (Purple/Indigo) */
+.cat-reports .cat-icon-badge { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; }
+.cat-card-report-1::before { background: #6366f1; }
+.cat-card-report-1 .cat-card-icon { background: #eef2ff; color: #4f46e5; }
+.cat-card-report-1:hover { border-color: #c7d2fe; }
+
+.cat-card-report-2::before { background: #f43f5e; }
+.cat-card-report-2 .cat-card-icon { background: #fff1f2; color: #e11d48; }
+.cat-card-report-2:hover { border-color: #fecdd3; }
+
+.cat-card-report-3::before { background: #ec4899; }
+.cat-card-report-3 .cat-card-icon { background: #fdf2f8; color: #db2777; }
+.cat-card-report-3:hover { border-color: #fbcfe8; }
+
+/* 2. Attendance & Rosters (Amber/Emerald/Orange) */
+.cat-attendance .cat-icon-badge { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+.cat-card-att-1::before { background: #f59e0b; }
+.cat-card-att-1 .cat-card-icon { background: #fffbeb; color: #d97706; }
+.cat-card-att-1:hover { border-color: #fde68a; }
+
+.cat-card-att-2::before { background: #ea580c; }
+.cat-card-att-2 .cat-card-icon { background: #fff7ed; color: #ea580c; }
+.cat-card-att-2:hover { border-color: #fed7aa; }
+
+.cat-card-att-3::before { background: #10b981; }
+.cat-card-att-3 .cat-card-icon { background: #ecfdf5; color: #059669; }
+.cat-card-att-3:hover { border-color: #a7f3d0; }
+
+/* 3. Record Books (Blue/Teal/Cyan) */
+.cat-records .cat-icon-badge { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+.cat-card-rec-1::before { background: #3b82f6; }
+.cat-card-rec-1 .cat-card-icon { background: #eff6ff; color: #2563eb; }
+.cat-card-rec-1:hover { border-color: #bfdbfe; }
+
+.cat-card-rec-2::before { background: #06b6d4; }
+.cat-card-rec-2 .cat-card-icon { background: #ecfeff; color: #0891b2; }
+.cat-card-rec-2:hover { border-color: #a5f3fc; }
+
+.cat-card-rec-3::before { background: #8b5cf6; }
+.cat-card-rec-3 .cat-card-icon { background: #f5f3ff; color: #7c3aed; }
+.cat-card-rec-3:hover { border-color: #ddd6fe; }
+
+/* 4. Management & System (Sky/Purple/Slate) */
+.cat-system .cat-icon-badge { background: linear-gradient(135deg, #0284c7, #0369a1); color: white; }
+.cat-card-sys-1::before { background: #0284c7; }
+.cat-card-sys-1 .cat-card-icon { background: #f0f9ff; color: #0284c7; }
+.cat-card-sys-1:hover { border-color: #bae6fd; }
+
+.cat-card-sys-2::before { background: #9333ea; }
+.cat-card-sys-2 .cat-card-icon { background: #faf5ff; color: #9333ea; }
+.cat-card-sys-2:hover { border-color: #e9d5ff; }
+
+.cat-card-sys-3::before { background: #64748b; }
+.cat-card-sys-3 .cat-card-icon { background: #f1f5f9; color: #475569; }
+.cat-card-sys-3:hover { border-color: #cbd5e1; }
+
+/* Legacy / Base util-card support */
+.utils-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+.util-card {
+    background: #fafbfc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s, box-shadow 0.25s, border-color 0.25s;
+    position: relative;
+    overflow: hidden;
+}
+
+.util-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #10b981, #f59e0b, #ec4899);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.util-card:hover::before {
+    opacity: 1;
+}
+
+.util-card:hover {
+    background-color: #ffffff;
+    border-color: #c7d2fe;
+    box-shadow: 0 12px 24px -4px rgba(59, 130, 246, 0.12);
+    transform: translateY(-6px);
+}
+
+.util-card svg {
+    transition: transform 0.3s;
+}
+
+.util-card:hover svg {
+    transform: scale(1.15);
+}
+
+.util-card span {
+    font-weight: 600;
+    color: #475569;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.util-card:hover span {
+    color: #1e293b;
+}
+
+/* Responsiveness */
+@media (max-width: 1100px) {
+    .category-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 1024px) {
+    .cards-grid { grid-template-columns: 1fr; }
+    .utils-grid { grid-template-columns: repeat(2, 1fr); }
+    .modern-main { padding: 2rem; }
+}
+
+@media (max-width: 768px) {
+    .nav-right { display: none; }
+    .utils-grid { grid-template-columns: 1fr; }
+    .category-grid { grid-template-columns: 1fr; }
+    .category-master-grid { grid-template-columns: 1fr; }
+    .utilities-section { padding: 1.5rem; }
+    .category-group { padding: 1.2rem; }
+}
+
+/* =========================================
+   OFFICIAL COMPLEX GRADE TABLE STYLES
+   ========================================= */
+
+.official-table-container {
+    overflow-x: auto;
+    width: 100%;
+    margin-top: 1rem;
+    border: 1px solid #cbd5e1;
+}
+
+.official-grade-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.official-grade-table th,
+.official-grade-table td {
+    border: 1px solid #94a3b8;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.official-grade-table th {
+    background-color: #f8fafc;
+    color: #1e293b;
+    font-weight: 600;
+    padding: 0.5rem;
+}
+
+.official-grade-table .header-main th {
+    border-bottom: 2px solid #64748b;
+}
+
+.official-grade-table .vertical-text {
+    height: 140px;
+    vertical-align: bottom;
+    padding-bottom: 10px;
+    width: 30px;
+}
+
+.official-grade-table .vertical-text span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    display: inline-block;
+}
+
+/* Inline Edit Input */
+.inline-input {
+    width: 100%;
+    height: 35px;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-family: inherit;
+    font-size: inherit;
+    outline: none;
+}
+
+.inline-input:focus {
+    background-color: #e0f2fe;
+}
+
+.inline-input::-webkit-outer-spin-button,
+.inline-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Group Headers Colors for better readability */
+.group-khmer { background-color: #e0f2fe !important; }
+.group-math { background-color: #fef08a !important; }
+.group-science { background-color: #dcfce7 !important; }
+.group-social { background-color: #ffedd5 !important; }
+.group-sport { background-color: #f3e8ff !important; }
+.group-result { background-color: #f1f5f9 !important; }
+
+/* =====================================================
+   PREMIUM DASHBOARD REDESIGN STYLES  (2026-08)
+   ===================================================== */
+
+/* ── Executive Hero Banner ── */
+.dash-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2.2rem;
+    background: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #0a3d2e 80%, #0f172a 100%);
+    border-radius: 26px;
+    padding: 2.4rem 2.8rem;
+    margin-bottom: 1.8rem;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    box-shadow: 0 20px 50px -10px rgba(4, 120, 87, 0.3), 0 10px 30px -5px rgba(15, 23, 42, 0.3);
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.dash-hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -60px;
+    width: 340px; height: 340px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.22), transparent 70%);
+    pointer-events: none;
+}
+
+.dash-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: 35%;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(2, 132, 199, 0.16), transparent 70%);
+    pointer-events: none;
+}
+
+.dash-hero-left {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.dash-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #ecfdf5;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 50px;
+    margin-bottom: 0.9rem;
+    backdrop-filter: blur(10px);
+    letter-spacing: 0.2px;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+.dash-hero-badge .badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 10px #34d399;
+}
+
+.dash-hero-title {
+    font-size: 2.2rem;
+    font-weight: normal;
+    color: #ffffff;
+    margin: 0 0 0.85rem 0;
+    line-height: 1.55;
+    font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+    letter-spacing: 0.3px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.dash-hero-highlight {
+    background: linear-gradient(135deg, #a7f3d0 0%, #34d399 50%, #10b981 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dash-hero-sub {
+    font-size: 0.98rem;
+    color: rgba(255, 255, 255, 0.88);
+    margin: 0 0 1.6rem 0;
+    font-family: 'Kantumruy Pro', 'Battambang', sans-serif;
+    font-weight: 400;
+    line-height: 1.65;
+    max-width: 640px;
+}
+
+.dash-hero-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 1.3rem;
+}
+
+.hero-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-family: 'Battambang', 'Poppins', sans-serif;
+}
+
+.chip-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.35); }
+.chip-blue  { background: rgba(59, 130, 246, 0.2);  color: #93c5fd; border: 1px solid rgba(147, 197, 253, 0.35); }
+.chip-amber { background: rgba(245, 158, 11, 0.2);  color: #fcd34d; border: 1px solid rgba(252, 211, 77, 0.35); }
+
+.dash-hero-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.dash-hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.62rem 1.3rem;
+    border-radius: 14px;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+.btn-hero-primary {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+}
+
+.btn-hero-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(16, 185, 129, 0.45);
+}
+
+.btn-hero-secondary {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(8px);
+}
+
+.btn-hero-secondary:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.45);
+    transform: translateY(-2px);
+}
+
+/* ── Hero Stats Cards ── */
+.dash-hero-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    min-width: 360px;
+}
+
+.dash-stat-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    border-radius: 20px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    backdrop-filter: blur(12px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    min-width: 150px;
+}
+
+.dash-stat-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.3);
+}
+
+.dash-stat-icon {
+    width: 46px; height: 46px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 16px -3px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+}
+
+.icon-students { background: linear-gradient(135deg, #0284c7, #0369a1); box-shadow: 0 6px 16px -2px rgba(2, 132, 199, 0.5); }
+.icon-class    { background: linear-gradient(135deg, #059669, #047857); box-shadow: 0 6px 16px -2px rgba(5, 150, 105, 0.5); }
+.icon-girls    { background: linear-gradient(135deg, #e11d48, #be123c); box-shadow: 0 6px 16px -2px rgba(225, 29, 72, 0.5); }
+.icon-boys     { background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 6px 16px -2px rgba(59, 130, 246, 0.5); }
+
+.dash-stat-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+.dash-stat-top-line {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.dash-stat-num {
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: #ffffff;
+    font-family: 'Poppins', 'Kantumruy Pro', sans-serif;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+}
+
+.dash-stat-unit {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-weight: 600;
+}
+
+.dash-stat-num.text-sm {
+    font-size: 1.1rem;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    letter-spacing: 0;
+    font-weight: 700;
+}
+
+.dash-stat-label {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 600;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    white-space: nowrap;
+}
+
+/* ── Smart Controls Bar (Search & Tabs) ── */
+.dashboard-controls-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 1.8rem;
+    flex-wrap: wrap;
+    background: #ffffff;
+    padding: 10px 14px;
+    border-radius: 20px;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.05);
+}
+
+.dashboard-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 260px;
+    max-width: 440px;
+}
+
+.dashboard-search-wrap .search-icon {
+    position: absolute;
+    left: 14px;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.dashboard-search-input {
+    width: 100%;
+    padding: 0.62rem 2.4rem 0.62rem 2.5rem;
+    border-radius: 14px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    transition: all 0.2s ease;
+    color: #0f172a;
+}
+
+.dashboard-search-input:focus {
+    background: #ffffff;
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+}
+
+.search-clear-btn {
+    position: absolute;
+    right: 10px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: #e2e8f0;
+    color: #64748b;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.search-clear-btn:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+/* ── Segmented Tabs ── */
+.dashboard-filter-tabs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.filter-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0.52rem 1.05rem;
+    border-radius: 14px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.86rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+.filter-tab-btn:hover {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    color: #0f172a;
+    transform: translateY(-1px);
+}
+
+.filter-tab-btn.active {
+    background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+    color: #ffffff;
+    border-color: #064e3b;
+    box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
+}
+
+.filter-tab-btn .tab-badge {
+    font-size: 0.72rem;
+    padding: 2px 7px;
+    border-radius: 50px;
+    background: rgba(0, 0, 0, 0.07);
+    font-weight: 800;
+}
+
+.filter-tab-btn.active .tab-badge {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+/* ── Section Blocks ── */
+.dashboard-section-block {
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+    padding: 1.8rem 2.2rem;
+    margin-bottom: 2rem;
+    transition: box-shadow 0.3s ease;
+}
+
+.dashboard-section-block:hover {
+    box-shadow: 0 10px 30px -4px rgba(15, 23, 42, 0.08);
+}
+
+.section-header-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.6rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1.5px solid #f1f5f9;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.section-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-header-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.15);
+}
+
+.section-header-icon svg { width: 22px; height: 22px; }
+
+.icon-blue-gradient   { background: linear-gradient(135deg, #0284c7, #0369a1); }
+.icon-amber-gradient  { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.icon-purple-gradient { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+
+.section-header-titles h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: normal;
+    color: #0f172a;
+    font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+    line-height: 1.55;
+    letter-spacing: 0.2px;
+}
+
+.section-header-titles p {
+    margin: 3px 0 0 0;
+    font-size: 0.8rem;
+    color: #64748b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+/* ── Section Step Badges ── */
+.section-step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    color: white;
+    font-size: 1rem;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px -2px rgba(0,0,0,0.2);
+    font-family: 'Battambang', sans-serif;
+}
+
+.step-blue   { background: linear-gradient(135deg, #0284c7, #0369a1); }
+.step-amber  { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.step-purple { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+
+/* ── Badge Variants ── */
+.section-count-badge {
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-family: 'Battambang', sans-serif;
+    border: 1px solid transparent;
+}
+
+.badge-blue-light   { background: #e0f2fe; color: #0369a1 !important; border-color: #bae6fd !important; }
+.badge-amber-light  { background: #fef3c7; color: #b45309 !important; border-color: #fde68a !important; }
+.badge-purple-light { background: #f3e8ff; color: #6d28d9 !important; border-color: #e9d5ff !important; }
+
+/* ── Card Subtitle in Modern Cards ── */
+.card-desc-sub {
+    display: block;
+    font-size: 0.76rem;
+    color: #64748b;
+    font-weight: 500;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    margin-top: 3px;
+    line-height: 1.35;
+}
+
+/* ── Report Action Bar ── */
+.report-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    background: linear-gradient(135deg, #f8fafc, #f0fdf4);
+    border: 1.5px solid #d1fae5;
+    border-radius: 18px;
+    padding: 0.95rem 1.4rem;
+    margin-bottom: 1.5rem;
+}
+
+.report-action-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.month-select-label-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.report-action-label {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: #1e293b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    white-space: nowrap;
+}
+
+.month-select-dropdown {
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.52rem 1.1rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 12px;
+    background: #ffffff;
+    outline: none;
+    cursor: pointer;
+    color: #0f172a;
+    width: 160px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.month-select-dropdown:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+}
+
+.report-action-btns {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.report-quick-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.58rem 1.25rem;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+.report-quick-btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-honor {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.28);
+}
+.btn-honor:hover { box-shadow: 0 8px 18px rgba(245, 158, 11, 0.4); }
+
+.btn-ranking {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: white;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.28);
+}
+.btn-ranking:hover { box-shadow: 0 8px 18px rgba(2, 132, 199, 0.4); }
+
+.btn-annual {
+    background: linear-gradient(135deg, #059669, #047857);
+    color: white;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.28);
+}
+.btn-annual:hover { box-shadow: 0 8px 18px rgba(5, 150, 105, 0.4); }
+
+/* ── Quick Tools Strip (Instant Access) ── */
+.quick-tools-strip {
+    margin-top: 1.6rem;
+    padding-top: 1.4rem;
+    border-top: 1.5px dashed #e2e8f0;
+}
+
+.quick-tools-strip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.strip-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1e293b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+.strip-hint {
+    font-size: 0.78rem;
+    color: #64748b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+.quick-tools-chips-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.quick-tool-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 15px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 50px;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #334155;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.quick-tool-chip:hover {
+    background: #ffffff;
+    border-color: #059669;
+    color: #047857;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(5, 150, 105, 0.12);
+}
+
+.tool-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.dot-amber   { background: #f59e0b; }
+.dot-emerald { background: #10b981; }
+.dot-blue    { background: #0284c7; }
+.dot-rose    { background: #e11d48; }
+.dot-cyan    { background: #06b6d4; }
+.dot-purple  { background: #8b5cf6; }
+.dot-teal    { background: #0d9488; }
+.dot-orange  { background: #ea580c; }
+
+.cat-preview-tags {
+    font-size: 0.74rem;
+    color: #64748b;
+    margin-top: 4px;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+/* ── Department Switcher Tabs & In-Place Categorized Cards ── */
+.dept-nav-tabs-wrapper {
+    margin-bottom: 1.4rem;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.dept-nav-tabs {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.dept-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 50px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    color: #475569;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+.dept-nav-btn:hover {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    color: #1e293b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.dept-nav-btn.active {
+    background: #1e293b;
+    border-color: #1e293b;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+}
+
+.dept-nav-btn.active .dept-count-badge {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.dept-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: #e2e8f0;
+    color: #475569;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.category-master-card.active-dept {
+    border-color: #6366f1;
+    background: #f8faff;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15), 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+}
+.category-master-card.cat-attendance.active-dept {
+    border-color: #f59e0b;
+    background: #fffdfa;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15), 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+}
+.category-master-card.cat-records.active-dept {
+    border-color: #0284c7;
+    background: #f0f9ff;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15), 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+}
+.category-master-card.cat-system.active-dept {
+    border-color: #475569;
+    background: #f8fafc;
+    box-shadow: 0 0 0 3px rgba(71, 85, 105, 0.15), 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+}
+
+/* In-Place Department Section Blocks */
+.dept-sections-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    margin-top: 1.6rem;
+}
+
+.dept-section-block {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 22px;
+    padding: 1.5rem 1.6rem;
+    box-shadow: 0 4px 18px -4px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+}
+
+.dept-section-block:hover {
+    box-shadow: 0 8px 26px -6px rgba(0, 0, 0, 0.06);
+    border-color: #cbd5e1;
+}
+
+.dept-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    margin-bottom: 1.2rem;
+    border-bottom: 1.5px solid #f1f5f9;
+}
+
+.dept-sec-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.dept-sec-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 6px 14px -3px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+}
+
+.dept-sec-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: white !important;
+}
+
+.dept-sec-titles h4 {
+    margin: 0;
+    font-size: 1.12rem;
+    font-weight: normal;
+    color: #1e293b;
+    font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif !important;
+    line-height: 1.55;
+    letter-spacing: 0.2px;
+}
+
+.dept-sec-titles span {
+    display: none !important;
+}
+
+.dept-sec-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dept-sec-count {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+.dept-btn-open-modal {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #475569;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.dept-btn-open-modal:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0284c7;
+    transform: translateY(-1px);
+}
+
+/* Department Functional Grid */
+.dept-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+@media (max-width: 1200px) {
+    .dept-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .dept-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Individual Functional Card */
+.dept-func-card {
+    background: #fafbfc;
+    border: 1.5px solid #eef2f6;
+    border-radius: 16px;
+    padding: 0.85rem 1.15rem;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 68px;
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.03);
+}
+
+.dept-func-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 4px;
+    background: #94a3b8;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.dept-func-card:hover {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px -5px rgba(0, 0, 0, 0.08);
+}
+
+.dept-func-card:hover::before {
+    opacity: 1;
+}
+
+.dept-func-card.theme-reports::before { background: #6366f1; }
+.dept-func-card.theme-attendance::before { background: #f59e0b; }
+.dept-func-card.theme-records::before { background: #0284c7; }
+.dept-func-card.theme-system::before { background: #475569; }
+
+.dept-func-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.12);
+    transition: transform 0.25s ease;
+}
+
+.dept-func-card:hover .dept-func-icon {
+    transform: scale(1.08) rotate(3deg);
+}
+
+.dept-func-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: white !important;
+}
+
+.dept-func-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.dept-func-title-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 3px;
+}
+
+.dept-func-title {
+    margin: 0;
+    font-size: 0.98rem;
+    font-weight: normal;
+    color: #1e293b;
+    font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif !important;
+    line-height: 1.55;
+    letter-spacing: 0.1px;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    transition: color 0.2s ease;
+}
+
+.dept-func-card:hover .dept-func-title {
+    color: #0284c7;
+}
+
+.dept-func-desc {
+    margin: 0 0 6px 0;
+    font-size: 0.78rem;
+    color: #64748b;
+    line-height: 1.4;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.dept-func-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.func-tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+.func-tag.tag-new {
+    background: #fef3c7;
+    color: #b45309;
+    border-color: #fde68a;
+}
+
+.func-tag.tag-official {
+    background: #eff6ff;
+    color: #1e40af;
+    border-color: #bfdbfe;
+}
+
+.dept-func-arrow {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    align-self: center;
+}
+
+.dept-func-card:hover .dept-func-arrow {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff;
+    transform: translateX(3px);
+}
+
+/* Quick Tools Strip Organized by Group */
+.quick-tools-by-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.quick-group-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: #f8fafc;
+    padding: 8px 14px;
+    border-radius: 16px;
+    border: 1px solid #eef2f6;
+}
+
+.quick-group-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #334155;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    min-width: 175px;
+    flex-shrink: 0;
+}
+
+.quick-group-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex: 1;
+}
+
+/* ── Top Navbar Refined Classes ── */
+.nav-brand-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-logo-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.nav-divider {
+    width: 1px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 0 4px;
+    flex-shrink: 0;
+}
+
+.nav-year-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1.5px solid rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.nav-year-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.45);
+    transform: translateY(-1px);
+}
+
+.nav-time-widget {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1.25;
+}
+
+.nav-time-widget .time-main {
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    font-family: 'Battambang', sans-serif;
+    color: #ffffff;
+}
+
+.nav-time-widget .date-sub {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.78);
+    font-family: 'Battambang', sans-serif;
+}
+
+.nav-user-capsule {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px 4px 5px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1.5px solid rgba(255, 255, 255, 0.28);
+    border-radius: 50px;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+}
+
+.nav-user-capsule:hover {
+    background: rgba(255, 255, 255, 0.24);
+    border-color: rgba(255, 255, 255, 0.45);
+}
+
+.nav-user-capsule .profile-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.nav-user-capsule .role-text {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #ffffff;
+    font-family: 'Battambang', sans-serif;
+    white-space: nowrap;
+}
+
+.nav-icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1.5px solid rgba(255, 255, 255, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nav-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+}
+
+/* ── Responsive Hero ── */
+@media (max-width: 1024px) {
+    .dash-hero { flex-direction: column; padding: 2rem 1.8rem; gap: 1.8rem; }
+    .dash-hero-stats { width: 100%; min-width: unset; grid-template-columns: repeat(2, 1fr); }
+    .dash-hero-title { font-size: 1.85rem; }
+}
+
+@media (max-width: 680px) {
+    .dash-hero-stats { grid-template-columns: 1fr; }
+    .dash-stat-card { min-width: unset; }
+    .dash-hero-title { font-size: 1.55rem; }
+    .dashboard-controls-bar { flex-direction: column; align-items: stretch; }
+    .dashboard-search-wrap { max-width: 100%; }
+}
+
+@keyframes countUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.dash-stat-num.loaded { animation: countUp 0.4s ease-out forwards; }
+
+/* ── Category Hub Modal Grid & Cards ── */
+.cat-modal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    max-height: 62vh;
+    overflow-y: auto;
+    padding: 6px 6px 16px 6px;
+}
+
+.cat-modal-item-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-left: 4.5px solid #3b82f6;
+    border-radius: 16px;
+    padding: 14px 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px -3px rgba(15, 23, 42, 0.05);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cat-modal-item-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.12);
+    border-color: #cbd5e1;
+    background: #ffffff;
+}
+
+.cat-modal-item-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 6px 16px -3px rgba(0,0,0,0.18);
+    flex-shrink: 0;
+}
+
+.cat-modal-item-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.cat-modal-item-info h5 {
+    margin: 0;
+    font-size: 0.98rem;
+    font-weight: normal;
+    color: #1e293b;
+    font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif !important;
+    line-height: 1.55;
+}
+
+.cat-modal-item-info p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #64748b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    line-height: 1.3;
+}
+
+.cat-modal-item-arrow {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.cat-modal-item-card:hover .cat-modal-item-arrow {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #0284c7;
+    transform: translateX(3px);
+}
+
+@media (max-width: 768px) {
+    .cat-modal-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Modal Headers Heading Reset (Prevent unwanted vertical bar) ── */
+#promotion-modal h2::before,
+#promotion-modal h3::before,
+#category-hub-modal h2::before,
+#category-hub-modal h3::before,
+#all-classes-report-modal h2::before,
+#all-classes-report-modal h3::before,
+.modal-header h2::before,
+.modal-header h3::before {
+    display: none !important;
+}
+
+/* ==========================================================================
+   PORTAL SIGNATURE DESIGN SYSTEM (Matching User Reference UI)
+   ========================================================================== */
+
+/* ── Top Portal Navbar ── */
+.portal-navbar-wrapper {
+    background: #ffffff;
+    border-bottom: 1.5px solid #e2e8f0;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.portal-navbar {
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 0.65rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.portal-nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.portal-nav-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 6px 16px -3px rgba(37, 99, 235, 0.35);
+    transition: transform 0.25s ease;
+}
+
+.portal-nav-brand:hover .portal-nav-logo {
+    transform: scale(1.05) rotate(3deg);
+}
+
+.portal-nav-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.portal-nav-brand-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.2;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+.portal-nav-brand-sub {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #64748b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+/* ── Horizontal Navigation Tabs (Pill Bar) ── */
+.portal-nav-tabs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 4px 0;
+    scrollbar-width: none;
+}
+
+.portal-nav-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.portal-tab-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0.48rem 0.95rem;
+    border-radius: 12px;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #475569;
+    text-decoration: none;
+    white-space: nowrap;
+    border: 1.5px solid transparent;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent;
+    cursor: pointer;
+}
+
+.portal-tab-item:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.portal-tab-item.active {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    color: #1e40af;
+    box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.08);
+}
+
+.portal-tab-item svg {
+    flex-shrink: 0;
+}
+
+/* ── Navbar Right Controls ── */
+.portal-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.portal-icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #475569;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.portal-icon-btn:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #cbd5e1;
+}
+
+.portal-badge-dot {
+    position: absolute;
+    top: 7px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+}
+
+.portal-user-chip {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 4px 10px 4px 12px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.portal-user-chip:hover {
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+}
+
+.portal-user-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1e293b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    white-space: nowrap;
+}
+
+.portal-user-badge {
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 50px;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    white-space: nowrap;
+}
+
+/* ── Sub-Action Bar ── */
+.portal-action-bar {
+    max-width: 1360px;
+    margin: 1.5rem auto 1.2rem auto;
+    padding: 0 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.portal-action-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.portal-pill-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.55rem 1.2rem;
+    border-radius: 50px;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.portal-pill-dark {
+    background: #0f172a;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+.portal-pill-dark:hover {
+    background: #1e293b;
+    transform: translateY(-1px);
+}
+
+.portal-pill-light {
+    background: #ffffff;
+    color: #334155;
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+.portal-pill-light:hover {
+    border-color: #94a3b8;
+    background: #f8fafc;
+}
+
+.portal-pill-light.active {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #0284c7;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+.portal-action-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ── SIGNATURE 6-CARD GRID (Vibrant Diamond Pattern) ── */
+.signature-cards-container {
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 0 1.25rem 3rem 1.25rem;
+}
+
+.signature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.signature-card {
+    background: #ffffff;
+    border-radius: 22px;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.signature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.1), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+    border-color: #cbd5e1;
+}
+
+/* ── Card Header With Diamond Geometric Pattern ── */
+.signature-card-header {
+    position: relative;
+    padding: 1.15rem 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Diamond watermark overlay */
+.signature-card-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(45deg, rgba(255, 255, 255, 0.11) 25%, transparent 25%), 
+        linear-gradient(-45deg, rgba(255, 255, 255, 0.11) 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.11) 75%), 
+        linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.11) 75%);
+    background-size: 22px 22px;
+    background-position: 0 0, 0 11px, 11px -11px, -11px 0px;
+    opacity: 0.85;
+    pointer-events: none;
+}
+
+.signature-header-title-wrap {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.signature-card-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ffffff;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    letter-spacing: 0.3px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.signature-card-header p {
+    margin: 2px 0 0 0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.signature-header-arrow {
+    position: relative;
+    z-index: 2;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+.signature-card:hover .signature-header-arrow {
+    background: rgba(255, 255, 255, 0.35);
+    transform: translateX(2px);
+}
+
+/* ── Card Header Gradient Variants (Matching User Screenshot) ── */
+.header-blue {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #1e40af 100%);
+}
+
+.header-orange {
+    background: linear-gradient(135deg, #ea580c 0%, #d97706 50%, #b45309 100%);
+}
+
+.header-purple {
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #4c1d95 100%);
+}
+
+.header-indigo {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #3730a3 100%);
+}
+
+.header-green {
+    background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+}
+
+.header-pink {
+    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 50%, #be123c 100%);
+}
+
+/* ── Card Body (Grid of Pill Buttons) ── */
+.signature-card-body {
+    padding: 1.25rem 1.15rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 10px;
+    flex: 1;
+    background: #ffffff;
+}
+
+.signature-pill-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0.62rem 0.75rem;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 13px;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.signature-pill-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px -2px rgba(15, 23, 42, 0.08);
+}
+
+/* ── Pill Button Color-Coded Typography & Borders ── */
+.pill-blue {
+    color: #0284c7;
+    border-color: #bae6fd;
+    background: #f8fafc;
+}
+.pill-blue:hover {
+    background: #f0f9ff;
+    border-color: #0284c7;
+}
+
+.pill-amber {
+    color: #d97706;
+    border-color: #fde68a;
+    background: #f8fafc;
+}
+.pill-amber:hover {
+    background: #fffbeb;
+    border-color: #d97706;
+}
+
+.pill-purple {
+    color: #7c3aed;
+    border-color: #ddd6fe;
+    background: #f8fafc;
+}
+.pill-purple:hover {
+    background: #faf5ff;
+    border-color: #7c3aed;
+}
+
+.pill-emerald {
+    color: #059669;
+    border-color: #a7f3d0;
+    background: #f8fafc;
+}
+.pill-emerald:hover {
+    background: #ecfdf5;
+    border-color: #059669;
+}
+
+.pill-indigo {
+    color: #4f46e5;
+    border-color: #c7d2fe;
+    background: #f8fafc;
+}
+.pill-indigo:hover {
+    background: #eef2ff;
+    border-color: #4f46e5;
+}
+
+.pill-rose {
+    color: #e11d48;
+    border-color: #fecdd3;
+    background: #f8fafc;
+}
+.pill-rose:hover {
+    background: #fff1f2;
+    border-color: #e11d48;
+}
+
+.pill-teal {
+    color: #0d9488;
+    border-color: #99f6e4;
+    background: #f8fafc;
+}
+.pill-teal:hover {
+    background: #f0fdfa;
+    border-color: #0d9488;
+}
+
+/* ── Responsive Signature Grid ── */
+@media (max-width: 1100px) {
+    .signature-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 720px) {
+    .signature-grid {
+        grid-template-columns: 1fr;
+    }
+    .portal-navbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .portal-nav-tabs {
+        justify-content: flex-start;
+    }
+    .signature-card-body {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* =====================================================
+   APP DASHBOARD SIDEBAR NAVIGATION (LEFT SIDEBAR)
+   ===================================================== */
+:root {
+    --sidebar-width: 270px;
+    --sidebar-collapsed-width: 76px;
+    --sidebar-bg: #dbeafe; /* Gentle soft blue matching screenshot */
+    --sidebar-bg-subtle: #eff6ff;
+    --sidebar-border: #bfdbfe;
+    --sidebar-text: #1e3a8a;
+    --sidebar-text-muted: #3b82f6;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.7);
+    --sidebar-active-bg: #ffffff;
+    --sidebar-active-text: #1d4ed8;
+}
+
+/* Layout container holding left sidebar and main wrapper */
+.app-dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    background: #f8fafc;
+}
+
+/* Left Sidebar Component */
+.app-sidebar {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    background: linear-gradient(180deg, #dbeafe 0%, #e0f2fe 50%, #eff6ff 100%);
+    border-right: 1px solid #bfdbfe;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1), transform 0.28s ease;
+    z-index: 1020;
+    box-shadow: 2px 0 16px rgba(30, 58, 138, 0.04);
+}
+
+/* Collapsed state for desktop */
+.app-sidebar.is-collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+/* Sidebar Top Bar (Toggle Collapse Button) */
+.sidebar-header {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.1rem;
+    border-bottom: 1px solid rgba(191, 219, 254, 0.7);
+    flex-shrink: 0;
+}
+
+.sidebar-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: opacity 0.2s ease, width 0.2s ease;
+}
+
+.sidebar-brand-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #2563eb;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.28);
+}
+
+.sidebar-brand-name {
+    font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+    font-size: 0.95rem;
+    color: #1e3a8a;
+    letter-spacing: 0.2px;
+}
+
+.app-sidebar.is-collapsed .sidebar-header-brand {
+    opacity: 0;
+    width: 0;
+    pointer-events: none;
+    margin: 0;
+}
+
+/* Toggle collapse button (< / >) matching user screenshot */
+.sidebar-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.08);
+    flex-shrink: 0;
+}
+
+.sidebar-toggle-btn:hover {
+    background: #ffffff;
+    border-color: #93c5fd;
+    color: #1e40af;
+    transform: scale(1.05);
+}
+
+.sidebar-toggle-btn svg {
+    transition: transform 0.28s ease;
+}
+
+.app-sidebar.is-collapsed .sidebar-toggle-btn svg {
+    transform: rotate(180deg);
+}
+
+.app-sidebar.is-collapsed .sidebar-header {
+    justify-content: center;
+    padding: 0;
+}
+
+/* Sidebar Navigation Items Body */
+.sidebar-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    scrollbar-width: thin;
+    scrollbar-color: #bfdbfe transparent;
+}
+
+.sidebar-body::-webkit-scrollbar {
+    width: 5px;
+}
+.sidebar-body::-webkit-scrollbar-thumb {
+    background: #bfdbfe;
+    border-radius: 4px;
+}
+
+/* Section label */
+.sidebar-section-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #60a5fa;
+    padding: 0.6rem 0.6rem 0.25rem 0.6rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.2s ease;
+}
+
+.app-sidebar.is-collapsed .sidebar-section-title {
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    pointer-events: none;
+}
+
+/* Sidebar Nav Item Link / Button */
+.sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.65rem 0.85rem;
+    border-radius: 12px;
+    color: #1e3a8a;
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 600;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    position: relative;
+    border: 1px solid transparent;
+    cursor: pointer;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+}
+
+.sidebar-nav-item:hover {
+    background: var(--sidebar-hover-bg);
+    color: #1d4ed8;
+    transform: translateX(2px);
+}
+
+.sidebar-nav-item.is-active {
+    background: #ffffff;
+    color: #1d4ed8;
+    font-weight: 700;
+    border-color: #bfdbfe;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.1);
+}
+
+.sidebar-nav-item.is-active .sidebar-item-icon {
+    color: #2563eb;
+}
+
+/* Sidebar Icon */
+.sidebar-item-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b82f6;
+    flex-shrink: 0;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-nav-item:hover .sidebar-item-icon {
+    transform: scale(1.1);
+    color: #1d4ed8;
+}
+
+.sidebar-item-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.2s ease;
+    line-height: 1.4;
+}
+
+.sidebar-badge-count {
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 999px;
+    margin-left: auto;
+}
+
+/* Hide label text in collapsed mode */
+.app-sidebar.is-collapsed .sidebar-item-label,
+.app-sidebar.is-collapsed .sidebar-badge-count {
+    opacity: 0;
+    width: 0;
+    display: none;
+}
+
+.app-sidebar.is-collapsed .sidebar-nav-item {
+    justify-content: center;
+    padding: 0.75rem 0;
+    transform: none !important;
+}
+
+/* Sidebar Dropdown Group / Accordion */
+.sidebar-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sidebar-group-header .group-chevron {
+    transition: transform 0.2s ease;
+    color: #60a5fa;
+    margin-left: auto;
+}
+
+.sidebar-group.is-open .sidebar-group-header .group-chevron {
+    transform: rotate(90deg);
+}
+
+.sidebar-group-menu {
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    padding-left: 2.2rem;
+    padding-top: 4px;
+}
+
+.sidebar-group.is-open .sidebar-group-menu {
+    display: flex;
+}
+
+.sidebar-subitem {
+    padding: 0.45rem 0.75rem;
+    border-radius: 8px;
+    color: #334155;
+    font-size: 0.84rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.sidebar-subitem:hover {
+    background: rgba(255, 255, 255, 0.85);
+    color: #1d4ed8;
+    transform: translateX(3px);
+}
+
+.app-sidebar.is-collapsed .sidebar-group-menu,
+.app-sidebar.is-collapsed .group-chevron {
+    display: none !important;
+}
+
+/* Sidebar Bottom Footer Info */
+.sidebar-footer {
+    padding: 0.85rem 1rem;
+    border-top: 1px solid rgba(191, 219, 254, 0.7);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.4);
+    flex-shrink: 0;
+}
+
+.sidebar-footer-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #2563eb;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.88rem;
+    flex-shrink: 0;
+}
+
+.sidebar-footer-text {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sidebar-footer-name {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.sidebar-footer-role {
+    font-size: 0.72rem;
+    color: #3b82f6;
+    white-space: nowrap;
+}
+
+.app-sidebar.is-collapsed .sidebar-footer-text {
+    display: none;
+}
+.app-sidebar.is-collapsed .sidebar-footer {
+    justify-content: center;
+    padding: 0.85rem 0;
+}
+
+/* Main Content Wrapper (Next to Sidebar) */
+.app-main-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* Prevents overflow blowout */
+    width: 100%;
+}
+
+/* Backdrop for Mobile Sidebar */
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1015;
+}
+
+/* Responsive Sidebar for Tablets and Mobile */
+@media (max-width: 992px) {
+    .app-sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        transform: translateX(-100%);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .app-sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .sidebar-backdrop.is-visible {
+        display: block;
+    }
+    
+    .mobile-menu-toggle-btn {
+        display: inline-flex !important;
+    }
+}
+
+/* Adjust modern-main padding when inside app-dashboard-layout for optimal widescreen view */
+.app-dashboard-layout .modern-main {
+    padding: 1.8rem 2.2rem;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ensure modern-navbar and main container cleanly expand and never break or squeeze */
+.modern-dashboard-body {
+    margin: 0;
+    padding: 0 !important;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+.modern-navbar {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modern-navbar .nav-left {
+    min-width: 0;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+.modern-navbar .nav-titles h1 {
+    font-size: 1.05rem;
+}
+
+.modern-navbar .nav-titles h2 {
+    font-size: 0.75rem;
+}
+
+.dash-hero {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 1100px) {
+    .dash-hero {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+        padding: 1.8rem;
+    }
+    .dash-hero-stats {
+        width: 100%;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-dashboard-layout .modern-main {
+        padding: 1.2rem 1rem;
+    }
+}
+
+/* ==========================================================================
+   SECTION 3: CATEGORIZED DEPARTMENTS & FUNCTIONAL CATALOG
+   ========================================================================== */
+
+/* Department Switcher Tabs */
+.dept-nav-tabs-wrapper {
+    margin: 1.25rem 0 1.5rem 0;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.dept-nav-tabs-wrapper::-webkit-scrollbar {
+    height: 5px;
+}
+.dept-nav-tabs-wrapper::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.dept-nav-tabs {
+    display: inline-flex;
+    gap: 8px;
+    background: #f1f5f9;
+    padding: 6px;
+    border-radius: 18px;
+    border: 1px solid #e2e8f0;
+}
+
+.dept-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+.dept-nav-btn:hover {
+    color: #0f172a;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.dept-nav-btn.active {
+    background: #ffffff;
+    color: #4338ca;
+    box-shadow: 0 4px 14px -2px rgba(67, 56, 202, 0.15), 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.dept-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 20px;
+    padding: 0 7px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: #e2e8f0;
+    color: #475569;
+    transition: all 0.22s ease;
+}
+
+.dept-nav-btn.active .dept-count-badge {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+/* Master Cards active state */
+.category-master-card {
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+}
+
+.category-master-card.active-dept {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25), 0 12px 28px -6px rgba(99, 102, 241, 0.2) !important;
+    transform: translateY(-3px);
+}
+
+/* In-Place Department Sections Container */
+.dept-sections-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    margin-top: 1.8rem;
+}
+
+.dept-section-block {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 1.6rem 1.8rem;
+    box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.04);
+    transition: all 0.3s ease;
+}
+
+.dept-section-block:hover {
+    box-shadow: 0 12px 32px -6px rgba(15, 23, 42, 0.08);
+}
+
+.dept-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.2rem;
+    margin-bottom: 1.4rem;
+    border-bottom: 1.5px solid #f1f5f9;
+}
+
+.dept-sec-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.dept-sec-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 6px 16px -3px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+}
+
+.dept-sec-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.dept-sec-titles h4 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1e293b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+.dept-sec-titles span {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.8px;
+    font-family: 'Poppins', sans-serif;
+    margin-top: 2px;
+}
+
+.dept-sec-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.dept-sec-count {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: 1px solid #e2e8f0;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+.dept-btn-open-modal {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #4338ca;
+    border: 1.5px solid #e0e7ff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dept-btn-open-modal:hover {
+    background: #eef2ff;
+    border-color: #c7d2fe;
+    color: #3730a3;
+    transform: translateY(-1px);
+}
+
+/* Department Cards Grid (Responsive 3 cols) */
+.dept-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 1.1rem;
+}
+
+/* Individual In-Place Functional Card */
+.dept-func-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0.85rem 1.15rem;
+    min-height: 68px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 18px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
+}
+
+.dept-func-card:hover {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px -5px rgba(15, 23, 42, 0.08);
+}
+
+.dept-func-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 6px 14px -3px rgba(0, 0, 0, 0.12);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.dept-func-card:hover .dept-func-icon {
+    transform: scale(1.06);
+}
+
+.dept-func-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.dept-func-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.dept-func-title-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dept-func-title {
+    margin: 0;
+    font-size: 0.98rem;
+    font-weight: normal;
+    color: #1e293b;
+    font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif !important;
+    line-height: 1.55;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+}
+
+.dept-func-desc {
+    margin: 3px 0 6px 0;
+    font-size: 0.78rem;
+    color: #64748b;
+    line-height: 1.4;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.dept-func-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.func-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: #f1f5f9;
+    color: #475569;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+.func-tag.tag-official {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.func-tag.tag-new {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.dept-func-arrow {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: transparent;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.dept-func-card:hover .dept-func-arrow {
+    background: #e2e8f0;
+    color: #1e293b;
+    transform: translateX(3px);
+}
+
+/* Theme accent border on hover */
+.dept-func-card.theme-reports:hover {
+    border-color: #818cf8;
+}
+.dept-func-card.theme-attendance:hover {
+    border-color: #34d399;
+}
+.dept-func-card.theme-records:hover {
+    border-color: #38bdf8;
+}
+.dept-func-card.theme-system:hover {
+    border-color: #a78bfa;
+}
+
+/* Quick Tools Strip Organized by Group */
+.quick-tools-strip {
+    margin-top: 2rem;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 1.4rem 1.6rem;
+}
+
+.quick-tools-strip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.strip-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+.strip-hint {
+    font-size: 0.78rem;
+    color: #64748b;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+.quick-tools-by-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.quick-group-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.quick-group-label {
+    min-width: 175px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #334155;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+}
+
+.quick-group-chips {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.quick-tool-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 13px;
+    background: #ffffff;
+    border: 1.2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #334155;
+    text-decoration: none;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Battambang', sans-serif;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.quick-tool-chip:hover {
+    background: #ffffff;
+    border-color: #6366f1;
+    color: #4338ca;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px -2px rgba(99, 102, 241, 0.15);
+}
+
+.tool-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.dot-blue { background: #0284c7; }
+.dot-emerald { background: #059669; }
+.dot-rose { background: #e11d48; }
+.dot-purple { background: #7c3aed; }
+.dot-teal { background: #0d9488; }
+.dot-orange { background: #ea580c; }
+.dot-amber { background: #d97706; }
+.dot-indigo { background: #4f46e5; }
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .dept-cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    .quick-group-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    .quick-group-label {
+        min-width: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    .dept-section-block {
+        padding: 1.2rem;
+    }
+    .dept-cards-grid {
+        grid-template-columns: 1fr;
+    }
+    .dept-sec-left {
+        gap: 10px;
+    }
+    .dept-sec-titles h4 {
+        font-size: 1rem;
+    }
+    .dept-nav-btn {
+        padding: 8px 12px;
+        font-size: 0.82rem;
+    }
+}
+
+

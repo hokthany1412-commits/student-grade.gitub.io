@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>គំរូហត្ថលេខា និងត្រា - Specimen Signature & Stamp Registry</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Battambang:wght@400;700;900&family=Moul&family=Kantumruy+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="khmer-calendar.js"></script>
+
+    <!-- Firebase & Core Modules -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+
+    <style>
+        :root {
+            --primary-blue: #0b3c8f;
+            --primary-accent: #0284c7;
+            --border-blue: #1e3a8a;
+        }
+
+        body {
+            background-color: #cbd5e1;
+            font-family: 'Battambang', sans-serif;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .moul-font { font-family: 'Moul', cursive; }
+        .battambang-font { font-family: 'Battambang', sans-serif; }
+
+        /* Top Action Bar */
+        .top-action-bar {
+            background: #ffffff;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .bar-left, .bar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-toolbar {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #334155;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family: inherit;
+            text-decoration: none;
+        }
+        .btn-toolbar:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+            border-color: #94a3b8;
+        }
+        .btn-toolbar.btn-primary {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #ffffff;
+            border: none;
+        }
+        .btn-toolbar.btn-primary:hover {
+            background: linear-gradient(135deg, #0369a1, #075985);
+        }
+        .btn-toolbar.btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            border: none;
+        }
+        .btn-toolbar.btn-success:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+
+        /* Page Layout */
+        .page-wrapper {
+            padding: 24px 16px 50px 16px;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            background: #ffffff;
+            padding: 10mm 12mm;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            border-radius: 6px;
+            box-sizing: border-box;
+            position: relative;
+            margin: auto;
+        }
+
+        /* MoEYS Double Frame */
+        .sheet-border {
+            border: 3.5px solid #0b3c8f;
+            padding: 14px 16px;
+            border-radius: 4px;
+            position: relative;
+            box-sizing: border-box;
+            background: #ffffff;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sheet-border::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            border: 1.5px solid #0b3c8f;
+            pointer-events: none;
+        }
+
+        .nation-header-center {
+            text-align: center;
+            width: 100%;
+            margin: 0 auto 6px auto;
+        }
+        .nation-header-center h2 {
+            font-family: 'Moul', cursive;
+            font-size: 11.5pt;
+            margin: 0;
+            color: #1e293b;
+            font-weight: normal;
+        }
+        .nation-header-center h3 {
+            font-family: 'Moul', cursive;
+            font-size: 10.5pt;
+            margin: 2px 0 0 0;
+            color: #1e293b;
+            font-weight: normal;
+        }
+        .emblem-icon {
+            font-size: 10pt;
+            letter-spacing: 4px;
+            margin-top: 2px;
+            color: #475569;
+        }
+
+        .school-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 9.8pt;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+
+        .main-title {
+            text-align: center;
+            font-family: 'Moul', cursive;
+            font-size: 1.35rem;
+            color: #0b3c8f;
+            margin: 6px 0 12px 0;
+            letter-spacing: 0.5px;
+        }
+
+        /* Registry Table */
+        .registry-table {
+            width: 100% !important;
+            max-width: 100% !important;
+            table-layout: fixed !important;
+            border-collapse: collapse !important;
+            font-size: 8.8pt;
+            margin-bottom: 16px;
+            box-sizing: border-box !important;
+        }
+
+        .registry-table th {
+            background: #eff6ff;
+            color: #0b3c8f;
+            border: 1px solid #1e3a8a;
+            padding: 6px 4px;
+            font-family: 'Moul', cursive;
+            font-size: 8.2pt;
+            font-weight: normal;
+            text-align: center;
+            box-sizing: border-box !important;
+        }
+
+        .registry-table td {
+            border: 1px solid #1e3a8a;
+            padding: 6px 4px;
+            text-align: center;
+            vertical-align: middle;
+            box-sizing: border-box !important;
+            word-break: break-word;
+        }
+
+        .td-name {
+            text-align: left !important;
+            padding-left: 8px !important;
+            font-weight: 700;
+        }
+
+        .signature-box-cell {
+            width: 100%;
+            max-width: 110px;
+            height: 42px;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .signature-preview-img {
+            max-width: 95px;
+            max-height: 38px;
+            object-fit: contain;
+        }
+
+        .stamp-box-cell {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 1.5px dashed #ef4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            color: #ef4444;
+            font-size: 7pt;
+            font-weight: 700;
+            background: #fef2f2;
+        }
+
+        .stamp-img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: contain;
+        }
+
+        /* Bottom Signatures */
+        .signatures-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 14px;
+            font-size: 9.5pt;
+            line-height: 1.6;
+        }
+
+        .sig-block-left {
+            text-align: center;
+            width: 42%;
+        }
+        .sig-block-right {
+            text-align: center;
+            width: 48%;
+        }
+
+        .sig-role {
+            font-family: 'Moul', cursive;
+            font-size: 9.8pt;
+            margin: 4px 0 50px 0;
+            color: #0b3c8f;
+        }
+
+        .sig-name {
+            font-family: 'Moul', cursive;
+            font-size: 9.5pt;
+            color: #1e293b;
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .top-action-bar {
+                display: none !important;
+            }
+            .page-wrapper {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .a4-page {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+                padding: 6mm 8mm !important;
+                width: 100% !important;
+                min-height: auto !important;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 8mm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Action Bar -->
+    <header class="top-action-bar">
+        <div class="bar-left">
+            <a href="index.html" class="btn-toolbar" title="ត្រឡប់ទៅផ្ទាំងដើម">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                ទំព័រដើម
+            </a>
+            <div id="global-class-selector"></div>
+        </div>
+
+        <div class="bar-right">
+            <button type="button" class="btn-toolbar" onclick="addNewTeacherRow()" title="បន្ថែមគ្រូ ឬបុគ្គលិកថ្មី">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                + បន្ថែមជួរ
+            </button>
+            <button type="button" class="btn-toolbar" onclick="saveRegistryData()" title="រក្សាទុកទិន្នន័យ">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                រក្សាទុក
+            </button>
+            <button type="button" class="btn-toolbar btn-primary" onclick="exportRegistryPDF()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                ទាញយក PDF
+            </button>
+            <button type="button" class="btn-toolbar btn-success" onclick="window.print()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                បោះពុម្ព (Print)
+            </button>
+        </div>
+    </header>
+
+    <!-- Page Content Container -->
+    <div class="page-wrapper">
+        <div class="a4-page" id="printable-signature-registry">
+            <div class="sheet-border">
+                
+                <div>
+                    <!-- Center Nation Header -->
+                    <div class="nation-header-center">
+                        <h2>ព្រះរាជាណាចក្រកម្ពុជា</h2>
+                        <h3>ជាតិ សាសនា ព្រះមហាក្សត្រ</h3>
+                        <img src="header-divider.png" alt="divider" class="nation-header-divider" onerror="this.onerror=null; this.src='images/header-divider.png';">
+                    </div>
+
+                    <!-- School Metadata Row -->
+                    <div class="school-info-row">
+                        <div>
+                            <div>មន្ទីរអប់រំ យុវជន និងកីឡា ខេត្ត ៖ <strong id="lbl-prov-name">កណ្ដាល</strong></div>
+                            <div>ការិយាល័យអប់រំ យុវជន និងកីឡា ស្រុក ៖ <strong id="lbl-dist-name">សន្ទុក</strong></div>
+                            <div>សាលាបឋមសិក្សា ៖ <strong id="lbl-school-name">សាលាបឋមសិក្សា ផ្លុង</strong></div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div>កម្រង ៖ <strong id="lbl-cluster-name">ទីពោ</strong></div>
+                            <div>ឆ្នាំសិក្សា ៖ <strong id="lbl-academic-year">២០២៥ - ២០២៦</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- Main Document Title -->
+                    <div class="main-title">តារាងគំរូហត្ថលេខា និងត្រាផ្លូវការ</div>
+
+                    <!-- Registry Table -->
+                    <table class="registry-table" id="registry-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 7%;">ល.រ</th>
+                                <th style="width: 25%;">គោត្តនាម និងនាម</th>
+                                <th style="width: 8%;">ភេទ</th>
+                                <th style="width: 22%;">មុខតំណែង / ទទួលបន្ទុក</th>
+                                <th style="width: 18%;">គំរូហត្ថលេខាពេញ</th>
+                                <th style="width: 11%;">ហត្ថលេខាកាត់</th>
+                                <th style="width: 9%;">គំរូត្រា</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registry-tbody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Bottom Signatures Section -->
+                <div class="signatures-area">
+                    <div class="sig-block-left">
+                        <div>បានពិនិត្យ និងយល់ព្រម</div>
+                        <div class="sig-role">ប្រធានការិយាល័យ អ.យ.ក</div>
+                        <div class="sig-name">...................................................</div>
+                    </div>
+
+                    <div class="sig-block-right">
+                        <div id="lbl-lunar-date">ថ្ងៃ..................កើត ខែ.............. ឆ្នាំម្សាញ់ ព.ស. ២៥៦៩</div>
+                        <div id="lbl-solar-date">ធ្វើនៅ..................., ថ្ងៃទី..... ខែ.......... ឆ្នាំ២០២៦</div>
+                        <div class="sig-role">នាយកសាលា</div>
+                        <div class="sig-name" id="sig-director-name">...................................................</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const KHMER_DIGITS = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
+        function toKhmerNumber(num) {
+            if (num === null || num === undefined) return '';
+            return num.toString().split('').map(d => KHMER_DIGITS[d] !== undefined ? KHMER_DIGITS[d] : d).join('');
+        }
+
+        let registryList = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSchoolMeta();
+            loadRegistryData();
+            setupKhmerDates();
+        });
+
+        function loadSchoolMeta() {
+            if (!window.classManager) return;
+            const info = window.classManager.getSchoolInfo ? window.classManager.getSchoolInfo() : {};
+            const yearName = window.classManager.getCurrentAcademicYearName ? window.classManager.getCurrentAcademicYearName() : '២០២៥ - ២០២៦';
+
+            if (document.getElementById('lbl-prov-name')) document.getElementById('lbl-prov-name').textContent = info.province || 'កណ្ដាល';
+            if (document.getElementById('lbl-dist-name')) document.getElementById('lbl-dist-name').textContent = info.district || 'សន្ទុក';
+            if (document.getElementById('lbl-school-name')) document.getElementById('lbl-school-name').textContent = info.school || 'សាលាបឋមសិក្សា ផ្លុង';
+            if (document.getElementById('lbl-cluster-name')) document.getElementById('lbl-cluster-name').textContent = info.cluster || 'ទីពោ';
+            if (document.getElementById('lbl-academic-year')) document.getElementById('lbl-academic-year').textContent = yearName;
+            if (document.getElementById('sig-director-name')) document.getElementById('sig-director-name').textContent = info.director || '...................................................';
+        }
+
+        function loadRegistryData() {
+            const key = 'schoolSignatureRegistry';
+            let saved = null;
+            try {
+                saved = JSON.parse(localStorage.getItem(key));
+            } catch(e) {}
+
+            if (saved && Array.isArray(saved) && saved.length > 0) {
+                registryList = saved;
+            } else {
+                // Initialize default rows from school director and teacherProfiles
+                const info = window.classManager && window.classManager.getSchoolInfo ? window.classManager.getSchoolInfo() : {};
+                let teachers = [];
+                try {
+                    teachers = JSON.parse(localStorage.getItem('teacherProfiles')) || [];
+                } catch(e) {}
+
+                registryList = [
+                    {
+                        name: info.director || 'ស៊ុន វណ្ណា',
+                        gender: 'ប្រុស',
+                        role: 'នាយកសាលា',
+                        hasStamp: true
+                    },
+                    {
+                        name: 'គង់ សារ៉េត',
+                        gender: 'ប្រុស',
+                        role: 'នាយករងសាលា',
+                        hasStamp: false
+                    }
+                ];
+
+                if (teachers.length > 0) {
+                    teachers.forEach(t => {
+                        registryList.push({
+                            name: t.name || t.teacherName || 'គ្រូបង្រៀន',
+                            gender: t.gender || 'ប្រុស',
+                            role: t.className ? `គ្រូ ${t.className}` : (t.subject ? `គ្រូ ${t.subject}` : 'គ្រូបន្ទុកថ្នាក់'),
+                            hasStamp: false
+                        });
+                    });
+                } else {
+                    registryList.push(
+                        { name: info.teacher || 'កែម សុផាត', gender: 'ប្រុស', role: 'គ្រូ ថ្នាក់ទី ៥ ក', hasStamp: false },
+                        { name: 'ចាន់ ស្រីនាង', gender: 'ស្រី', role: 'គ្រូ ថ្នាក់ទី ៤ ក', hasStamp: false },
+                        { name: 'សេង វិបុល', gender: 'ប្រុស', role: 'គ្រូ ថ្នាក់ទី ៦ ក', hasStamp: false }
+                    );
+                }
+            }
+
+            renderRegistryTable();
+        }
+
+        function renderRegistryTable() {
+            const tbody = document.getElementById('registry-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            registryList.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 700;">${toKhmerNumber(idx + 1)}</td>
+                    <td class="td-name" contenteditable="true" onblur="updateRowData(${idx}, 'name', this.innerText)">${item.name}</td>
+                    <td contenteditable="true" onblur="updateRowData(${idx}, 'gender', this.innerText)">${item.gender}</td>
+                    <td contenteditable="true" onblur="updateRowData(${idx}, 'role', this.innerText)">${item.role}</td>
+                    <td>
+                        <div class="signature-box-cell" style="cursor: text;">
+                            <span style="color: #0b3c8f; font-family: 'Moul', cursive; font-size: 8.5pt;">${item.name}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="signature-box-cell" style="width: 80px;">
+                            <span style="color: #0b3c8f; font-weight: 700; font-size: 8.5pt;">${(item.name || '').substring(0, 4)}</span>
+                        </div>
+                    </td>
+                    <td>
+                        ${item.hasStamp ? `
+                            <div class="stamp-box-cell" title="ត្រាមូលសាលា">
+                                <span>ត្រាមូល</span>
+                            </div>
+                        ` : `
+                            <span style="color: #94a3b8; font-size: 8pt;">-</span>
+                        `}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateRowData(index, field, value) {
+            if (registryList[index]) {
+                registryList[index][field] = value.trim();
+            }
+        }
+
+        function addNewTeacherRow() {
+            registryList.push({
+                name: 'ឈ្មោះគ្រូបង្រៀន',
+                gender: 'ប្រុស',
+                role: 'គ្រូបន្ទុកថ្នាក់',
+                hasStamp: false
+            });
+            renderRegistryTable();
+        }
+
+        function saveRegistryData() {
+            localStorage.setItem('schoolSignatureRegistry', JSON.stringify(registryList));
+            alert('បានរក្សាទុកតារាងគំរូហត្ថលេខា និងត្រាដោយជោគជ័យ!');
+        }
+
+        function setupKhmerDates() {
+            const now = new Date();
+            const sDay = toKhmerNumber(now.getDate());
+            const khmerMonths = ['មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'];
+            const sMonth = khmerMonths[now.getMonth()];
+            const sYear = toKhmerNumber(now.getFullYear());
+
+            let location = 'ផ្លុង';
+            if (window.classManager && window.classManager.getSchoolInfo) {
+                const info = window.classManager.getSchoolInfo();
+                location = info.district || info.school || 'ផ្លុង';
+            }
+
+            const elSolar = document.getElementById('lbl-solar-date');
+            if (elSolar) {
+                elSolar.textContent = `ធ្វើនៅ${location}, ថ្ងៃទី ${sDay} ខែ ${sMonth} ឆ្នាំ ${sYear}`;
+            }
+
+            const elLunar = document.getElementById('lbl-lunar-date');
+            if (elLunar) {
+                if (typeof KhmerCalendar !== 'undefined' && KhmerCalendar.toKhmerLunarDate) {
+                    try {
+                        const lunar = KhmerCalendar.toKhmerLunarDate(now);
+                        if (lunar && lunar.lunarDateText) {
+                            elLunar.textContent = lunar.lunarDateText;
+                        }
+                    } catch(e) {
+                        elLunar.textContent = `ថ្ងៃព្រហស្បតិ៍ ៩ កើត ខែពិសាខ ឆ្នាំម្សាញ់ ព.ស. ២៥៦៩`;
+                    }
+                }
+            }
+        }
+
+        function exportRegistryPDF() {
+            const element = document.getElementById('printable-signature-registry');
+            const opt = {
+                margin: [5, 5, 5, 5],
+                filename: `Signature_Registry_${Date.now()}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2.2, useCORS: true, letterRendering: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>

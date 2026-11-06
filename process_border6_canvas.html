@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Border 6 Processor</title>
+</head>
+<body>
+    <canvas id="c" width="1024" height="726"></canvas>
+    <script>
+        const img = new Image();
+        img.src = 'images/praise_border_6.jpg';
+        img.onload = () => {
+            const canvas = document.getElementById('c');
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+
+            // Clean the interior text area while keeping:
+            // 1. Outer ornate border (margins: left 105px, right 105px, top 110px, bottom 105px)
+            // 2. Top center MoEYS logo (X: 430-594, Y: 0-140)
+            // 3. Central watermark (MoEYS logo at 14% opacity)
+
+            // Let's create a path for the inner clean white canvas
+            ctx.fillStyle = '#ffffff';
+            
+            // Left text region
+            ctx.fillRect(105, 120, 325, 490);
+            // Right text region
+            ctx.fillRect(594, 120, 325, 490);
+            // Center body text region
+            ctx.fillRect(105, 230, 814, 380);
+
+            // Re-draw central watermark at 14% opacity
+            const watermark = new Image();
+            watermark.src = 'images/moeys-logo.png';
+            watermark.onload = () => {
+                ctx.save();
+                ctx.globalAlpha = 0.14;
+                ctx.drawImage(watermark, (1024 - 450)/2, (726 - 450)/2 + 20, 450, 450);
+                ctx.restore();
+
+                // Export clean PNG
+                const dataUrl = canvas.toDataURL('image/png');
+                window.cleanPngData = dataUrl;
+                document.body.setAttribute('data-done', 'true');
+            };
+        };
+    </script>
+</body>
+</html>

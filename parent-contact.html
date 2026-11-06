@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>សៀវភៅទំនាក់ទំនងមាតាបិតាសិស្ស - Parent Contact Book</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Battambang:wght@400;700&family=Moul&family=Moulpali&family=Khmer+OS+Muol+Light&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .moul-font { font-family: 'Moul', cursive; }
+        
+        .print-area {
+            background: #f0f2f5;
+            color: black;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .page {
+            padding: 40px;
+            min-height: 1040px;
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        /* Page 1 Styles */
+        .instruction-title {
+            color: red;
+            text-align: center;
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive;
+            font-size: 32px;
+            margin-top: 50px;
+            margin-bottom: 40px;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+        }
+        
+        .instruction-content {
+            color: purple;
+            font-size: 24px;
+            line-height: 2;
+            padding: 0 40px;
+            font-family: 'Battambang', sans-serif;
+        }
+
+        .instruction-content ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+        
+        .instruction-content ul li::before {
+            content: "✓ ";
+            color: purple;
+            font-weight: bold;
+        }
+
+        /* Page 2 Styles */
+        .letter-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .school-logo-area {
+            text-align: left;
+            color: #00b050; /* Green */
+            font-weight: bold;
+            font-family: 'Moul', cursive;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-top: 25px; /* Reduced from 40px */
+        }
+        
+        .school-logo-area img {
+            width: 80px;
+            height: auto;
+            margin-bottom: 10px;
+            margin-left: 20px;
+        }
+
+        .nation-header {
+            text-align: center;
+            color: #00b050; /* Green */
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .letter-title {
+            color: red;
+            text-align: center;
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive;
+            font-size: 28px;
+            margin: 25px 0; /* Reduced from 40px */
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+        }
+
+        .letter-body {
+            font-size: 16px;
+            line-height: 2.2;
+            text-align: justify;
+        }
+        
+        .text-green { color: #00b050; }
+        .text-blue { color: blue; font-family: 'Khmer OS Muol Light', 'Moul', cursive; }
+        .text-blue-normal { color: blue; font-family: 'Khmer OS Muol Light', 'Moul', cursive; border-bottom: 1px dotted blue; min-width: 50px; display: inline-block; text-align: center; }
+
+        .letter-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px; /* Reduced from 50px */
+        }
+
+        .footer-left, .footer-right {
+            text-align: center;
+        }
+        
+        .footer-left { color: #00b050; font-family: 'Khmer OS Muol Light', 'Moul', cursive; margin-top: 25px; /* Reduced from 50px */}
+        .footer-right { color: blue; }
+        .footer-right .green-title { color: #00b050; font-family: 'Khmer OS Muol Light', 'Moul', cursive; margin-top: 10px; margin-bottom: 40px;}
+
+        .parent-feedback {
+            margin-top: 40px; /* Reduced from 80px */
+            color: #00b050;
+            text-align: center;
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive;
+            font-size: 16px;
+        }
+        
+        .dotted-line {
+            border-bottom: 2px dotted blue;
+            margin-top: 25px; /* Reduced from 30px */
+        }
+
+        .form-control-panel {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        @media print {
+            @page { size: A4 portrait; margin: 15mm; }
+            .app-header, .form-control-panel, .sidebar { display: none !important; }
+            html, body { 
+                background: white; 
+                padding: 0; 
+                margin: 0 !important; 
+            }
+            .app-container { max-width: 100%; padding: 0; margin: 0; display: block; }
+            .main-content { margin: 0 !important; padding: 0 !important; display: block;}
+            .print-area { 
+                padding: 0;
+            }
+            .page {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                margin: 0;
+                height: auto;
+                min-height: auto;
+                page-break-after: always;
+            }
+            .page:last-child {
+                page-break-after: auto;
+            }
+        }
+    </style>
+
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>ប្រព័ន្ធគ្រប់គ្រងសាលា</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-group">
+                    <h3>ម៉ឺនុយមុខងារ</h3>
+                    <a href="index.html" class="nav-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        ទំព័រដើម
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="app-header">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <a href="index.html" class="btn btn-secondary" style="text-decoration: none; display: flex; align-items: center; gap: 5px; padding: 0.5rem 1rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        ត្រឡប់ក្រោយ
+                    </a>
+                    <h1 style="margin: 0;">សៀវភៅទំនាក់ទំនងមាតាបិតាសិស្ស</h1>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div id="global-class-selector"></div>
+                    <button class="btn btn-primary" onclick="window.print()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 5px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                        បោះពុម្ព (Print)
+                    </button>
+                </div>
+            </header>
+
+            <div class="form-control-panel">
+                <div style="display: flex; gap: 15px; align-items: end; flex-wrap: wrap;">
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label for="student-name" style="font-weight: 500; font-size: 0.9rem;">ឈ្មោះសិស្សអវត្តមាន៖</label>
+                        <select id="student-name" class="form-control" style="min-width: 200px; font-family: 'Battambang', sans-serif;" onchange="calculateAbsences()">
+                            <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label for="notice-reason" style="font-weight: 500; font-size: 0.9rem;">ករណី (Reason)៖</label>
+                        <select id="notice-reason" class="form-control" style="min-width: 250px; font-family: 'Battambang', sans-serif;" onchange="toggleReasonInputs()">
+                            <option value="absent">សិស្សអវត្តមានច្រើនគ្មានដំណឹង</option>
+                            <option value="slow">សិស្សរៀនយឺតប្រចាំខែឬរៀនយឺតតាមមុខវិជ្ជាផ្សេងៗ</option>
+                            <option value="outstanding">សិស្សរៀនពូកែ</option>
+                            <option value="discipline">សិស្សមានបញ្ហាលើសុខភាព លើវិន័យ សីលធម៌</option>
+                        </select>
+                    </div>
+                    <div id="discipline-input-group" style="display: none; flex-direction: column; gap: 5px;">
+                        <label for="discipline-sub-reason" style="font-weight: 500; font-size: 0.9rem;">បញ្ជាក់ប្រភេទបញ្ហា៖</label>
+                        <select id="discipline-sub-reason" class="form-control" style="min-width: 250px; font-family: 'Battambang', sans-serif;">
+                            <option value="health1">១. បញ្ហាសុខភាពទូទៅ/ឈឺញឹកញាប់</option>
+                            <option value="health2">២. សុំព័ត៌មានពីជំងឺប្រចាំកាយ</option>
+                            <option value="discipline1">៣. បញ្ហាលេងច្រើន/មិនផ្ដោតអារម្មណ៍</option>
+                            <option value="discipline2">៤. បញ្ហាមិនធ្វើកិច្ចការ ឬមិនគោរពវិន័យថ្នាក់</option>
+                            <option value="moral1">៥. បញ្ហាប្រើពាក្យសម្តី ឬអាកប្បកិរិយាមិនសមរម្យតិចតួច</option>
+                            <option value="moral2">៦. បញ្ហាធ្ងន់ធ្ងរដែលទាមទារការជួបពិភាក្សា</option>
+                        </select>
+                    </div>
+                    <div id="absent-input-group" style="display: flex; flex-direction: row; gap: 10px; align-items: end;">
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label for="absent-month" style="font-weight: 500; font-size: 0.9rem;">ខែអវត្តមាន៖</label>
+                            <select id="absent-month" class="form-control" style="font-family: 'Battambang', sans-serif; min-width: 120px;" onchange="calculateAbsences()">
+                                <option value="1">មករា</option>
+                                <option value="2">កុម្ភៈ</option>
+                                <option value="3">មីនា</option>
+                                <option value="4">មេសា</option>
+                                <option value="5">ឧសភា</option>
+                                <option value="6">មិថុនា</option>
+                                <option value="7">កក្កដា</option>
+                                <option value="8">សីហា</option>
+                                <option value="9">កញ្ញា</option>
+                                <option value="10">តុលា</option>
+                                <option value="11">វិច្ឆិកា</option>
+                                <option value="12">ធ្នូ</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label for="absent-days" style="font-weight: 500; font-size: 0.9rem;">ចំនួនថ្ងៃអវត្តមាន៖</label>
+                            <input type="number" id="absent-days" class="form-control" placeholder="ចំនួនថ្ងៃ..." style="max-width: 100px;">
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label for="notice-date" style="font-weight: 500; font-size: 0.9rem;">កាលបរិច្ឆេទបញ្ចេញលិខិត៖</label>
+                        <input type="date" id="notice-date" class="form-control" style="font-family: 'Battambang', sans-serif;" onchange="calculateAbsences()">
+                    </div>
+                    <button class="btn btn-primary" onclick="updateNotice()" style="white-space: nowrap;">បញ្ចូលទិន្នន័យ (Apply)</button>
+                </div>
+            </div>
+
+            <div class="print-area">
+                <!-- Page 1: Notification Letter -->
+                <div class="page">
+                    <div class="letter-header">
+                        <div class="school-logo-area" style="cursor: pointer; position: relative;" onclick="document.getElementById('logo-upload').click()" title="ចុចទីនេះដើម្បីបញ្ចូលរូប Logo (Click to upload logo)">
+                            <img id="moeys-logo-img" src="moeys-logo.png" alt="ចុចបញ្ចូល Logo" style="width: 80px; height: 80px; object-fit: contain; display: block; margin-left: 0; margin-bottom: 5px; border: 1px dashed #ccc; padding: 2px;">
+                            <input type="file" id="logo-upload" accept="image/*" style="display: none;" onchange="handleLogoUpload(event)">
+                            <div>ការិយាល័យ អ.យ.ក ស្រុក<span id="print-district" class="text-green">...........</span></div>
+                            <div>បឋមសិក្សា <span id="print-school" class="text-green">...........</span></div>
+                            <div>លេខ....................</div>
+                        </div>
+                        <div class="nation-header">
+                            ព្រះរាជាណាចក្រកម្ពុជា<br>
+                            ជាតិ សាសនា ព្រះមហាក្សត្រ<br>
+                            <div style="font-family: 'Battambang', sans-serif; letter-spacing: 2px; font-size: 12px; margin-top: -5px;">━━━━ ❁ ━━━━</div>
+                        </div>
+                    </div>
+
+                    <div class="letter-title">សេចក្តីជូនដំណឹង</div>
+
+                    <div class="letter-body">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ខ្ញុំបាទ/នាងខ្ញុំឈ្មោះ <span id="print-teacher-name" class="text-blue">.............................</span> ជាគ្រូប្រចាំ <span class="text-blue">ថ្នាក់ទី<span id="print-grade">....</span></span> នៃសាលាបឋមសិក្សា <span class="text-blue" id="print-school-2">...................</span> ឃុំ <span class="text-blue" id="print-commune">...................</span> ស្រុក <span class="text-blue" id="print-district-2">...................</span> ខេត្ត <span class="text-blue" id="print-province">កំពង់ធំ</span> ។
+                        
+                        <div id="dynamic-reason-content">
+                            <!-- Dynamic reason content will be injected here by JS -->
+                            <div class="text-green moul-font" style="text-align: center; margin: 15px 0;">សូមជម្រាបមក</div>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>លោក លោកស្រីដែលជាអាណាព្យាបាលរបស់សិស្សឈ្មោះ </span><span class="text-blue-normal" id="out-student-name">........................................................</span><span> ជាសិស្ស <span class="text-blue">ថ្នាក់ទី<span id="print-grade-2">....</span></span> បានជ្រាបថា ៖សិស្សមានឈ្មោះខាងលើនេះបានឈប់មិនឃើញមករៀនចំនួន </span><span class="text-blue-normal" id="out-absent-days">......</span><span> ថ្ងៃ មកហើយ ដោយខាងសាលាមិនបានដឹងមូលហេតុ ។</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>អាស្រ័យហេតុនេះ សូមលោក លោកស្រីជ្រាបជាព័ត៌មាន នឹងមេត្តាជួយផ្ដល់ដំណឹងតាមរយះសៀវភៅនេះ ដល់ ខ្ញុំបាទ/នាងខ្ញុំ ដោយក្តីអនុគ្រោះ ។</span>
+                        </div>
+                    </div>
+
+                    <div class="letter-footer">
+                        <div class="footer-left">
+                            <div>បានឃើញ និងឯកភាព</div>
+                            <div>នាយកសាលា</div>
+                        </div>
+                        <div class="footer-right">
+                            <div id="print-khmer-date">ថ្ងៃ..........................ខែ....................ឆ្នាំ..................ស័ក ព.ស. ២៥....</div>
+                            <div class="text-blue" style="font-family: 'Battambang', sans-serif;">
+                                ធ្វើនៅ<span id="print-location" class="moul-font" contenteditable="true" style="outline: none; border-bottom: 1px dashed #cbd5e1; min-width: 100px; display: inline-block; cursor: text; text-align: center;" title="ចុចដើម្បីកែប្រែ" onblur="saveCustomLocation()">...................</span>
+                                <span id="print-solar-date">ថ្ងៃទី...........ខែ..................ឆ្នាំ២០.......</span>
+                            </div>
+                            <div class="green-title">គ្រូប្រចាំថ្នាក់</div>
+                            <div class="text-blue moul-font" id="print-teacher-name-sign" style="margin-top: 10px; margin-bottom: 5px; margin-left: 70px;">.............................</div>
+                            <div class="text-blue">ទូរស័ព្ទ ៖ <span id="print-phone">...................</span></div>
+                        </div>
+                    </div>
+
+                    <div class="parent-feedback">
+                        មតិឆ្លើយតបរបស់អ្នកអាណាព្យាបាលសិស្ស
+                    </div>
+                    <div class="dotted-line"></div>
+                    <div class="dotted-line"></div>
+                    <div class="dotted-line"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Load khmer-calendar script synchronously or as module -->
+    <script src="auth.js"></script>
+    <script src="khmer-calendar.js"></script>
+    <script src="parent-contact.js"></script>
+</body>
+</html>

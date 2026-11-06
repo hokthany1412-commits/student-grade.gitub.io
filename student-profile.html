@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ប្រវត្តិរូបសិស្ស - Student Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+    <script src="google-sync.js?v=2.6"></script>
+    <style>
+        .app-container {
+            max-width: 1440px;
+        }
+        .diff-option-label:hover {
+            background-color: #f1f5f9 !important;
+        }
+        #difficulty-select-btn:focus {
+            outline: none;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+        }
+
+        /* Photo Upload UI */
+        .photo-uploader-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+        .photo-uploader-card:hover {
+            border-color: #cbd5e1;
+        }
+        .photo-frame-preview {
+            width: 120px;
+            height: 155px;
+            border: 2px dashed #94a3b8;
+            border-radius: 10px;
+            background: #f8fafc;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .photo-frame-preview:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+        .photo-frame-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .photo-frame-preview:hover .photo-overlay-hint {
+            opacity: 1;
+        }
+        .photo-overlay-hint {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.75);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 4px 2px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        /* Student Table Avatar */
+        .student-table-photo {
+            width: 38px;
+            height: 46px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1.5px solid #cbd5e1;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            display: block;
+            margin: 0 auto;
+        }
+        .student-table-photo:hover {
+            transform: scale(1.15);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .student-table-no-photo {
+            width: 38px;
+            height: 46px;
+            border-radius: 6px;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 0 auto;
+            transition: transform 0.15s ease;
+        }
+        .student-table-no-photo:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .personal-info-row-container {
+                grid-template-columns: 1fr !important;
+            }
+            .photo-uploader-card {
+                margin: 0 auto 15px !important;
+                max-width: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header modern-page-header">
+            <!-- Top Action Bar -->
+            <div class="page-top-bar">
+                <div class="page-top-left">
+                    <a href="index.html" class="btn-back-nav">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        <span>ត្រឡប់ទៅទំព័រដើម</span>
+                    </a>
+                    <div id="global-class-selector"></div>
+                    <button type="button" class="btn-back-nav" onclick="if(window.classManager && window.classManager.openAcademicYearModal){ window.classManager.openAcademicYearModal(); }" title="ចុចដើម្បីផ្លាស់ប្ដូរ ឬបន្ថែមឆ្នាំសិក្សា" style="background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 700;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        <span>ឆ្នាំសិក្សា៖ <strong id="top-nav-academic-year-text">...</strong></span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                </div>
+
+                <div class="page-top-right">
+                    <a href="equity-report.html" class="page-nav-link link-rose">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                        <span>របាយការណ៍ប័ណ្ណសមធម៌</span>
+                    </a>
+                    <a href="enrollment-certificate.html" class="page-nav-link link-emerald">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+                        <span>លិខិតបញ្ជាក់ការចុះឈ្មោះ</span>
+                    </a>
+                    <a href="study-certificate.html" class="page-nav-link" style="background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe;">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        <span>លិខិតបញ្ជាក់ការសិក្សា</span>
+                    </a>
+                    <a href="student-id-card.html" class="page-nav-link link-blue">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 8h2"/><path d="M15 12h2"/><path d="M7 16h10"/></svg>
+                        <span>ប័ណ្ណសម្គាល់ខ្លួនសិស្ស</span>
+                    </a>
+                </div>
+            </div>
+
+        </header>
+
+        <main class="main-content">
+            <!-- FLOATING MODAL FORM FOR ADDING / EDITING STUDENT PROFILE -->
+            <div id="profile-form-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); z-index: 1200; align-items: center; justify-content: center; backdrop-filter: blur(6px); padding: 15px;">
+                <div id="profile-modal-container" class="glass-panel" style="background: #ffffff; padding: 24px; border-radius: 18px; width: 100%; max-width: 900px; max-height: 92vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3); border: 1.5px solid #cbd5e1; position: relative;">
+                    
+                    <form id="student-profile-form">
+                        <!-- TOP STICKY HEADER WITH ACTION BUTTONS -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.85rem; position: sticky; top: -24px; background: #ffffff; z-index: 10; padding-top: 4px;">
+                            <h2 id="form-section-title" style="margin: 0; display: flex; align-items: center; gap: 10px; font-size: 1.35rem; color: #0b3c8f; font-family: 'Battambang', sans-serif; font-weight: 700;">
+                                <span id="form-icon" style="font-size: 1.4rem;">✏️</span>
+                                <span id="form-title-text">កែប្រែប្រវត្តិរូបសិស្ស</span>
+                            </h2>
+
+                            <!-- TOP ACTION BUTTONS -->
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #0b3c8f, #1d4ed8); color: white; padding: 0.55rem 1.2rem; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 3px 10px rgba(11, 60, 143, 0.25);">
+                                    <span id="top-submit-text">រក្សាទុកទិន្នន័យ</span>
+                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                </button>
+                                <button type="button" onclick="toggleStudentForm(false)" class="btn btn-secondary" style="font-weight: 600; padding: 0.55rem 1rem; border-radius: 8px; background: #f8fafc; color: #475569; border: 1.5px solid #cbd5e1;">
+                                    បោះបង់ (Cancel)
+                                </button>
+                                <button type="button" onclick="toggleStudentForm(false)" style="background: #f1f5f9; border: none; font-size: 1.4rem; color: #64748b; cursor: pointer; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; margin-left: 4px;" onmouseover="this.style.background='#fee2e2'; this.style.color='#dc2626';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b';" title="បិទ (Close)">
+                                    &times;
+                                </button>
+                            </div>
+                        </div>
+
+                        <h3 style="margin: 0.5rem 0 1rem; color: var(--primary); font-size: 1.1rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.4rem; display: flex; align-items: center; gap: 6px;">
+                            <span>👤 ព័ត៌មានផ្ទាល់ខ្លួន</span>
+                        </h3>
+                        
+                        <div class="personal-info-row-container" style="display: grid; grid-template-columns: 140px 1fr; gap: 20px; align-items: start; margin-bottom: 1.25rem;">
+                            <!-- PHOTO UPLOAD CARD -->
+                            <div class="photo-uploader-card">
+                                <label style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary); text-align: center;">រូបថត (4x6)</label>
+                                <div id="student-photo-dropzone" class="photo-frame-preview" onclick="document.getElementById('student-photo-file-input').click()" ondragover="event.preventDefault(); this.style.borderColor='var(--primary)';" ondragleave="this.style.borderColor='#94a3b8';" ondrop="handlePhotoDrop(event)" title="ចុចដើម្បីជ្រើសរើស ឬអូសទម្លាក់រូបថតទីនេះ">
+                                    <img id="form-photo-preview" src="" alt="រូបថតសិស្ស" style="display: none;">
+                                    <div id="form-photo-placeholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; text-align: center; color: #64748b;">
+                                        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 4px; color: #94a3b8;"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                        <span style="font-size: 0.76rem; font-weight: 600; line-height: 1.3; color: #64748b;">ចុច ឬទម្លាក់<br>រូបថតទីនេះ</span>
+                                    </div>
+                                    <div class="photo-overlay-hint">ប្ដូររូបថត 📷</div>
+                                </div>
+                                <input type="file" id="student-photo-file-input" accept="image/*" style="display: none;" onchange="handlePhotoFileInput(this)">
+                                <div style="display: flex; gap: 4px; width: 100%; justify-content: center;">
+                                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('student-photo-file-input').click()" style="padding: 4px 8px; font-size: 0.78rem; flex: 1; border-radius: 6px; background: #eff6ff; color: #2563eb; border-color: #bfdbfe; font-weight: 600;">
+                                        📷 រូបថត
+                                    </button>
+                                    <button type="button" id="remove-photo-btn" class="btn btn-secondary" onclick="removeStudentPhoto()" style="padding: 4px 8px; font-size: 0.78rem; border-radius: 6px; background: #fef2f2; color: #dc2626; border-color: #fecaca; display: none;" title="លុបរូបថតចេញ">
+                                        ✕
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- INPUTS GRID -->
+                            <div class="grades-grid" style="margin: 0;">
+                                <div class="form-group">
+                                    <label for="student-id">អត្តលេខសិស្ស (ID)</label>
+                                    <input type="text" id="student-id" placeholder="ឧ. 1312" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="last-name">នាមត្រកូល (Last Name)</label>
+                                    <input type="text" id="last-name" placeholder="នាមត្រកូល">
+                                </div>
+                                <div class="form-group">
+                                    <label for="first-name">នាមខ្លួន (First Name)</label>
+                                    <input type="text" id="first-name" placeholder="នាមខ្លួន">
+                                </div>
+                                <div class="form-group">
+                                    <label for="gender">ភេទ (Gender)</label>
+                                    <select id="gender" style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem;">
+                                        <option value="ប">ប (ប្រុស)</option>
+                                        <option value="ស">ស (ស្រី)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="student-status">ស្ថានភាពសិស្ស (Status)</label>
+                                    <select id="student-status" style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem; font-weight: 500;">
+                                        <option value="សិស្សថ្មី">សិស្សថ្មី (New)</option>
+                                        <option value="សិស្សចាស់ (ត្រួតថ្នាក់)">សិស្សចាស់ (ត្រួតថ្នាក់)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dob">ថ្ងៃខែឆ្នាំកំណើត (DOB)</label>
+                                    <input type="date" id="dob" style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 style="margin: 1.5rem 0 1rem; color: var(--primary); font-size: 1.1rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.4rem; display: flex; align-items: center; gap: 6px;">
+                            <span>📍 ទីកន្លែងកំណើត</span>
+                        </h3>
+                        <div class="grades-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                            <div class="form-group">
+                                <label for="pob-village">ភូមិ/ក្រុម (Village)</label>
+                                <input type="text" id="pob-village" placeholder="ភូមិកំណើត">
+                            </div>
+                            <div class="form-group">
+                                <label for="pob-commune">ឃុំ/សង្កាត់ (Commune)</label>
+                                <input type="text" id="pob-commune" placeholder="ឃុំកំណើត">
+                            </div>
+                            <div class="form-group">
+                                <label for="pob-district">ស្រុក/ខណ្ឌ (District)</label>
+                                <input type="text" id="pob-district" placeholder="ស្រុកកំណើត">
+                            </div>
+                            <div class="form-group">
+                                <label for="pob-province">ខេត្ត/ក្រុង (Province)</label>
+                                <input type="text" id="pob-province" placeholder="ខេត្តកំណើត">
+                            </div>
+                        </div>
+
+                        <h3 style="margin: 1.5rem 0 1rem; color: var(--primary); font-size: 1.1rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.4rem; display: flex; align-items: center; gap: 6px;">
+                            <span>👨‍👩‍👧 គ្រួសារ និងអាណាព្យាបាល</span>
+                        </h3>
+                        <div class="grades-grid">
+                            <div class="form-group">
+                                <label for="father-name">ឈ្មោះឪពុក (Father's Name)</label>
+                                <input type="text" id="father-name" placeholder="ឈ្មោះឪពុក">
+                            </div>
+                            <div class="form-group">
+                                <label for="father-job">មុខរបរ (Occupation)</label>
+                                <input type="text" id="father-job" placeholder="មុខរបរឪពុក">
+                            </div>
+                            <div class="form-group">
+                                <label for="mother-name">ឈ្មោះម្តាយ (Mother's Name)</label>
+                                <input type="text" id="mother-name" placeholder="ឈ្មោះម្តាយ">
+                            </div>
+                            <div class="form-group">
+                                <label for="mother-job">មុខរបរ (Occupation)</label>
+                                <input type="text" id="mother-job" placeholder="មុខរបរម្តាយ">
+                            </div>
+                            <div class="form-group">
+                                <label for="guardian-name">ឈ្មោះអាណាព្យាបាល (Guardian's Name)</label>
+                                <input type="text" id="guardian-name" placeholder="ឈ្មោះអាណាព្យាបាល">
+                            </div>
+                            <div class="form-group">
+                                <label for="guardian-job">មុខរបរ (Occupation)</label>
+                                <input type="text" id="guardian-job" placeholder="មុខរបរអាណាព្យាបាល">
+                            </div>
+                            <div class="form-group">
+                                <label for="family-members-tot">សមាជិកគ្រួសារ (សរុប)</label>
+                                <input type="number" id="family-members-tot" min="0" placeholder="ចំនួនសរុប (ឧ. ៥)" style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem;">
+                            </div>
+                            <div class="form-group">
+                                <label for="family-members-fem">ក្នុងនោះស្រី (Female)</label>
+                                <input type="number" id="family-members-fem" min="0" placeholder="ចំនួនស្រី (ឧ. ៣)" style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem;">
+                            </div>
+                            <div class="form-group">
+                                <label for="orphan-status">ស្ថានភាពកំព្រា (Orphan Status)</label>
+                                <select id="orphan-status" style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem; font-weight: 500;">
+                                    <option value="មិនកំព្រា">មិនកំព្រា (None)</option>
+                                    <option value="កំព្រាឪពុក">កំព្រាឪពុក (Father Deceased)</option>
+                                    <option value="កំព្រាម្តាយ">កំព្រាម្តាយ (Mother Deceased)</option>
+                                    <option value="កំព្រាទាំងឪពុកនិងម្តាយ">កំព្រាទាំងឪពុកនិងម្តាយ (Double Orphan)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="equity-card">ប័ណ្ណសមធម៌ (Equity Card)</label>
+                                <select id="equity-card" style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem; font-weight: 500;">
+                                    <option value="គ្មាន">គ្មានប័ណ្ណសមធម៌ (None)</option>
+                                    <option value="កម្រិតក្រ១">កម្រិតក្រ១ (ក្រ១ - ទីទាល់ក្រ)</option>
+                                    <option value="កម្រិតក្រ២">កម្រិតក្រ២ (ក្រ២ - ក្រីក្រ)</option>
+                                    <option value="កម្រិតក្រ៣">កម្រិតក្រ៣ (ក្រ៣ - ងាយរងហានិភ័យ)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="equity-card-no">លេខប័ណ្ណសមធម៌ (Card Number)</label>
+                                <input type="text" id="equity-card-no" placeholder="ឧ. 0102030405..." style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem;">
+                            </div>
+                            <div class="form-group">
+                                <label for="is-indigenous">ជនជាតិដើមភាគតិច (Indigenous)</label>
+                                <select id="is-indigenous" style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem; font-weight: 500;">
+                                    <option value="ទេ">ទេ (No)</option>
+                                    <option value="ពិតមែន">ពិតមែន (Yes)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="early-childhood">ឆ្លងកាត់កម្មវិធីកុមារតូច (Early Childhood)</label>
+                                <select id="early-childhood" style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem; font-weight: 500;">
+                                    <option value="ទេ">មិនបានឆ្លងកាត់ (No)</option>
+                                    <option value="បានឆ្លងកាត់">បានឆ្លងកាត់ (Yes)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span>ការជួបការលំបាក / ពិការភាព (Difficulty / Disability - អាចជ្រើសរើសបានច្រើន)</span>
+                                    <span id="difficulty-count-badge" style="font-size: 0.8rem; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 12px; font-weight: 600; display: none;">ជ្រើសរើស 0</span>
+                                </label>
+                                
+                                <div id="difficulty-multiselect-wrapper" style="position: relative;">
+                                    <div id="difficulty-select-btn" tabindex="0" style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.6rem 0.9rem; border-radius: 10px; font-family: inherit; font-size: 0.95rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 48px; flex-wrap: wrap; gap: 6px; transition: border-color 0.2s, box-shadow 0.2s;">
+                                        <div id="difficulty-selected-tags" style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+                                            <span class="placeholder-text" style="color: #94a3b8; font-size: 0.92rem;">គ្មានបញ្ហា/ការលំបាក (ចុចដើម្បីជ្រើសរើស...)</span>
+                                        </div>
+                                        <span id="difficulty-arrow" style="color: #64748b; font-size: 0.8rem; margin-left: auto; transition: transform 0.2s;">▼</span>
+                                    </div>
+                                    
+                                    <div id="difficulty-dropdown-menu" style="display: none; position: absolute; top: calc(100% + 5px); left: 0; right: 0; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.15); z-index: 1050; max-height: 290px; overflow-y: auto; padding: 8px;">
+                                        <div style="padding: 4px 8px 8px; border-bottom: 1px solid #f1f5f9; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                            <span style="font-size: 0.82rem; font-weight: 700; color: #64748b;">ជ្រើសរើសជម្រើសដែលត្រូវគ្នា ៖</span>
+                                            <button type="button" id="clear-difficulties-btn" style="background: none; border: none; color: #ef4444; font-size: 0.8rem; cursor: pointer; font-weight: 600; padding: 2px 6px; border-radius: 4px;">សម្អាតទាំងអស់ (Clear)</button>
+                                        </div>
+                                        
+                                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 4px;">
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_see" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>ពិបាកក្នុងការមើល</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_hear" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>ពិបាកក្នុងការស្ដាប់</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_speak" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>ពិបាកក្នុងការនិយាយ</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_write" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>ពិបាកក្នុងការសរសេរ</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_move" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>ពិបាកក្នុងការធ្វើចលនា</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_learn" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>ពិបាកក្នុងការរៀនសូត្រ</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_mental" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>ពិបាកខាងផ្លូវចិត្ត</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_nutrition" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>ខ្វះអាហារូបត្ថម្ភធ្ងន់ធ្ងរ</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_health1" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>សុខភាព/ជំងឺប្រចាំកាយ</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_migrant" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>មកពីគ្រួសារផ្លាស់ប្ដូរទីលំនៅ</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_violence" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>កុមាររងអំពើហិង្សាក្នុងគ្រួសារ</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_exploit" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>កុមាររងការកេងប្រវ័ញ្ចកម្លាំង</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_posture" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>បញ្ហាកាយវិការ</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #334155; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_health2" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                                                <span>ជំងឺប្រចាំកាយ</span>
+                                            </label>
+                                            <label class="diff-option-label" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: #b91c1c; font-weight: 600; background: #fef2f2; transition: background 0.15s;">
+                                                <input type="checkbox" name="difficulty-checkbox" value="diff_disabled_total" style="width: 16px; height: 16px; accent-color: #dc2626; cursor: pointer;">
+                                                <span>សិស្សពិការភាព (Disability)</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 style="margin: 1.5rem 0 1rem; color: var(--primary); font-size: 1.1rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.4rem; display: flex; align-items: center; gap: 6px;">
+                            <span>🏠 អាសយដ្ឋានបច្ចុប្បន្ន</span>
+                        </h3>
+                        <div class="grades-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                            <div class="form-group">
+                                <label for="curr-house">ស្នាក់នៅផ្ទះលេខ (House No.)</label>
+                                <input type="text" id="curr-house" placeholder="លេខផ្ទះ">
+                            </div>
+                            <div class="form-group">
+                                <label for="curr-village">ភូមិ/ក្រុម (Village)</label>
+                                <input type="text" id="curr-village" placeholder="ភូមិ">
+                            </div>
+                            <div class="form-group">
+                                <label for="curr-commune">ឃុំ/សង្កាត់ (Commune)</label>
+                                <input type="text" id="curr-commune" placeholder="ឃុំ">
+                            </div>
+                            <div class="form-group">
+                                <label for="curr-district">ស្រុក/ខណ្ឌ (District)</label>
+                                <input type="text" id="curr-district" placeholder="ស្រុក">
+                            </div>
+                            <div class="form-group">
+                                <label for="curr-province">ខេត្ត/ក្រុង (Province)</label>
+                                <input type="text" id="curr-province" placeholder="ខេត្ត">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">លេខទូរស័ព្ទ (Phone)</label>
+                                <input type="text" id="phone" placeholder="012 345 678">
+                            </div>
+                        </div>
+
+                        <div class="form-actions" style="margin-top: 1.5rem; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #0b3c8f, #1d4ed8); color: white; padding: 0.65rem 1.4rem; font-weight: 700;">
+                                <span>រក្សាទុកទិន្នន័យ</span>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            </button>
+                            <button type="button" onclick="toggleStudentForm(false)" class="btn btn-secondary" style="font-weight: 600; margin-left: auto;">
+                                បោះបង់ (Cancel)
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <section class="table-section glass-panel">
+
+            <section class="table-section glass-panel">
+                <div class="section-header" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <h2 style="margin: 0; font-size: 1.35rem; display: flex; align-items: center; gap: 8px;">
+                            <span>បញ្ជីប្រវត្តិរូបសិស្ស</span>
+                        </h2>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; width: 100%;">
+                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                            <button type="button" id="open-add-student-btn" onclick="toggleStudentForm(true)" class="btn btn-primary" style="background: #2563eb; color: white; border: none; font-weight: 600; padding: 0.45rem 0.85rem; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; border-radius: 8px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); cursor: pointer; white-space: nowrap;">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                <span>បញ្ចូលប្រវត្តិរូបសិស្សថ្មី</span>
+                            </button>
+                            <button type="button" id="import-btn-header" class="btn btn-secondary" onclick="openImportModal()" style="background: #10b981; color: white; border: none; font-weight: 600; padding: 0.45rem 0.85rem; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; border-radius: 8px; cursor: pointer; white-space: nowrap;">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <span>នាំចូល (Import)</span>
+                            </button>
+                            <button type="button" id="export-btn-header" class="btn btn-secondary" onclick="openExportModal()" style="background: #0284c7; color: white; border: none; font-weight: 600; padding: 0.45rem 0.85rem; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25); white-space: nowrap;">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                <span>ទាញទិន្នន័យ (Export)</span>
+                            </button>
+                            <button type="button" id="push-sheets-btn" onclick="exportStudentsToGoogleSheets()" class="btn btn-secondary" style="background: #16a34a; color: white; border: none; font-weight: 600; padding: 0.45rem 0.85rem; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25); white-space: nowrap;" title="បញ្ជូនទិន្នន័យសិស្សទាំងអស់ឡើងទៅកាន់ Google Sheets (Sync)">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                <span>⬆️ Push ទៅ Sheets</span>
+                            </button>
+                            <button type="button" id="pull-sheets-btn" onclick="if(window.pullFromGoogleSheets){ this.disabled=true; window.pullFromGoogleSheets(false).finally(()=>{ this.disabled=false; }); } else { alert('មិនមានមុខងារទាញទិន្នន័យ'); }" class="btn btn-secondary" style="background: #0ea5e9; color: white; border: none; font-weight: 600; padding: 0.45rem 0.85rem; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25); white-space: nowrap;" title="ទាញទិន្នន័យសិស្សពី Google Sheets ចូលមកក្នុងប្រព័ន្ធ">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <span>☁️ ទាញពី Sheets</span>
+                            </button>
+                            <button type="button" id="config-sheet-url-btn" onclick="configureGoogleSheetsUrlDirectly()" class="btn btn-secondary" style="background: #475569; color: white; border: none; font-weight: 600; padding: 0.45rem 0.65rem; font-size: 0.88rem; display: flex; align-items: center; gap: 4px; border-radius: 8px; cursor: pointer; white-space: nowrap;" title="កំណត់ Google Apps Script Web App URL">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                                <span>URL</span>
+                            </button>
+                            <button type="button" id="sort-name-btn" onclick="sortStudentsAlphabetical()" class="btn btn-secondary" style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; font-weight: 600; font-size: 0.88rem; padding: 0.45rem 0.85rem; display: flex; align-items: center; gap: 6px; border-radius: 8px; cursor: pointer; transition: all 0.2s; white-space: nowrap;" title="តម្រៀបសិស្សតាមលំដាប់ឈ្មោះពី ក ដល់ អ">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h12M3 18h6"/></svg>
+                                <span>🔤 តម្រៀបឈ្មោះ (ក-អ)</span>
+                            </button>
+                            <button type="button" id="clear-data-btn" onclick="clearAllStudentData()" class="btn btn-secondary" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; font-weight: 600; font-size: 0.88rem; padding: 0.45rem 0.85rem; display: flex; align-items: center; gap: 6px; border-radius: 8px; cursor: pointer; transition: all 0.2s; white-space: nowrap;" title="សម្អាតទិន្នន័យសិស្សទាំងអស់ក្នុងថ្នាក់នេះ">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                                <span>🗑️ សម្អាតទិន្នន័យ</span>
+                            </button>
+                        </div>
+                        <div class="search-box" style="margin: 0; min-width: 200px; max-width: 280px; flex: 1;">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="left: 0.9rem;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" id="search-input" placeholder="ស្វែងរកសិស្ស..." style="width: 100%; padding: 0.45rem 1rem 0.45rem 2.4rem; height: 38px; font-size: 0.88rem; border-radius: 50px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="students-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 45px; text-align: center;">ល.រ</th>
+                                <th style="width: 55px; text-align: center;">រូបថត</th>
+                                <th style="width: 85px; text-align: center;">អត្តលេខ</th>
+                                <th onclick="sortStudentsAlphabetical()" style="cursor: pointer;" title="ចុចដើម្បីតម្រៀបតាមឈ្មោះ (ក ដល់ អ)">
+                                    <span style="display: inline-flex; align-items: center; gap: 4px;">
+                                        ឈ្មោះសិស្ស <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"/></svg>
+                                    </span>
+                                </th>
+                                <th style="width: 50px; text-align: center;">ភេទ</th>
+                                <th>ស្ថានភាព</th>
+                                <th style="white-space: nowrap; min-width: 110px; text-align: center;">ថ្ងៃខែឆ្នាំកំណើត</th>
+                                <th style="white-space: nowrap; text-align: center;">អាយុ</th>
+                                <th>អាណាព្យាបាល</th>
+                                <th>លេខទូរស័ព្ទ</th>
+                                <th style="text-align: center; min-width: 270px;">សកម្មភាព</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="empty-state" class="empty-state hidden">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <p>មិនទាន់មានទិន្នន័យសិស្សនៅឡើយទេ</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Clear Data Options Modal -->
+    <div id="clear-data-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); z-index: 1300; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 15px;">
+        <div style="background: #ffffff; padding: 24px; border-radius: 18px; width: 100%; max-width: 580px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); border: 1.5px solid #cbd5e1; font-family: 'Battambang', sans-serif;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 0.85rem;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="background: #fee2e2; color: #dc2626; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                        🗑️
+                    </div>
+                    <div>
+                        <h2 style="margin: 0; color: #991b1b; font-size: 1.25rem; font-weight: 700;">សម្អាតទិន្នន័យ (Clear Student Data)</h2>
+                        <p style="margin: 2px 0 0; font-size: 0.82rem; color: #64748b;">ជ្រើសរើសវិសាលភាពនៃការសម្អាតទិន្នន័យ</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeClearDataModal()" style="background: #f1f5f9; border: none; font-size: 1.4rem; color: #64748b; cursor: pointer; line-height: 1; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">&times;</button>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <!-- OPTION 1: Current Class Only -->
+                <div onclick="executeClearCurrentClass()" style="border: 1.5px solid #fed7aa; background: #fffaf5; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#f97316'; this.style.background='#fff7ed';" onmouseout="this.style.borderColor='#fed7aa'; this.style.background='#fffaf5';">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                        <strong style="color: #c2410c; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
+                            <span>🏫</span> សម្អាតសិស្សក្នុង «<span class="active-class-name-placeholder" style="color: #ea580c;">ថ្នាក់បច្ចុប្បន្ន</span>»
+                        </strong>
+                        <span style="background: #ffedd5; color: #9a3412; font-size: 0.78rem; font-weight: 700; padding: 3px 8px; border-radius: 6px;">តែថ្នាក់នេះប៉ុណ្ណោះ</span>
+                    </div>
+                    <p style="margin: 0; font-size: 0.84rem; color: #7c2d12; line-height: 1.5;">
+                        សម្អាតបញ្ជីសិស្ស (<span class="active-class-count-placeholder" style="font-weight: 700;">0</span> នាក់) និងពិន្ទុទាំងអស់ក្នុងថ្នាក់នេះចេញ។ ទិន្នន័យថ្នាក់ដទៃទៀតនៅរក្សាដដែល។
+                    </p>
+                </div>
+
+                <!-- OPTION 2: All Classes Across School -->
+                <div onclick="executeClearAllSchoolData()" style="border: 2px solid #fca5a5; background: #fef2f2; border-radius: 12px; padding: 14px 16px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#ef4444'; this.style.background='#fee2e2';" onmouseout="this.style.borderColor='#fca5a5'; this.style.background='#fef2f2';">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                        <strong style="color: #dc2626; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
+                            <span>⚠️</span> សម្អាតទិន្នន័យ «គ្រប់ថ្នាក់ទាំងអស់» (ថ្នាក់ទី ១ ដល់ ទី ៦)
+                        </strong>
+                        <span style="background: #fee2e2; color: #991b1b; font-size: 0.78rem; font-weight: 700; padding: 3px 8px; border-radius: 6px;">សាលាទាំងមូល</span>
+                    </div>
+                    <p style="margin: 0; font-size: 0.84rem; color: #991b1b; line-height: 1.5;">
+                        សម្អាតបញ្ជីសិស្ស និងពិន្ទុគ្រប់ថ្នាក់ទាំងអស់ក្នុងសាលា ដើម្បីចាប់ផ្ដើមដំណើរការប្រព័ន្ធថ្មីសម្រាប់ «សាលាបឋមសិក្សា ផ្លុង» ដោយគ្មានទិន្នន័យចាស់ឡើយ។
+                    </p>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+                <button type="button" class="btn btn-secondary" onclick="closeClearDataModal()" style="border-radius: 8px; font-weight: 600; padding: 0.55rem 1.2rem; background: #f8fafc; border: 1.5px solid #cbd5e1; color: #475569; cursor: pointer;">បិទ / បោះបង់ (Cancel)</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="import-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); padding: 15px;">
+        <div style="background: var(--surface); padding: 2rem; border-radius: 16px; width: 100%; max-width: 780px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.25); border: 1px solid var(--border-color);">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="background: #10b981; color: white; width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </div>
+                    <h2 style="margin: 0; color: var(--text-primary); font-size: 1.3rem;">នាំចូលទិន្នន័យសិស្សពីឯកសារ (Import Students)</h2>
+                </div>
+                <button type="button" onclick="closeImportModal()" style="background: transparent; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; line-height: 1;">&times;</button>
+            </div>
+
+            <!-- STRUCTURED FIELD GUIDELINES -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 1.25rem;">
+                <div style="font-weight: 600; color: #1e293b; margin-bottom: 8px; font-size: 0.95rem; display: flex; align-items: center; gap: 6px;">
+                    <span>📋 លំដាប់ជួរឈរទិន្នន័យ (បែងចែកតាមផ្នែកច្បាស់លាស់) ៖</span>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px; font-size: 0.85rem;">
+                    <!-- Section 1 -->
+                    <div style="background: white; border: 1px solid #cbd5e1; border-left: 4px solid #3b82f6; border-radius: 6px; padding: 8px 10px;">
+                        <strong style="color: #1d4ed8; display: block; margin-bottom: 4px;">១. ព័ត៌មានផ្ទាល់ខ្លួន</strong>
+                        <div style="color: #475569; line-height: 1.5;">
+                            ១. អត្តលេខ | ២. នាមត្រកូល | ៣. នាមខ្លួន | ៤. ភេទ (ប/ស) | ៥. ស្ថានភាព (សិស្សថ្មី/សិស្សចាស់ (ត្រួតថ្នាក់)) | ៦. ថ្ងៃកំណើត (dd/mm/yyyy)
+                        </div>
+                    </div>
+
+                    <!-- Section 2 -->
+                    <div style="background: white; border: 1px solid #cbd5e1; border-left: 4px solid #10b981; border-radius: 6px; padding: 8px 10px;">
+                        <strong style="color: #047857; display: block; margin-bottom: 4px;">២. ទីកន្លែងកំណើត</strong>
+                        <div style="color: #475569; line-height: 1.5;">
+                            ៧. ភូមិកំណើត | ៨. ឃុំកំណើត | ៩. ស្រុកកំណើត | ១០. ខេត្តកំណើត
+                        </div>
+                    </div>
+
+                    <!-- Section 3 -->
+                    <div style="background: white; border: 1px solid #cbd5e1; border-left: 4px solid #f59e0b; border-radius: 6px; padding: 8px 10px;">
+                        <strong style="color: #b45309; display: block; margin-bottom: 4px;">៣. គ្រួសារ & អាណាព្យាបាល</strong>
+                        <div style="color: #475569; line-height: 1.5;">
+                            ១១. ឈ្មោះឪពុក | ១២. មុខរបរឪពុក | ១៣. ឈ្មោះម្តាយ | ១៤. មុខរបរម្តាយ | ១៥. ឈ្មោះអាណាព្យាបាល | ១៦. មុខរបរអាណាព្យាបាល | ១៧. សមាជិកគ្រួសារ (សរុប) | ១៨. សមាជិកគ្រួសារ (ស្រី) | ១៩. ស្ថានភាពកំព្រា (មិនកំព្រា/កំព្រាឪពុក/កំព្រាម្តាយ/កំព្រាទាំងឪពុកនិងម្តាយ)
+                        </div>
+                    </div>
+
+                    <!-- Section 4 -->
+                    <div style="background: white; border: 1px solid #cbd5e1; border-left: 4px solid #8b5cf6; border-radius: 6px; padding: 8px 10px;">
+                        <strong style="color: #6d28d9; display: block; margin-bottom: 4px;">៤. អាសយដ្ឋានបច្ចុប្បន្ន & ទំនាក់ទំនង</strong>
+                        <div style="color: #475569; line-height: 1.5;">
+                            ២០. លេខផ្ទះ | ២១. ភូមិ/ក្រុម | ២២. ឃុំ/សង្កាត់ | ២៣. ស្រុក/ខណ្ឌ | ២៤. ខេត្ត/ក្រុង | ២៥. លេខទូរស័ព្ទ
+                        </div>
+                    </div>
+
+                    <!-- Section 5 -->
+                    <div style="background: white; border: 1px solid #cbd5e1; border-left: 4px solid #ec4899; border-radius: 6px; padding: 8px 10px;">
+                        <strong style="color: #be185d; display: block; margin-bottom: 4px;">៥. ព័ត៌មានប័ណ្ណសមធម៌</strong>
+                        <div style="color: #475569; line-height: 1.5;">
+                            ២៦. ប័ណ្ណសមធម៌ (គ្មាន/កម្រិតក្រ១/កម្រិតក្រ២/កម្រិតក្រ៣) | ២៧. លេខប័ណ្ណសមធម៌
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OPTION 1: FILE UPLOAD -->
+            <div style="background: #ffffff; padding: 14px; border-radius: 10px; margin-bottom: 1rem; border: 2px dashed #94a3b8;">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px; color: var(--text-primary);">
+                    📁 ជម្រើសទី១ ៖ ជ្រើសរើសឯកសារ Excel (.xlsx) ឬ CSV (.csv)
+                </label>
+                <input type="file" id="import-file" accept=".xlsx, .xls, .csv" class="form-control" style="width: 100%; padding: 8px;">
+            </div>
+            
+            <!-- OPTION 2: PASTE DATA -->
+            <div style="margin-bottom: 1.25rem;">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px; color: var(--text-primary);">
+                    📋 ជម្រើសទី២ ៖ Copy ទិន្នន័យពី Excel រួច Paste ចូលទីនេះ
+                </label>
+                <textarea id="import-textarea" rows="4" class="form-control" placeholder="ជ្រើសរើសជួរក្នុង Excel -> ចុច Copy (Ctrl+C) -> ចុច Paste (Ctrl+V) ទីនេះ..." style="width: 100%; font-family: monospace; font-size: 0.88rem; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;"></textarea>
+            </div>
+
+            <!-- ACTIONS -->
+            <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center; flex-wrap: wrap; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-secondary" onclick="downloadTemplate('xlsx')" style="background: #ecfdf5; color: #047857; border-color: #a7f3d0; font-weight: 500;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        ទាញយកគំរូ Excel (.xlsx)
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="downloadTemplate('csv')" style="color: #475569; font-size: 0.85rem;">
+                        ទាញយកគំរូ CSV
+                    </button>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeImportModal()">បោះបង់</button>
+                    <button type="button" class="btn btn-primary" onclick="processImport()" style="background: #10b981; border-color: #10b981; font-weight: 600;">
+                        <span>នាំចូលទិន្នន័យ (Import Now)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export / Data Pull Modal -->
+    <div id="export-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); padding: 15px;">
+        <div style="background: var(--surface); padding: 2rem; border-radius: 16px; width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.25); border: 1px solid var(--border-color);">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="background: #0284c7; color: white; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <div>
+                        <h2 style="margin: 0; color: var(--text-primary); font-size: 1.25rem;">ទាញទិន្នន័យប្រវត្តិរូបសិស្ស (Export / Pull Data)</h2>
+                        <p style="margin: 2px 0 0; font-size: 0.85rem; color: #64748b;" id="export-modal-subtitle">ទាញយកឯកសារបញ្ជីសិស្សទាំងអស់ក្នុងថ្នាក់</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeExportModal()" style="background: transparent; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; line-height: 1;">&times;</button>
+            </div>
+
+            <!-- EXPORT CARDS GRID -->
+            <div style="display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 1.5rem;">
+                
+                <!-- OPTION 1: FULL EXCEL EXPORT -->
+                <div onclick="exportStudentsToExcel()" style="display: flex; align-items: center; gap: 15px; padding: 16px; border: 1.5px solid #cbd5e1; border-radius: 12px; background: #ffffff; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.03);" onmouseover="this.style.borderColor='#10b981'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.transform='translateY(0)';">
+                    <div style="width: 46px; height: 46px; border-radius: 10px; background: linear-gradient(135deg, #10b981, #059669); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.4rem;">
+                        📊
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="margin: 0 0 4px; font-size: 1.05rem; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                            <span>ទាញយកជា Excel ពេញលេញ (.xlsx)</span>
+                            <span style="font-size: 0.72rem; background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 20px; font-weight: 700;">ពេញនិយម</span>
+                        </h3>
+                        <p style="margin: 0; font-size: 0.84rem; color: #64748b; line-height: 1.4;">
+                            ទាញយកបញ្ជីប្រវត្តិរូបសិស្សគ្រប់ព័ត៌មានលម្អិតទាំងអស់ (ព័ត៌មានផ្ទាល់ខ្លួន ទីកន្លែងកំណើត ឪពុកម្តាយ អាសយដ្ឋាន ប័ណ្ណសមធម៌ ពិការភាព) មានគូសក្រឡាត្រឹមត្រូវ។
+                        </p>
+                    </div>
+                    <span style="color: #10b981; font-weight: 700; font-size: 1.2rem;">➔</span>
+                </div>
+
+                <!-- OPTION 2: CSV EXPORT -->
+                <div onclick="exportStudentsToCSV()" style="display: flex; align-items: center; gap: 15px; padding: 16px; border: 1.5px solid #cbd5e1; border-radius: 12px; background: #ffffff; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.03);" onmouseover="this.style.borderColor='#0284c7'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.transform='translateY(0)';">
+                    <div style="width: 46px; height: 46px; border-radius: 10px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.4rem;">
+                        📄
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="margin: 0 0 4px; font-size: 1.05rem; color: #0f172a;">ទាញយកជា CSV (.csv)</h3>
+                        <p style="margin: 0; font-size: 0.84rem; color: #64748b; line-height: 1.4;">
+                            ឯកសារអក្សរ CSV គាំទ្រភាសាខ្មែរ UTF-8 ងាយស្រួលនាំចូលទៅកាន់កម្មវិធីផ្សេងៗ ឬ Google Sheets។
+                        </p>
+                    </div>
+                    <span style="color: #0284c7; font-weight: 700; font-size: 1.2rem;">➔</span>
+                </div>
+
+                <!-- OPTION 3: JSON BACKUP -->
+                <div onclick="exportStudentsToJSON()" style="display: flex; align-items: center; gap: 15px; padding: 16px; border: 1.5px solid #cbd5e1; border-radius: 12px; background: #ffffff; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.03);" onmouseover="this.style.borderColor='#8b5cf6'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.transform='translateY(0)';">
+                    <div style="width: 46px; height: 46px; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.4rem;">
+                        💾
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="margin: 0 0 4px; font-size: 1.05rem; color: #0f172a;">ទាញយកឯកសារ Backup (.json)</h3>
+                        <p style="margin: 0; font-size: 0.84rem; color: #64748b; line-height: 1.4;">
+                            ទាញយកកញ្ចប់ទិន្នន័យសុវត្ថិភាពទុកលើកុំព្យូទ័រ ដើម្បីងាយស្រួល Restore ឬផ្ទេរទៅឧបករណ៍ផ្សេង។
+                        </p>
+                    </div>
+                    <span style="color: #8b5cf6; font-weight: 700; font-size: 1.2rem;">➔</span>
+                </div>
+
+                <!-- OPTION 4: PULL/SYNC FROM GRADE DATA -->
+                <div onclick="pullStudentsFromGrades()" style="display: flex; align-items: center; gap: 15px; padding: 16px; border: 1.5px solid #fde68a; border-radius: 12px; background: #fffbeb; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.03);" onmouseover="this.style.borderColor='#f59e0b'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='#fde68a'; this.style.transform='translateY(0)';">
+                    <div style="width: 46px; height: 46px; border-radius: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.4rem;">
+                        🔄
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="margin: 0 0 4px; font-size: 1.05rem; color: #92400e;">ទាញទិន្នន័យពីបញ្ជីពិន្ទុ (Sync from Grades)</h3>
+                        <p style="margin: 0; font-size: 0.84rem; color: #78350f; line-height: 1.4;">
+                            ទាញឈ្មោះនិងអត្តលេខសិស្សដែលមានស្រាប់ក្នុងតារាងពិន្ទុប្រចាំខែចូលក្នុងប្រវត្តិរូបសិស្សដោយស្វ័យប្រវត្តិ។
+                        </p>
+                    </div>
+                    <span style="color: #f59e0b; font-weight: 700; font-size: 1.2rem;">➔</span>
+                </div>
+
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeExportModal()">បិទ (Close)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STUDENT FULL PROFILE VIEW MODAL -->
+    <div id="view-profile-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 1100; align-items: center; justify-content: center; backdrop-filter: blur(4px); padding: 15px;">
+        <div style="background: #ffffff; padding: 24px; border-radius: 16px; width: 100%; max-width: 820px; max-height: 92vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #cbd5e1; position: relative;">
+            
+            <!-- Modal Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        👤
+                    </div>
+                    <div>
+                        <h2 id="view-modal-name-header" style="margin: 0; color: #0f172a; font-size: 1.3rem; font-family: 'Battambang', sans-serif; font-weight: 700;">ប្រវត្តិរូបសិស្ស</h2>
+                        <p style="margin: 2px 0 0; font-size: 0.82rem; color: #64748b;" id="view-modal-sub-header">ព័ត៌មានលម្អិតអំពីជីវប្រវត្តិ និងស្ថានភាពសិស្ស</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeViewProfileModal()" style="background: #f1f5f9; border: none; font-size: 1.3rem; color: #64748b; cursor: pointer; line-height: 1; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.15s;" onmouseover="this.style.background='#fee2e2'; this.style.color='#dc2626';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b';">&times;</button>
+            </div>
+
+            <!-- Profile Content Sheet -->
+            <div id="printable-profile-card" style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                
+                <!-- TOP PROFILE HERO (PHOTO + BASIC INFO) -->
+                <div style="display: flex; gap: 20px; align-items: center; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 16px; margin-bottom: 16px; flex-wrap: wrap;">
+                    <!-- PHOTO 4x6 -->
+                    <div style="width: 110px; height: 140px; border-radius: 10px; border: 2px solid #3b82f6; overflow: hidden; background: #f8fafc; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: relative; display: flex; align-items: center; justify-content: center;">
+                        <img id="view-modal-photo" src="" alt="រូបថតសិស្ស" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                        <div id="view-modal-photo-placeholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; text-align: center; padding: 4px;">
+                            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <span style="font-size: 0.72rem; color: #64748b; font-weight: 600; margin-top: 2px;">គ្មានរូបថត</span>
+                        </div>
+                    </div>
+
+                    <!-- HERO DETAILS -->
+                    <div style="flex: 1; min-width: 240px;">
+                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px;">
+                            <h3 id="view-modal-name" style="margin: 0; font-size: 1.4rem; color: #1e3a8a; font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif; font-weight: normal;">-</h3>
+                            <span id="view-modal-gender-badge" style="background: #eff6ff; color: #1d4ed8; padding: 3px 10px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: 1px solid #bfdbfe;">ភេទ : -</span>
+                            <span id="view-modal-status-badge" style="background: #dcfce7; color: #15803d; padding: 3px 10px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: 1px solid #bbf7d0;">សិស្សថ្មី</span>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; font-size: 0.9rem; color: #334155; margin-top: 10px;">
+                            <div><strong style="color: #64748b;">អត្តលេខ ៖</strong> <span id="view-modal-id" style="font-weight: 700; color: #0f172a; font-family: monospace; font-size: 1rem;">-</span></div>
+                            <div><strong style="color: #64748b;">ថ្ងៃខែឆ្នាំកំណើត ៖</strong> <span id="view-modal-dob" style="font-weight: 600; color: #0f172a;">-</span></div>
+                            <div><strong style="color: #64748b;">អាយុ ៖</strong> <span id="view-modal-age" style="font-weight: 600; color: #0f172a;">-</span></div>
+                            <div><strong style="color: #64748b;">លេខទូរស័ព្ទ ៖</strong> <span id="view-modal-phone" style="font-weight: 600; color: #0f172a;">-</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION GRIDS -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 0.88rem;">
+                    
+                    <!-- BOX 1: ទីកន្លែងកំណើត -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 10px 12px; position: relative;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <h4 style="margin: 0; font-size: 0.92rem; color: #1d4ed8; display: flex; align-items: center; gap: 6px;">
+                                <span>📍 ទីកន្លែងកំណើត</span>
+                            </h4>
+                            <button type="button" onclick="openEditSection('pob')" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; font-size: 0.76rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 3px;" title="ចុចដើម្បីកែប្រែទីកន្លែងកំណើត">
+                                ✏️ កែប្រែ
+                            </button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; color: #475569;">
+                            <div>ភូមិ ៖ <strong id="view-modal-pob-vil" style="color: #0f172a;">-</strong></div>
+                            <div>ឃុំ/សង្កាត់ ៖ <strong id="view-modal-pob-com" style="color: #0f172a;">-</strong></div>
+                            <div>ស្រុក/ខណ្ឌ ៖ <strong id="view-modal-pob-dis" style="color: #0f172a;">-</strong></div>
+                            <div>ខេត្ត/ក្រុង ៖ <strong id="view-modal-pob-prov" style="color: #0f172a;">-</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- BOX 2: អាសយដ្ឋានបច្ចុប្បន្ន -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #10b981; border-radius: 8px; padding: 10px 12px; position: relative;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <h4 style="margin: 0; font-size: 0.92rem; color: #047857; display: flex; align-items: center; gap: 6px;">
+                                <span>🏠 អាសយដ្ឋានបច្ចុប្បន្ន</span>
+                            </h4>
+                            <button type="button" onclick="openEditSection('residence')" style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; font-size: 0.76rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 3px;" title="ចុចដើម្បីកែប្រែអាសយដ្ឋានបច្ចុប្បន្ន">
+                                ✏️ កែប្រែ
+                            </button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; color: #475569;">
+                            <div>ផ្ទះលេខ ៖ <strong id="view-modal-curr-house" style="color: #0f172a;">-</strong></div>
+                            <div>ភូមិ ៖ <strong id="view-modal-curr-vil" style="color: #0f172a;">-</strong></div>
+                            <div>ឃុំ/សង្កាត់ ៖ <strong id="view-modal-curr-com" style="color: #0f172a;">-</strong></div>
+                            <div>ស្រុក-ខេត្ត ៖ <strong id="view-modal-curr-disprov" style="color: #0f172a;">-</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- BOX 3: គ្រួសារ និងអាណាព្យាបាល -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 10px 12px; grid-column: span 2; position: relative;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h4 style="margin: 0; font-size: 0.92rem; color: #b45309; display: flex; align-items: center; gap: 6px;">
+                                <span>👨‍👩‍👧 ព័ត៌មានគ្រួសារ និងអាណាព្យាបាល</span>
+                            </h4>
+                            <button type="button" onclick="openEditSection('family')" style="background: #fffbeb; border: 1px solid #fde68a; color: #b45309; font-size: 0.76rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 3px;" title="ចុចដើម្បីកែប្រែព័ត៌មានគ្រួសារ">
+                                ✏️ កែប្រែ
+                            </button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; color: #475569;">
+                            <div>ឪពុក ៖ <strong id="view-modal-father" style="color: #0f172a;">-</strong> <span id="view-modal-father-job" style="color: #64748b; font-size: 0.82rem;"></span></div>
+                            <div>ម្តាយ ៖ <strong id="view-modal-mother" style="color: #0f172a;">-</strong> <span id="view-modal-mother-job" style="color: #64748b; font-size: 0.82rem;"></span></div>
+                            <div>អាណាព្យាបាល ៖ <strong id="view-modal-guardian" style="color: #0f172a;">-</strong> <span id="view-modal-guardian-job" style="color: #64748b; font-size: 0.82rem;"></span></div>
+                            <div>សមាជិកគ្រួសារ ៖ <strong id="view-modal-family-count" style="color: #0f172a;">-</strong></div>
+                            <div>ស្ថានភាពកំព្រា ៖ <span id="view-modal-orphan-badge">-</span></div>
+                        </div>
+                    </div>
+
+                    <!-- BOX 4: ប័ណ្ណសមធម៌ & ការលំបាក -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #8b5cf6; border-radius: 8px; padding: 10px 12px; grid-column: span 2; position: relative;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h4 style="margin: 0; font-size: 0.92rem; color: #6d28d9; display: flex; align-items: center; gap: 6px;">
+                                <span>🏷️ ប័ណ្ណសមធម៌ & ការលំបាកផ្សេងៗ</span>
+                            </h4>
+                            <button type="button" onclick="openEditSection('equity')" style="background: #f5f3ff; border: 1px solid #ddd6fe; color: #6d28d9; font-size: 0.76rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 3px;" title="ចុចដើម្បីកែប្រែប័ណ្ណសមធម៌និងការលំបាក">
+                                ✏️ កែប្រែ
+                            </button>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 8px;">
+                            <div>ប័ណ្ណសមធម៌ ៖ <span id="view-modal-equity-badge">-</span></div>
+                            <div>ជនជាតិដើមភាគតិច ៖ <strong id="view-modal-indigenous" style="color: #0f172a;">ទេ</strong></div>
+                            <div>ឆ្លងកុមារតូច ៖ <strong id="view-modal-early-childhood" style="color: #0f172a;">ទេ</strong></div>
+                        </div>
+                        <div>
+                            <div style="color: #64748b; font-size: 0.82rem; margin-bottom: 4px; font-weight: 600;">បញ្ហា/ការលំបាក (Difficulties) ៖</div>
+                            <div id="view-modal-difficulties-tags" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                                <span style="color: #94a3b8; font-size: 0.84rem;">គ្មានការលំបាក</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- MODAL ACTIONS -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" id="view-modal-edit-btn" class="btn btn-primary" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: none; font-weight: 700; padding: 0.6rem 1.2rem; border-radius: 8px; display: flex; align-items: center; gap: 6px; box-shadow: 0 3px 10px rgba(37,99,235,0.25);">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        <span>កែប្រែប្រវត្តិរូបសិស្សនេះ (Edit in Form)</span>
+                    </button>
+                    <button type="button" id="view-modal-card-btn" class="btn btn-secondary" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 600; padding: 0.5rem 1rem; border-radius: 8px; display: flex; align-items: center; gap: 6px;">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 8h2"/><path d="M15 12h2"/><path d="M7 16h10"/></svg>
+                        <span>ចេញកាតសិស្ស</span>
+                    </button>
+                    <button type="button" onclick="printStudentProfileCard()" class="btn btn-secondary" style="background: #f8fafc; color: #334155; border: 1px solid #cbd5e1; font-weight: 600; padding: 0.5rem 1rem; border-radius: 8px; display: flex; align-items: center; gap: 6px;">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                        <span>បោះពុម្ព (Print)</span>
+                    </button>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="closeViewProfileModal()" style="border-radius: 8px; font-weight: 600;">បិទ (Close)</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+    <script src="student-profile.js?v=2.6"></script>
+
+    <script>
+        if (window.classManager && document.getElementById("global-class-selector")) {
+            window.classManager.renderClassSelector("global-class-selector");
+        }
+    </script>
+    </body>
+</html>

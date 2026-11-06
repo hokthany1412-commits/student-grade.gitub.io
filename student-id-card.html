@@ -1,0 +1,1617 @@
+﻿<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ប័ណ្ណសម្គាល់ខ្លួនសិស្ស - Student ID Card</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul&family=Siemreap&family=Kantumruy+Pro:wght@400;500;600;700;800&family=Playwrite+US+Modern:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
+    
+    <!-- Khmer Calendar for Lunar Date calculation -->
+    <script src="khmer-calendar.js"></script>
+    
+    <!-- Firebase Cloud Sync & Auth -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <style>
+        :root {
+            --card-blue: #0052cc;
+            --card-navy: #0b3a75;
+            --card-label: #111827;
+            --card-val: #004ba0;
+            --card-green: #047857;
+            --card-red: #dc2626;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            color: #0f172a;
+            margin: 0;
+            padding: 0;
+        }
+
+        .moul-font { font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif; }
+        .kantumruy-font { font-family: 'Battambang', 'Khmer OS Battambang', sans-serif; }
+        .siemreap-font { font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif; }
+
+        /* Top Navbar */
+        .top-navbar {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1.5px solid #cbd5e1;
+            background: #ffffff;
+            color: #334155;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+            text-decoration: none;
+        }
+        .nav-btn:hover {
+            background: #f8fafc;
+            color: #0f172a;
+            border-color: #94a3b8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+        }
+
+        .nav-btn-primary {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+        .nav-btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+        }
+
+        .nav-btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+        .nav-btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+        }
+
+        .nav-btn-purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+        }
+        .nav-btn-purple:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.35);
+        }
+
+        .nav-btn-amber {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+        }
+        .nav-btn-amber:hover {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
+        }
+
+        .student-select {
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 1.5px solid #2563eb;
+            background: #ffffff;
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #1e293b;
+            min-width: 230px;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .student-select:focus {
+            box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Settings Drawer / Options Bar */
+        .options-bar {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            font-size: 0.88rem;
+            color: #475569;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+        }
+
+        .opt-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Preview Workspace */
+        .workspace-container {
+            padding: 25px 20px 60px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* === ID CARD CONTAINER (Exact 2:3 vertical badge ratio) === */
+        .id-card-wrapper {
+            background: #ffffff;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15), 0 3px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            box-sizing: border-box;
+            width: 105mm; /* Standard badge/card display size */
+            min-height: 152mm;
+            position: relative;
+            background-color: #ffffff;
+            margin: 0 auto;
+        }
+
+        /* Card Main Frame - Double Blue Borders */
+        .id-card-frame {
+            border: 3.5px solid var(--card-blue);
+            padding: 4px;
+            box-sizing: border-box;
+            position: relative;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 147mm;
+            overflow: hidden;
+        }
+
+        .id-card-inner-border {
+            border: 1.2px solid var(--card-blue);
+            padding: 8px 10px 10px;
+            box-sizing: border-box;
+            position: relative;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Background Watermark - Bulletproof CSS Background */
+        .card-watermark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('moeys-logo.png');
+            background-repeat: no-repeat;
+            background-position: center 48%;
+            background-size: 82% auto;
+            opacity: 0.20;
+            pointer-events: none;
+            z-index: 1;
+            user-select: none;
+        }
+
+        .card-watermark img {
+            display: none;
+        }
+
+        .card-content-layer {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: space-between;
+        }
+
+        /* TOP HEADER */
+        .card-header-block {
+            position: relative;
+            margin-bottom: 2px;
+        }
+
+        .header-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            min-height: 48px;
+            width: 100%;
+        }
+
+        /* MoEYS Logo */
+        .moeys-logo-box {
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .header-spacer-box {
+            width: 46px;
+            height: 46px;
+            flex-shrink: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .moeys-logo-svg {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Center Motto */
+        .national-motto-area {
+            text-align: center;
+            flex: 1;
+            padding: 0 4px;
+        }
+
+        .motto-line-1 {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: 10pt;
+            color: #0b3a75;
+            margin: 0 0 6px 0;
+            line-height: 1.65;
+            font-weight: normal;
+            white-space: nowrap;
+        }
+
+        .motto-line-2 {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: 10pt;
+            color: #0b3a75;
+            margin: 0 0 4px 0;
+            line-height: 1.65;
+            font-weight: normal;
+            white-space: nowrap;
+        }
+
+        .motto-ribbon-divider {
+            display: block;
+            margin: 4px auto 0;
+            height: 14px;
+            width: auto;
+        }
+
+        /* Department / Province Line */
+        .dept-prov-line {
+            text-align: center;
+            margin-top: 4px;
+            margin-bottom: 4px;
+        }
+
+        .dept-prov-text {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: 9.8pt;
+            color: #004ba0;
+            font-weight: normal;
+            display: inline-block;
+            border: none;
+            background: transparent;
+            text-align: center;
+            width: 100%;
+            outline: none;
+            line-height: 1.5;
+        }
+        .dept-prov-text:focus {
+            background: #eff6ff;
+            border-bottom: 1px dashed #0052cc;
+        }
+
+        /* Blue Section Divider Line */
+        .card-blue-divider {
+            height: 2px;
+            background-color: var(--card-blue);
+            width: 100%;
+            margin: 3px 0 6px;
+        }
+
+        /* CARD MAIN TITLE */
+        .card-title-section {
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .card-main-title {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: 16pt;
+            color: var(--card-blue);
+            margin: 0 0 2px;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 1px rgba(0, 82, 204, 0.15);
+        }
+
+        .card-academic-year {
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-size: 11.5pt;
+            color: #111827;
+            margin: 0 0 2px;
+            font-weight: bold;
+        }
+
+        .card-class-level {
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-size: 12pt;
+            color: #111827;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .inline-editable-header {
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            color: inherit;
+            text-align: center;
+            outline: none;
+            padding: 0 4px;
+        }
+        .inline-editable-header:focus {
+            background: #eff6ff;
+            border-bottom: 1px dashed #0052cc;
+        }
+
+        /* STUDENT INFO DETAILS */
+        .student-info-section {
+            margin: 6px 0 8px;
+            padding: 0 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: baseline;
+            font-size: 10.5pt;
+            line-height: 1.5;
+            white-space: nowrap;
+        }
+
+        .info-label {
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-weight: 700;
+            color: var(--card-label);
+            margin-right: 6px;
+            flex-shrink: 0;
+        }
+
+        .info-value {
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-weight: 700;
+            color: var(--card-val);
+            border: none;
+            background: transparent;
+            outline: none;
+            padding: 0 2px;
+            font-size: 10.5pt;
+        }
+        .info-value:focus {
+            background: #eff6ff;
+            border-bottom: 1px dashed #0052cc;
+        }
+
+        .info-row-split {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            width: 100%;
+        }
+
+        .split-col {
+            display: flex;
+            align-items: baseline;
+        }
+
+        /* BOTTOM SECTION (PHOTO & SIGNATURE/STAMP) */
+        .card-bottom-section {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 4px;
+            position: relative;
+        }
+
+        /* LEFT COLUMN: PHOTO & ID */
+        .photo-and-id-column {
+            width: 32mm;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .id-bar-header {
+            width: 100%;
+            border: 1.2px solid #0b3a75;
+            border-bottom: none;
+            background: #ffffff;
+            text-align: center;
+            padding: 2px 0;
+            box-sizing: border-box;
+        }
+
+        .id-bar-text {
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-size: 9.5pt;
+            font-weight: 700;
+            color: #0b3a75;
+            letter-spacing: 0.5px;
+            outline: none;
+            border: none;
+            background: transparent;
+            text-align: center;
+            width: 95%;
+        }
+
+        .photo-container-box {
+            width: 100%;
+            height: 42mm;
+            border: 1.2px solid #0b3a75;
+            background: #f8fafc;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .photo-container-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photo-placeholder {
+            text-align: center;
+            color: #64748b;
+            font-size: 8.5pt;
+            line-height: 1.3;
+            padding: 4px;
+        }
+
+        .photo-hover-hint {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.65);
+            color: #ffffff;
+            font-size: 7.5pt;
+            text-align: center;
+            padding: 2px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .photo-container-box:hover .photo-hover-hint {
+            opacity: 1;
+        }
+
+        /* RIGHT COLUMN: SCHOOL, DATE, STAMP, SIGNATURE, PRINCIPAL */
+        .card-sign-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            min-height: 46mm;
+            justify-content: space-between;
+        }
+
+        .student-of-school-title {
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-size: 10pt;
+            color: var(--card-green);
+            margin-bottom: 2px;
+            font-weight: bold;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .school-green-input {
+            color: var(--card-green);
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            border: none;
+            background: transparent;
+            text-align: center;
+            outline: none;
+            width: 100%;
+        }
+        .school-green-input:focus {
+            background: #ecfdf5;
+            border-bottom: 1px dashed #047857;
+        }
+
+        .dates-wrapper {
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-size: 7.2pt;
+            line-height: 1.75;
+            color: #111827;
+            margin: 1px 0 2px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .lunar-date-line {
+            white-space: nowrap;
+            overflow: visible;
+            line-height: 1.6;
+        }
+
+        .solar-date-line {
+            white-space: nowrap;
+            overflow: visible;
+            line-height: 1.6;
+        }
+
+        .inline-date-input {
+            border: none;
+            background: transparent;
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-size: inherit;
+            color: inherit;
+            text-align: center;
+            outline: none;
+            width: 100%;
+            line-height: 1.6;
+            padding: 1px 0;
+            letter-spacing: 0.15px;
+        }
+        .inline-date-input:focus {
+            background: #eff6ff;
+            border-bottom: 1px dashed #0052cc;
+        }
+
+        .director-role-title {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: 10pt;
+            color: #000000;
+            margin: 0;
+            font-weight: normal;
+            line-height: 1.45;
+        }
+
+        /* STAMP & SIGNATURE OVERLAY CONTAINER */
+        .stamp-signature-overlay-box {
+            position: relative;
+            width: 100%;
+            height: 22mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Red Official Stamp Seal */
+        .school-stamp-img {
+            position: absolute;
+            left: 2px;
+            top: -6px;
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            opacity: 0.88;
+            pointer-events: none;
+            user-select: none;
+            transform: rotate(-5deg);
+        }
+
+        /* Blue Principal Signature */
+        .principal-signature-img {
+            position: absolute;
+            right: 8px;
+            top: -2px;
+            width: 65px;
+            height: 38px;
+            object-fit: contain;
+            pointer-events: none;
+            user-select: none;
+            transform: rotate(-3deg);
+        }
+
+        /* Principal Name in Red Moul - shifted 20mm (2cm) to right */
+        .principal-name-red {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: 10.5pt;
+            color: var(--card-red);
+            font-weight: normal;
+            margin: 0;
+            line-height: 1.45;
+            width: 100%;
+            text-align: center;
+            padding-left: 20mm;
+            box-sizing: border-box;
+        }
+
+        .principal-name-input {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: 10.5pt;
+            color: var(--card-red);
+            font-weight: normal;
+            border: none;
+            background: transparent;
+            text-align: center;
+            outline: none;
+            width: 100%;
+            line-height: 1.45;
+            padding-left: 20mm;
+            box-sizing: border-box;
+        }
+        .principal-name-input:focus {
+            background: #fff1f2;
+            border-bottom: 1px dashed #dc2626;
+        }
+
+        .batch-id-card .principal-name-red {
+            padding-left: 15mm;
+            box-sizing: border-box;
+        }
+        .batch-id-card.grid-6-card .principal-name-red {
+            padding-left: 10mm;
+            box-sizing: border-box;
+        }
+        .batch-id-card.grid-8-card .principal-name-red {
+            padding-left: 8mm;
+            box-sizing: border-box;
+        }
+        .batch-id-card.grid-9-card .principal-name-red {
+            padding-left: 6mm;
+            box-sizing: border-box;
+        }
+
+        /* Hidden Upload Inputs */
+        #student-photo-file, #custom-stamp-file, #custom-signature-file {
+            display: none;
+        }
+
+        /* === BATCH PRINT A4 SHEET (Grid 4-8 cards per page) === */
+        #batch-print-container {
+            display: none;
+            width: 100%;
+        }
+
+        .a4-print-page {
+            width: 210mm;
+            min-height: 295mm;
+            max-height: 297mm;
+            margin: 0 auto 30px;
+            background: #ffffff;
+            padding: 8mm 6mm;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            page-break-after: always;
+            break-after: page;
+            overflow: hidden;
+        }
+
+        /* === 4 CARDS PER A4 SHEET (Grid 2x2 Portrait - ចតុកោណកែងធំ) === */
+        .cards-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(2, 92mm);
+            grid-template-rows: repeat(2, 134mm);
+            gap: 5mm 6mm;
+            justify-content: center;
+            align-content: center;
+            box-sizing: border-box;
+        }
+
+        /* === 6 CARDS PER A4 SHEET (Grid 3x2 Landscape A4 297mm x 210mm - ចតុកោណកែង) === */
+        .a4-print-page.landscape-page {
+            width: 297mm;
+            min-height: 208mm;
+            max-height: 210mm;
+            padding: 5mm 6mm;
+            box-sizing: border-box;
+        }
+
+        .cards-grid-6 {
+            display: grid;
+            grid-template-columns: repeat(3, 74mm);
+            grid-template-rows: repeat(2, 98mm);
+            gap: 4mm 8mm;
+            justify-content: center;
+            align-content: center;
+            box-sizing: border-box;
+        }
+
+        /* === 8 CARDS PER A4 SHEET (Grid 4x2 Landscape A4 - ចតុកោណកែងស្តង់ដារ) === */
+        .cards-grid-8 {
+            display: grid;
+            grid-template-columns: repeat(4, 67mm);
+            grid-template-rows: repeat(2, 96mm);
+            gap: 4mm 4mm;
+            justify-content: center;
+            align-content: center;
+            box-sizing: border-box;
+        }
+
+        /* === 9 CARDS PER A4 SHEET (Grid 3x3 Equal Dimensions - ចតុកោណកែង) === */
+        .cards-grid-9 {
+            display: grid;
+            grid-template-columns: repeat(3, 63.5mm);
+            grid-template-rows: repeat(3, 91mm);
+            gap: 3.5mm 3.5mm;
+            justify-content: center;
+            align-content: center;
+            box-sizing: border-box;
+        }
+
+        /* Layout Switcher Buttons */
+        .batch-layout-selector {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .batch-layout-selector span {
+            font-size: 0.85rem;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .layout-opt-btn {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .layout-opt-btn:hover {
+            background: #f8fafc;
+            color: #0f172a;
+            border-color: #94a3b8;
+        }
+
+        .layout-opt-btn.active {
+            background: #7c3aed;
+            color: #ffffff;
+            font-weight: 700;
+            border-color: #7c3aed;
+            box-shadow: 0 2px 6px rgba(124, 58, 237, 0.3);
+        }
+
+        /* Individual Mini Card for Batch Grid (4-Card - 92mm x 134mm) */
+        .batch-id-card {
+            width: 92mm;
+            height: 134mm;
+            max-height: 134mm;
+            border: 3px solid var(--card-blue);
+            padding: 3px;
+            box-sizing: border-box;
+            position: relative;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden !important;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        /* Individual Mini Card for Batch Grid (6-Card Landscape Grid 3x2 - 74mm x 98mm) */
+        .batch-id-card.grid-6-card {
+            width: 74mm;
+            height: 98mm;
+            max-height: 98mm;
+            border: 2.2px solid var(--card-blue);
+            padding: 2.5px;
+            box-sizing: border-box;
+            position: relative;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden !important;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .batch-id-card.grid-6-card .batch-inner-border {
+            border: 0.9px solid var(--card-blue);
+            padding: 3.5px 6px;
+            box-sizing: border-box;
+        }
+
+        /* Individual Mini Card for Batch Grid (8-Card Landscape Grid 4x2 - 67mm x 96mm) */
+        .batch-id-card.grid-8-card {
+            width: 67mm;
+            height: 96mm;
+            max-height: 96mm;
+            border: 2px solid var(--card-blue);
+            padding: 2px;
+            box-sizing: border-box;
+            position: relative;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden !important;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .batch-id-card.grid-8-card .batch-inner-border {
+            border: 0.85px solid var(--card-blue);
+            padding: 3px 5px;
+            box-sizing: border-box;
+        }
+
+        /* Individual Mini Card for Batch Grid (9-Card 3x3 Pocket Size) */
+        .batch-id-card.grid-9-card {
+            width: 63.5mm;
+            height: 91mm;
+            max-height: 91mm;
+            border: 2px solid var(--card-blue);
+            padding: 2px;
+            box-sizing: border-box;
+            position: relative;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden !important;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .batch-id-card.grid-9-card .batch-inner-border {
+            border: 0.8px solid var(--card-blue);
+            padding: 3px 4px;
+            box-sizing: border-box;
+        }
+
+        .batch-inner-border {
+            border: 1px solid var(--card-blue);
+            padding: 6px 8px;
+            box-sizing: border-box;
+            position: relative;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            overflow: hidden !important;
+        }
+
+        .batch-id-card .card-watermark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('moeys-logo.png');
+            background-repeat: no-repeat;
+            background-position: center 48%;
+            background-size: 80% auto;
+            opacity: 0.20;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .batch-id-card .card-watermark img {
+            display: none;
+        }
+
+        /* Cutting marks on batch print */
+        .crop-mark-tl, .crop-mark-tr, .crop-mark-bl, .crop-mark-br {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-color: #94a3b8;
+            pointer-events: none;
+        }
+        .crop-mark-tl { top: -1px; left: -1px; border-top: 1px solid #64748b; border-left: 1px solid #64748b; }
+        .crop-mark-tr { top: -1px; right: -1px; border-top: 1px solid #64748b; border-right: 1px solid #64748b; }
+        .crop-mark-bl { bottom: -1px; left: -1px; border-bottom: 1px solid #64748b; border-left: 1px solid #64748b; }
+        .crop-mark-br { bottom: -1px; right: -1px; border-bottom: 1px solid #64748b; border-right: 1px solid #64748b; }
+
+        /* Modal for Customizing Stamp / Signature / Settings */
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .custom-modal.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 540px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.15rem;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+        .form-control:focus {
+            border-color: #0052cc;
+            outline: none;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+
+            *, *:before, *:after {
+                box-sizing: border-box !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .no-print, .top-navbar, .options-bar, .custom-modal, header {
+                display: none !important;
+            }
+
+            html, body {
+                background: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 210mm !important;
+                height: 100% !important;
+            }
+
+            .workspace-container {
+                padding: 0 !important;
+                margin: 0 !important;
+                min-height: auto !important;
+                display: block !important;
+            }
+
+            .id-card-wrapper {
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 15mm auto !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            @page {
+                size: auto;
+                margin: 0;
+            }
+
+            body.is-landscape-print {
+                width: 297mm !important;
+            }
+
+            .a4-print-page {
+                box-shadow: none !important;
+                padding: 8mm 6mm 6mm 6mm !important;
+                margin: 0 !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                min-height: 297mm !important;
+                max-height: 297mm !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                overflow: hidden !important;
+                box-sizing: border-box !important;
+                background: #ffffff !important;
+            }
+
+            .a4-print-page.landscape-page {
+                width: 297mm !important;
+                height: 210mm !important;
+                min-height: 210mm !important;
+                max-height: 210mm !important;
+                padding: 5mm 6mm !important;
+                margin: 0 !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                box-sizing: border-box !important;
+                overflow: hidden !important;
+                background: #ffffff !important;
+            }
+
+            .cards-grid-4 {
+                display: grid !important;
+                grid-template-columns: 92mm 92mm !important;
+                grid-template-rows: 134mm 134mm !important;
+                gap: 5mm 6mm !important;
+                justify-content: center !important;
+                align-content: center !important;
+                box-sizing: border-box !important;
+            }
+
+            .cards-grid-6 {
+                display: grid !important;
+                grid-template-columns: 74mm 74mm 74mm !important;
+                grid-template-rows: 98mm 98mm !important;
+                gap: 4mm 8mm !important;
+                justify-content: center !important;
+                align-content: center !important;
+                box-sizing: border-box !important;
+            }
+
+            .cards-grid-8 {
+                display: grid !important;
+                grid-template-columns: 67mm 67mm 67mm 67mm !important;
+                grid-template-rows: 96mm 96mm !important;
+                gap: 4mm 4mm !important;
+                justify-content: center !important;
+                align-content: center !important;
+                box-sizing: border-box !important;
+            }
+
+            .cards-grid-9 {
+                display: grid !important;
+                grid-template-columns: 63.5mm 63.5mm 63.5mm !important;
+                grid-template-rows: 91mm 91mm 91mm !important;
+                gap: 3.5mm 3.5mm !important;
+                justify-content: center !important;
+                align-content: center !important;
+                box-sizing: border-box !important;
+            }
+
+            .batch-id-card {
+                width: 92mm !important;
+                height: 134mm !important;
+                max-height: 134mm !important;
+                overflow: hidden !important;
+                position: relative !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                box-sizing: border-box !important;
+                background: #ffffff !important;
+            }
+
+            .batch-id-card.grid-6-card {
+                width: 74mm !important;
+                height: 98mm !important;
+                max-height: 98mm !important;
+                overflow: hidden !important;
+                position: relative !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                box-sizing: border-box !important;
+                background: #ffffff !important;
+            }
+
+            .batch-id-card.grid-6-card .batch-inner-border {
+                border: 0.9px solid var(--card-blue) !important;
+                padding: 3.5px 6px !important;
+                box-sizing: border-box !important;
+            }
+
+            .batch-id-card.grid-8-card {
+                width: 67mm !important;
+                height: 96mm !important;
+                max-height: 96mm !important;
+                overflow: hidden !important;
+                position: relative !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                box-sizing: border-box !important;
+                background: #ffffff !important;
+            }
+
+            .batch-id-card.grid-8-card .batch-inner-border {
+                border: 0.85px solid var(--card-blue) !important;
+                padding: 3px 5px !important;
+                box-sizing: border-box !important;
+            }
+
+            .batch-id-card.grid-9-card {
+                width: 63.5mm !important;
+                height: 91mm !important;
+                max-height: 91mm !important;
+                overflow: hidden !important;
+                position: relative !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                box-sizing: border-box !important;
+                background: #ffffff !important;
+            }
+
+            .batch-id-card.grid-9-card .batch-inner-border {
+                border: 0.8px solid var(--card-blue) !important;
+                padding: 3px 4px !important;
+                box-sizing: border-box !important;
+            }
+
+            .batch-inner-border {
+                overflow: hidden !important;
+                position: relative !important;
+                height: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            .card-watermark {
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                background-image: url('moeys-logo.png') !important;
+                background-repeat: no-repeat !important;
+                background-position: center 48% !important;
+                background-size: 80% auto !important;
+                opacity: 0.20 !important;
+                pointer-events: none !important;
+                z-index: 1 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .card-watermark img {
+                display: none !important;
+            }
+        }
+    </style>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+</head>
+<body>
+
+    <!-- TOP NAVBAR CONTROLS -->
+    <header class="top-navbar no-print">
+        <div class="toolbar-group">
+            <button class="nav-btn" onclick="window.location.href='index.html'" title="ត្រឡប់ទៅផ្ទាំងដើម">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span>ត្រឡប់ក្រោយ</span>
+            </button>
+            <div id="global-class-selector"></div>
+        </div>
+
+        <!-- Student Selector Controls -->
+        <div class="toolbar-group">
+            <button class="nav-btn" onclick="navigateStudent(-1)" title="សិស្សមុន (Previous)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <select id="student-picker" class="student-select" onchange="onStudentSelectChanged()">
+                <!-- Populated dynamically -->
+            </select>
+            <button class="nav-btn" onclick="navigateStudent(1)" title="សិស្សបន្ទាប់ (Next)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+        </div>
+
+        <!-- Actions -->
+        <div class="toolbar-group">
+            <button class="nav-btn nav-btn-amber" onclick="openSettingsModal()" title="កែសម្រួលព័ត៌មានទូទៅ ត្រា និងហត្ថលេខា">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>⚙️ ការកំណត់កាត</span>
+            </button>
+            <button class="nav-btn nav-btn-purple" onclick="toggleBatchPrintMode()" id="btn-toggle-batch" title="បោះពុម្ពកាតសិស្សទាំងអស់ក្នុងថ្នាក់លើក្រដាស A4">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                <span id="batch-btn-text">🖨️ បោះពុម្ពទាំងថ្នាក់ (A4 Grid)</span>
+            </button>
+            <div class="batch-layout-selector no-print" id="batch-layout-selector" style="display: none;">
+                <span>📋 ប្លង់បោះពុម្ព៖</span>
+                <button type="button" class="layout-opt-btn" id="btn-layout-4" onclick="setBatchGridSize(4)" title="៤ កាតក្នុង ១ សន្លឹក A4">
+                    📇 ៤ កាត
+                </button>
+                <button type="button" class="layout-opt-btn active" id="btn-layout-6" onclick="setBatchGridSize(6)" title="៦ កាតក្នុង ១ សន្លឹក A4 ផ្ដេក (ខ្នាតចតុកោណកែង ៣x២)">
+                    📑 ៦ កាត
+                </button>
+                <button type="button" class="layout-opt-btn" id="btn-layout-8" onclick="setBatchGridSize(8)" title="៨ កាតក្នុង ១ សន្លឹក A4 ផ្ដេក (ខ្នាតចតុកោណកែង ៤x២)">
+                    🏷️ ៨ កាត
+                </button>
+                <button type="button" class="layout-opt-btn" id="btn-layout-9" onclick="setBatchGridSize(9)" title="៩ កាតក្នុង ១ សន្លឹក A4 (ខ្នាតចតុកោណកែង ៣x៣)">
+                    💳 ៩ កាត
+                </button>
+            </div>
+            <button class="nav-btn" onclick="exportCardAsImage()" title="ទាញយកជារូបភាព PNG">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>🖼️ PNG</span>
+            </button>
+            <button class="nav-btn nav-btn-success" onclick="exportCardAsPDF()" title="ទាញយកជាឯកសារ PDF">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>📥 PDF</span>
+            </button>
+            <button class="nav-btn nav-btn-primary" onclick="printCardDocument()" title="បោះពុម្ព (Print)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                <span>🖨️ បោះពុម្ព (Print)</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- QUICK OPTIONS / HINTS BAR (Screen only) -->
+    <div class="options-bar no-print">
+        <div class="opt-item">
+            <span>💡 <strong>ជំនួយ៖</strong> លោកគ្រូ/អ្នកគ្រូអាចចុចលើអក្សរណាមួយលើកាតដើម្បីកែប្រែដោយផ្ទាល់ (Inline Editing) ឬចុចលើរូបថតដើម្បីផ្លាស់ប្តូររូបថតសិស្ស។</span>
+        </div>
+    </div>
+
+    <!-- HIDDEN INPUTS FOR UPLOADING ASSETS -->
+    <input type="file" id="student-photo-file" accept="image/*" onchange="handleStudentPhotoUpload(event)">
+    <input type="file" id="custom-stamp-file" accept="image/*" onchange="handleCustomStampUpload(event)">
+    <input type="file" id="custom-signature-file" accept="image/*" onchange="handleCustomSignatureUpload(event)">
+
+    <!-- MAIN WORKSPACE -->
+    <main class="workspace-container">
+        
+        <!-- === SINGLE CARD VIEW === -->
+        <div class="id-card-wrapper" id="single-card-view">
+            <div class="id-card-frame" id="printable-card-element">
+                <div class="id-card-inner-border">
+
+                    <!-- Watermark Layer -->
+                    <div class="card-watermark" id="watermark-layer">
+                        <img src="moeys-logo.png" alt="MoEYS Watermark" style="width: 100%; height: auto; object-fit: contain;">
+                    </div>
+
+                    <!-- Foreground Content -->
+                    <div class="card-content-layer">
+                        
+                        <!-- 1. TOP HEADER -->
+                        <div class="card-header-block">
+                            <div class="header-top-row">
+                                <!-- MoEYS Logo Left -->
+                                <div class="moeys-logo-box" onclick="openSettingsModal()" title="ស្លាកសញ្ញាក្រសួងអប់រំ យុវជន និងកីឡា">
+                                    <img src="moeys-logo.png" alt="MoEYS Logo" class="moeys-logo-svg" style="width: 100%; height: 100%; object-fit: contain;">
+                                </div>
+
+                                <!-- Center Motto -->
+                                <div class="national-motto-area">
+                                    <div class="motto-line-1">ព្រះរាជាណាចក្រកម្ពុជា</div>
+                                    <div class="motto-line-2">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+                                    <img src="header-divider.png" alt="divider" class="motto-ribbon-divider">
+                                </div>
+
+                                <!-- Balance Spacer Right -->
+                                <div class="header-spacer-box"></div>
+                            </div>
+
+                            <!-- Department & Province Subheader -->
+                            <div class="dept-prov-line">
+                                <input type="text" id="card-dept-prov" class="dept-prov-text" value="មន្ទីរអប់រំយុវជន និង កីឡា ខេត្ត កំពង់ធំ" title="ចុចដើម្បីកែឈ្មោះមន្ទីរ និងខេត្ត">
+                            </div>
+
+                            <!-- Blue Separator -->
+                            <div class="card-blue-divider"></div>
+                        </div>
+
+                        <!-- 2. CARD TITLE SECTION -->
+                        <div class="card-title-section">
+                            <h1 class="card-main-title">ប័ណ្ណសម្គាល់ខ្លួនសិស្ស</h1>
+                            <div class="card-academic-year">
+                                <span>ឆ្នាំសិក្សា </span>
+                                <input type="text" id="card-academic-year-val" class="inline-editable-header" value="២០២៥ ~ ២០២៦" style="width: 140px;" title="ចុចដើម្បីកែប្រែឆ្នាំសិក្សា">
+                            </div>
+                            <div class="card-class-level">
+                                <span>ថ្នាក់ទី </span>
+                                <input type="text" id="card-class-name-val" class="inline-editable-header" value="៥ ក" style="width: 70px;" title="ចុចដើម្បីកែប្រែថ្នាក់">
+                            </div>
+                        </div>
+
+                        <!-- 3. STUDENT PROFILE INFORMATION -->
+                        <div class="student-info-section">
+                            <!-- Name & Gender -->
+                            <div class="info-row info-row-split">
+                                <div class="split-col" style="flex: 1;">
+                                    <span class="info-label">គោត្តនាម នាម :</span>
+                                    <input type="text" id="card-student-name" class="info-value" value="សុខ សុផាវត្តី" style="flex: 1;" title="កែប្រែឈ្មោះសិស្ស">
+                                </div>
+                                <div class="split-col" style="width: 80px; justify-content: flex-end;">
+                                    <span class="info-label">ភេទ :</span>
+                                    <input type="text" id="card-student-gender" class="info-value" value="ស្រី" style="width: 40px;" title="កែប្រែភេទ">
+                                </div>
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div class="info-row">
+                                <span class="info-label">ថ្ងៃខែឆ្នាំកំណើត :</span>
+                                <input type="text" id="card-student-dob" class="info-value" value="១២ ឧសភា ១៩៩៩" style="flex: 1;" title="កែប្រែថ្ងៃខែឆ្នាំកំណើត">
+                            </div>
+
+                            <!-- Place of Birth -->
+                            <div class="info-row">
+                                <span class="info-label">ទីកន្លែងកំណើត :</span>
+                                <input type="text" id="card-student-pob" class="info-value" value="ផ្លុង សន្ទុក កំពង់ធំ" style="flex: 1;" title="កែប្រែទីកន្លែងកំណើត">
+                            </div>
+
+                            <!-- Parents -->
+                            <div class="info-row info-row-split">
+                                <div class="split-col" style="flex: 1;">
+                                    <span class="info-label">ឪពុកឈ្មោះ :</span>
+                                    <input type="text" id="card-father-name" class="info-value" value="ភិន សុដ" style="flex: 1;" title="កែប្រែឈ្មោះឪពុក">
+                                </div>
+                                <div class="split-col" style="flex: 1;">
+                                    <span class="info-label">ម្តាយឈ្មោះ :</span>
+                                    <input type="text" id="card-mother-name" class="info-value" value="ជួន ស្រង" style="flex: 1;" title="កែប្រែឈ្មោះម្តាយ">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. BOTTOM SECTION: PHOTO & SIGNATURE/STAMP -->
+                        <div class="card-bottom-section">
+                            <!-- Left: Photo Frame & ID -->
+                            <div class="photo-and-id-column">
+                                <div class="id-bar-header">
+                                    <input type="text" id="card-student-id" class="id-bar-text" value="ID:0011001" title="ចុចដើម្បីកែលេខសម្គាល់សិស្ស">
+                                </div>
+                                <div class="photo-container-box" id="card-photo-box" onclick="triggerStudentPhotoUpload()" title="ចុចដើម្បីប្តូររូបថតសិស្ស">
+                                    <img id="card-photo-img" src="" alt="Student Photo" style="display: none;">
+                                    <div id="card-photo-placeholder" class="photo-placeholder">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 2px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                        <div>រូបថត ៤x៦</div>
+                                        <div style="font-size: 7pt; color: #94a3b8;">ចុចដើម្បីដាក់រូប</div>
+                                    </div>
+                                    <div class="photo-hover-hint">ប្តូររូបថត</div>
+                                </div>
+                            </div>
+
+                            <!-- Right: School Name, Dates, Stamp, Principal -->
+                            <div class="card-sign-column">
+                                <!-- Student of School title -->
+                                <div class="student-of-school-title">
+                                    <span>ជាសិស្ស </span>
+                                    <input type="text" id="card-school-name" class="school-green-input" value="បឋមសិក្សា ផ្លុង" title="ចុចដើម្បីកែប្រែឈ្មោះសាលា">
+                                </div>
+
+                                <!-- Dates -->
+                                <div class="dates-wrapper">
+                                    <div class="lunar-date-line">
+                                        <input type="text" id="card-lunar-date" class="inline-date-input" value="ថ្ងៃសុក្រ ១០រោច ខែចេត្រ ឆ្នាំឆ្លូវ ត្រីស័ក ព.ស.២៥៦៤" title="កាលបរិច្ឆេទចន្ទគតិ">
+                                    </div>
+                                    <div class="solar-date-line">
+                                        <input type="text" id="card-solar-date" class="inline-date-input" value="សន្ទុក ថ្ងៃទី ២៦ ខែមីនា ឆ្នាំ២០២៥" title="កាលបរិច្ឆេទសុរិយគតិ">
+                                    </div>
+                                </div>
+
+                                <!-- Director Title -->
+                                <div class="director-role-title">នាយកសាលា</div>
+
+                                <!-- Stamp & Signature Area -->
+                                <div class="stamp-signature-overlay-box">
+                                    <!-- Custom Red Stamp (if uploaded) -->
+                                    <div id="stamp-container" style="display: none;">
+                                        <img id="custom-stamp-img" class="school-stamp-img" style="display: none;" alt="Custom Stamp">
+                                    </div>
+
+                                    <!-- Custom Principal Signature (if uploaded) -->
+                                    <div id="signature-container" style="display: none;">
+                                        <img id="custom-signature-img" class="principal-signature-img" style="display: none;" alt="Custom Signature">
+                                    </div>
+                                </div>
+
+                                <!-- Principal Name in Red -->
+                                <div class="principal-name-red">
+                                    <input type="text" id="card-principal-name" class="principal-name-input" value="" placeholder="ឈ្មោះនាយកសាលា..." title="កែប្រែ ឬលុបឈ្មោះនាយកសាលា">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- === BATCH PRINT VIEW (A4 Page Grid 4 Cards Per Page) === -->
+        <div id="batch-print-container">
+            <!-- Dynamically populated when batch printing is triggered -->
+        </div>
+
+    </main>
+
+    <!-- SETTINGS & CUSTOMIZATION MODAL -->
+    <div class="custom-modal" id="settings-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0052cc" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <span>ការកំណត់កាត និងព័ត៌មានទូទៅ</span>
+                </h3>
+                <button type="button" class="nav-btn" onclick="closeSettingsModal()" style="padding: 4px 8px;">✕</button>
+            </div>
+
+            <div class="form-group">
+                <label>មន្ទីរអប់រំ និងខេត្ត (Department / Province)</label>
+                <input type="text" id="modal-dept-prov" class="form-control" placeholder="មន្ទីរអប់រំយុវជន និង កីឡា ខេត្ត កណ្ដាល">
+            </div>
+
+            <div class="form-group">
+                <label>ឈ្មោះសាលា (School Name)</label>
+                <input type="text" id="modal-school-name" class="form-control" placeholder="វិ.ខេមរបុរាណនារាញ្ញ ឬ សាលាបឋមសិក្សា...">
+            </div>
+
+            <div class="form-group">
+                <label>ឆ្នាំសិក្សា (Academic Year)</label>
+                <input type="text" id="modal-academic-year" class="form-control" placeholder="២០២១ ~ ២០២២">
+            </div>
+
+            <div class="form-group">
+                <label>ទីកន្លែងចុះកាលបរិច្ឆេទ (Location Prefix)</label>
+                <input type="text" id="modal-location-prefix" class="form-control" placeholder="ឈូងលាភ ឬ ភ្នំពេញ ឬ កណ្តាល">
+            </div>
+
+            <div class="form-group">
+                <label>ឈ្មោះនាយកសាលា (Principal Name)</label>
+                <input type="text" id="modal-principal-name" class="form-control" placeholder="ឈ្មោះនាយកសាលា... (អាចទុកទំនេរបាន)">
+            </div>
+
+            <div style="border-top: 1px solid #e2e8f0; padding-top: 12px; margin-top: 16px;">
+                <h4 style="margin: 0 0 10px; font-size: 0.95rem; color: #1e293b;">ជម្រើសត្រា ហត្ថលេខា និង Watermark</h4>
+                
+                <div style="display: flex; gap: 15px; margin-bottom: 12px; flex-wrap: wrap;">
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.88rem;">
+                        <input type="checkbox" id="modal-toggle-stamp" onchange="toggleStampVisibility(this.checked)">
+                        <span>បង្ហាញត្រាសាលា (Show Stamp)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.88rem;">
+                        <input type="checkbox" id="modal-toggle-signature" onchange="toggleSignatureVisibility(this.checked)">
+                        <span>បង្ហាញហត្ថលេខា (Show Signature)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.88rem;">
+                        <input type="checkbox" id="modal-toggle-watermark" checked onchange="toggleWatermarkVisibility(this.checked)">
+                        <span>បង្ហាញ Watermark</span>
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button type="button" class="nav-btn" onclick="triggerCustomStampUpload()" style="font-size: 0.82rem;">
+                        <span>📤 ប្តូររូបត្រា (Custom Stamp)</span>
+                    </button>
+                    <button type="button" class="nav-btn" onclick="triggerCustomSignatureUpload()" style="font-size: 0.82rem;">
+                        <span>📤 ប្តូររូបហត្ថលេខា (Custom Signature)</span>
+                    </button>
+                    <button type="button" class="nav-btn" onclick="resetStampAndSignature()" style="font-size: 0.82rem; color: #dc2626;">
+                        <span>🔄 កំណត់ឡើងវិញ</span>
+                    </button>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 14px;">
+                <button type="button" class="nav-btn" onclick="closeSettingsModal()">បោះបង់</button>
+                <button type="button" class="nav-btn nav-btn-primary" onclick="saveSettingsModal()">រក្សាទុកការកំណត់</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student ID Card Logic Script -->
+    <script src="student-id-card.js"></script>
+</body>
+</html>
+
+

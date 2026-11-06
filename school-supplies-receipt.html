@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បញ្ជីទទួលសម្ភារសាលា - School Supplies Receipt List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Siemreap&family=Kantumruy+Pro:wght@400;500;600;700&family=Moul&family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- PDF and Excel Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
+
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+    <script src="khmer-calendar.js"></script>
+
+    <style>
+        :root {
+            --paper-font: 'Battambang', 'Khmer OS Battambang', 'Siemreap', 'Khmer OS Battambang', sans-serif;
+            --muol-font: 'Khmer OS Muol Light', 'Moul', 'Khmer OS Muol', cursive;
+            --title-green: #15803d;
+            --title-red: #991b1b;
+            --item-blue: #1d4ed8;
+            --border-color: #334155;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            font-family: var(--paper-font);
+            margin: 0;
+            padding: 0;
+            color: #0f172a;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .moul-font { font-family: var(--muol-font); font-weight: normal; }
+        .regular-font { font-family: var(--paper-font); }
+
+        /* Remove default pseudo elements */
+        h1::before, h1::after,
+        h2::before, h2::after,
+        h3::before, h3::after,
+        h4::before, h4::after {
+            display: none !important;
+            content: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        /* Top Action Toolbar */
+        .no-print-toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #cbd5e1;
+            padding: 10px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .toolbar-left, .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 500;
+            font-family: var(--paper-font);
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            color: #334155;
+            background: #f8fafc;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .toolbar-btn:hover {
+            background: #f1f5f9;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+        }
+
+        .toolbar-btn.btn-primary {
+            background: linear-gradient(135deg, #15803d, #16a34a);
+            color: #ffffff;
+            border: none;
+        }
+        .toolbar-btn.btn-primary:hover {
+            background: linear-gradient(135deg, #166534, #15803d);
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+        }
+
+        .toolbar-btn.btn-excel {
+            background: linear-gradient(135deg, #0d9488, #0f766e);
+            color: #ffffff;
+            border: none;
+        }
+        .toolbar-btn.btn-excel:hover {
+            background: linear-gradient(135deg, #0f766e, #115e59);
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+        }
+
+        .toolbar-btn.btn-pdf {
+            background: linear-gradient(135deg, #ea580c, #c2410c);
+            color: #ffffff;
+            border: none;
+        }
+        .toolbar-btn.btn-pdf:hover {
+            background: linear-gradient(135deg, #c2410c, #9a3412);
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+        }
+
+        .toolbar-btn.btn-print {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff;
+            border: none;
+        }
+        .toolbar-btn.btn-print:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .class-select-box {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1.5px solid #cbd5e1;
+            font-family: var(--paper-font);
+            font-size: 13.5px;
+            background: #ffffff;
+            color: #0f172a;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+        }
+        .class-select-box:focus {
+            border-color: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+        }
+
+        /* A4 Page Container */
+        .a4-page-wrapper {
+            padding: 20px 10px 40px;
+            display: flex;
+            justify-content: center;
+            box-sizing: border-box;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .a4-sheet {
+            width: 210mm;
+            max-width: 100%;
+            min-height: 297mm;
+            background: #ffffff;
+            margin: 0 auto;
+            padding: 12mm 14mm 12mm 14mm;
+            box-sizing: border-box;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Editable field */
+        .editable-field {
+            outline: none;
+            border-bottom: 1px dotted #94a3b8;
+            padding: 0 4px;
+            transition: all 0.2s;
+            display: inline-block;
+            min-width: 60px;
+        }
+        .editable-field:hover, .editable-field:focus {
+            background-color: #f0fdf4;
+            border-bottom: 1.5px solid #16a34a;
+        }
+
+        /* Top Header Grid */
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+            position: relative;
+        }
+
+        .school-info-left {
+            font-size: 10.5pt;
+            line-height: 1.65;
+            color: #1e293b;
+            font-family: var(--muol-font);
+            width: 48%;
+            text-align: left;
+        }
+        .school-info-left .info-row {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            white-space: nowrap;
+        }
+        .school-info-left span.label {
+            white-space: nowrap;
+        }
+
+        .national-motto-center {
+            text-align: center !important;
+            width: 100% !important;
+            margin: 0 auto 6px auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        .national-motto-center h2 {
+            font-family: var(--muol-font) !important;
+            font-size: 12.5pt !important;
+            margin: 0 auto !important;
+            color: #1e293b !important;
+            font-weight: normal !important;
+            letter-spacing: 0.5px !important;
+            line-height: 1.35 !important;
+            text-align: center !important;
+            display: block !important;
+            width: 100% !important;
+        }
+        .national-motto-center h3 {
+            font-family: var(--muol-font) !important;
+            font-size: 11.5pt !important;
+            margin: 3px auto 3px auto !important;
+            color: #1e293b !important;
+            font-weight: normal !important;
+            letter-spacing: 0.5px !important;
+            line-height: 1.35 !important;
+            text-align: center !important;
+            display: block !important;
+            width: 100% !important;
+        }
+        .motto-divider {
+            display: block !important;
+            margin: 2px auto 0 auto !important;
+            height: 16px !important;
+            max-width: 140px !important;
+            width: auto !important;
+            object-fit: contain !important;
+        }
+
+        /* Document Title Section */
+        .doc-title-section {
+            text-align: center;
+            margin: 4px 0 8px 0;
+        }
+        .doc-title-section h1 {
+            font-family: var(--muol-font);
+            font-size: 15.5pt;
+            color: var(--title-green);
+            margin: 0 0 2px 0;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+        }
+        .doc-title-section .sub-eng-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 9pt;
+            font-weight: 700;
+            color: #475569;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        /* Meta Information */
+        .meta-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10pt;
+            margin: 6px 0 8px 0;
+            padding: 4px 0;
+            border-bottom: 1px dashed #cbd5e1;
+            width: 100%;
+        }
+
+        /* Main Table Container */
+        .inventory-table-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 4px 0 8px 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .inventory-table {
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: unset !important;
+            min-width: 0 !important;
+            border-collapse: collapse;
+            border: 1.5px solid var(--border-color);
+            table-layout: fixed !important;
+            font-size: 9.8pt;
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        .inventory-table th, 
+        .inventory-table td {
+            border: 1px solid var(--border-color);
+            padding: 4px 4px;
+            vertical-align: middle;
+            box-sizing: border-box;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .inventory-table th {
+            background-color: #f8fafc;
+            color: #0f172a;
+            font-family: var(--muol-font);
+            font-size: 9.5pt;
+            font-weight: normal;
+            text-align: center;
+            padding: 5px 2px;
+        }
+
+        .inventory-table td.col-num {
+            text-align: center;
+            font-family: var(--paper-font);
+            font-size: 10pt;
+            color: #0f172a;
+            padding: 3px 1px;
+        }
+
+        .inventory-table td.col-name {
+            text-align: left;
+            padding-left: 8px;
+            padding-right: 4px;
+            color: var(--item-blue);
+            font-family: var(--paper-font);
+            font-weight: 500;
+            outline: none;
+            cursor: text;
+        }
+        .inventory-table td.col-name:focus {
+            background-color: #eff6ff;
+            outline: 1px dashed #3b82f6;
+        }
+
+        .inventory-table td.col-qty {
+            text-align: center;
+            font-family: var(--paper-font);
+            color: #0f172a;
+            outline: none;
+            cursor: text;
+            font-weight: 600;
+            padding: 3px 2px;
+        }
+        .inventory-table td.col-qty:focus {
+            background-color: #f0fdf4;
+            outline: 1px dashed #16a34a;
+        }
+
+        .status-checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin: 0 4px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 9pt;
+            white-space: nowrap;
+        }
+        .status-checkbox-label input[type="checkbox"] {
+            cursor: pointer;
+            width: 13px;
+            height: 13px;
+            accent-color: #16a34a;
+            margin: 0;
+            vertical-align: middle;
+        }
+
+        .inventory-table td.col-other {
+            text-align: left;
+            padding-left: 6px;
+            padding-right: 4px;
+            font-family: var(--paper-font);
+            color: #334155;
+            outline: none;
+            cursor: text;
+            position: relative;
+        }
+        .inventory-table td.col-other:focus {
+            background-color: #fffbeb;
+            outline: 1px dashed #f59e0b;
+        }
+
+        .cell-content-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            min-height: 18px;
+        }
+
+        .cell-editable-note {
+            flex: 1;
+            outline: none;
+            text-align: left;
+            min-height: 18px;
+        }
+
+        .row-action-btn {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            border-radius: 4px;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 11px;
+            padding: 1px 4px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            margin-left: 4px;
+            transition: all 0.2s;
+        }
+        tr:hover .row-action-btn {
+            display: inline-flex;
+        }
+        .row-action-btn:hover {
+            background: #ef4444;
+            color: #ffffff;
+        }
+
+        /* Signatures Section */
+        .signatures-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 10px;
+            padding: 0 4px;
+            font-size: 10.5pt;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .sig-block {
+            width: 32%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .sig-date-line {
+            font-size: 9.8pt;
+            color: #0f172a;
+            margin-bottom: 2px;
+            line-height: 1.4;
+            white-space: nowrap;
+        }
+
+        .sig-role {
+            font-family: var(--muol-font);
+            font-size: 10.5pt;
+            color: #0f172a;
+            margin-bottom: 45px;
+        }
+
+        .sig-name {
+            font-family: var(--muol-font);
+            font-size: 10.5pt;
+            color: #0f172a;
+            border-top: 1px dotted #94a3b8;
+            padding-top: 4px;
+            width: 85%;
+            min-height: 22px;
+        }
+
+        .usage-notes {
+            margin-top: 8px;
+            padding: 5px 10px;
+            background: #f8fafc;
+            border-radius: 6px;
+            border-left: 3px solid #16a34a;
+            font-size: 8.5pt;
+            color: #334155;
+            line-height: 1.4;
+        }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 6mm 8mm 6mm 8mm;
+            }
+
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .no-print-toolbar,
+            .no-print,
+            .row-action-btn {
+                display: none !important;
+            }
+
+            .a4-page-wrapper {
+                padding: 0 !important;
+                margin: 0 !important;
+                display: block !important;
+            }
+
+            .a4-sheet {
+                width: 100% !important;
+                min-height: auto !important;
+                max-height: 100vh !important;
+                margin: 0 !important;
+                padding: 4mm 6mm !important;
+                box-shadow: none !important;
+                border: none !important;
+                page-break-after: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            .editable-field {
+                border-bottom: none !important;
+            }
+
+            .inventory-table td.col-name,
+            .inventory-table td.col-qty,
+            .inventory-table td.col-other {
+                outline: none !important;
+            }
+
+            .usage-notes {
+                background: #f1f5f9 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Action Toolbar (Hidden in Print) -->
+    <div class="no-print-toolbar">
+        <div class="toolbar-left">
+            <a href="index.html" class="toolbar-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                ទំព័រដើម
+            </a>
+            <select id="class-selector" class="class-select-box" onchange="onClassChanged(this.value)">
+                <!-- populated by JS -->
+            </select>
+            <button type="button" class="toolbar-btn" onclick="addNewRow()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                បន្ថែមសម្ភារ
+            </button>
+            <button type="button" class="toolbar-btn" onclick="resetToTemplate()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
+                ទម្រង់ដើម
+            </button>
+        </div>
+        <div class="toolbar-right">
+            <button type="button" class="toolbar-btn btn-excel" onclick="exportToExcel()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Excel
+            </button>
+            <button type="button" class="toolbar-btn btn-pdf" onclick="exportToPdf()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                PDF
+            </button>
+            <button type="button" class="toolbar-btn btn-print" onclick="window.print()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                បោះពុម្ព
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Printable A4 Page Container -->
+    <div class="a4-page-wrapper">
+        <div class="a4-sheet" id="receipt-printable-sheet">
+            <div>
+                <!-- Top Header -->
+                <div class="doc-header">
+                    <div class="national-motto-center">
+                        <h2>ព្រះរាជាណាចក្រកម្ពុជា</h2>
+                        <h3>ជាតិ សាសនា ព្រះមហាក្សត្រ</h3>
+                        <img src="header-divider.png" alt="divider" class="motto-divider" onerror="this.style.display='none'">
+                    </div>
+                </div>
+
+                <!-- Left Hierarchy Info -->
+                <div class="school-info-left" style="margin-top: -30px; margin-bottom: 2px;">
+                    <div class="info-row">
+                        <span class="label">ក្រសួងអប់រំ យុវជន និងកីឡា</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">មន្ទីរអប់រំ យុវជន និងកីឡា ខេត្ត/រាជធានី</span>
+                        <span class="editable-field" contenteditable="true" id="f-province">កំពង់ធំ</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">ការិយាល័យអប់រំ យុវជន និងកីឡា ស្រុក/ក្រុង/ខណ្ឌ</span>
+                        <span class="editable-field" contenteditable="true" id="f-district">សន្ទុក</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">សាលាបឋមសិក្សា</span>
+                        <span class="editable-field" contenteditable="true" id="f-school">ផ្លុង</span>
+                    </div>
+                </div>
+
+                <!-- Main Document Title -->
+                <div class="doc-title-section">
+                    <h1>បញ្ជីទទួលសម្ភារសាលា</h1>
+                    <div class="sub-eng-title">SCHOOL SUPPLIES RECEIPT LIST</div>
+                </div>
+
+                <!-- Meta Info -->
+                <div class="meta-info-row">
+                    <div>
+                        <strong>ឈ្មោះអ្នកទទួល/ថ្នាក់៖</strong> 
+                        <span class="editable-field" contenteditable="true" id="f-receiver" style="min-width: 160px; font-weight: 600;">ថ្នាក់ទី ១ក</span>
+                    </div>
+                    <div>
+                        <strong>កាលបរិច្ឆេទ៖</strong> 
+                        <span class="editable-field" contenteditable="true" id="f-date">ថ្ងៃទី ...... ខែ ................ ឆ្នាំ ២០២៦</span>
+                    </div>
+                </div>
+
+                <!-- Main Inventory Table -->
+                <div class="inventory-table-container">
+                    <table class="inventory-table" id="supplies-table">
+                        <colgroup>
+                            <col style="width: 7%;">
+                            <col style="width: 40%;">
+                            <col style="width: 18%;">
+                            <col style="width: 21%;">
+                            <col style="width: 14%;">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>ល.រ</th>
+                                <th>ឈ្មោះសម្ភារ</th>
+                                <th>ចំនួន (តួលេខ)</th>
+                                <th>ស្ថានភាពសម្ភារ</th>
+                                <th>ផ្សេងៗ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supplies-table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Signatures Section -->
+            <div>
+                <div class="signatures-section">
+                    <div class="sig-block">
+                        <div class="sig-date-line">ថ្ងៃទី ...... ខែ ...... ឆ្នាំ ២០២៦</div>
+                        <div class="sig-role">អ្នកប្រគល់សម្ភារ</div>
+                        <div class="sig-name editable-field" contenteditable="true" id="f-giver-name">................................</div>
+                    </div>
+                    <div class="sig-block">
+                        <div class="sig-date-line">ថ្ងៃទី ...... ខែ ...... ឆ្នាំ ២០២៦</div>
+                        <div class="sig-role">អ្នកទទួលសម្ភារ</div>
+                        <div class="sig-name editable-field" contenteditable="true" id="f-receiver-name">................................</div>
+                    </div>
+                    <div class="sig-block">
+                        <div class="sig-date-line">ថ្ងៃទី ...... ខែ ...... ឆ្នាំ ២០២៦</div>
+                        <div class="sig-role">បានឃើញ និងឯកភាព<br><span style="font-size: 9pt; font-family: var(--paper-font); font-weight: normal;">នាយក/នាយិកាសាលា</span></div>
+                        <div class="sig-name editable-field" contenteditable="true" id="f-director-name">................................</div>
+                    </div>
+                </div>
+
+                <!-- Usage Notes -->
+                <div class="usage-notes">
+                    <strong>💡 របៀបប្រើប្រាស់៖</strong><br>
+                    • <strong>ស្ថានភាពសម្ភារ៖</strong> គូសសញ្ញា (✔) លើប្រអប់ <strong>ថ្មី</strong> ឬ <strong>ប្រើរួច</strong> ដើម្បីបញ្ជាក់ពីសភាពជាក់ស្តែងនៃសម្ភារនីមួយៗ។
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const defaultItems = [
+            { no: "១", name: "សៀវភៅសរសេរ", qtyNum: "........... ក្បាល", isNew: true, isUsed: false, note: "" },
+            { no: "២", name: "ប៊ិច (ខៀវ/ក្រហម)", qtyNum: "........... ដើម", isNew: true, isUsed: false, note: "" },
+            { no: "៣", name: "ខ្មៅដៃ", qtyNum: "........... ដើម", isNew: true, isUsed: false, note: "" },
+            { no: "៤", name: "ជ័រលុប", qtyNum: "........... ដុំ", isNew: true, isUsed: false, note: "" },
+            { no: "៥", name: "បន្ទាត់", qtyNum: "........... ដើម", isNew: true, isUsed: false, note: "" },
+            { no: "៦", name: "កាតាប/កាបូបស្ពាយ", qtyNum: "........... ភ្នែក", isNew: true, isUsed: false, note: "" },
+            { no: "៧", name: "សៀវភៅពុម្ព (មុខវិជ្ជា៖...............)", qtyNum: "........... ក្បាល", isNew: false, isUsed: true, note: "" },
+            { no: "៨", name: "ឧបករណ៍វាស់ (ប្រទាក់/ដែកឈូស)", qtyNum: "........... ប្រអប់", isNew: true, isUsed: false, note: "" },
+            { no: "៩", name: "....................................................", qtyNum: "..................", isNew: false, isUsed: false, note: "" },
+            { no: "១០", name: "....................................................", qtyNum: "..................", isNew: false, isUsed: false, note: "" }
+        ];
+
+        let currentItems = JSON.parse(JSON.stringify(defaultItems));
+
+        function toKhmerNum(num) {
+            const khmerDigits = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
+            return String(num).split('').map(d => khmerDigits[parseInt(d)] || d).join('');
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('supplies-table-body');
+            tbody.innerHTML = '';
+
+            currentItems.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="col-num" style="font-weight: 600;">${toKhmerNum(idx + 1)}</td>
+                    <td class="col-name item-name" contenteditable="true" onblur="updateItem(${idx}, 'name', this.innerText)">${item.name}</td>
+                    <td class="col-qty" contenteditable="true" onblur="updateItem(${idx}, 'qtyNum', this.innerText)">${item.qtyNum}</td>
+                    <td>
+                        <label class="status-checkbox-label">
+                            <input type="checkbox" ${item.isNew ? 'checked' : ''} onchange="updateCheckbox(${idx}, 'isNew', this.checked)"> ថ្មី
+                        </label>
+                        <label class="status-checkbox-label">
+                            <input type="checkbox" ${item.isUsed ? 'checked' : ''} onchange="updateCheckbox(${idx}, 'isUsed', this.checked)"> ប្រើរួច
+                        </label>
+                    </td>
+                    <td class="col-other">
+                        <div class="cell-content-wrap">
+                            <div class="cell-editable-note" contenteditable="true" onblur="updateItem(${idx}, 'note', this.innerText)">${item.note || ''}</div>
+                            <button type="button" class="row-action-btn no-print" title="លុបជួរនេះ" onclick="deleteRow(${idx})">✕</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateItem(index, key, value) {
+            if (currentItems[index]) {
+                currentItems[index][key] = value;
+                saveLocal();
+            }
+        }
+
+        function updateCheckbox(index, key, value) {
+            if (currentItems[index]) {
+                currentItems[index][key] = value;
+                saveLocal();
+            }
+        }
+
+        function addNewRow() {
+            currentItems.push({
+                no: toKhmerNum(currentItems.length + 1),
+                name: "....................................................",
+                qtyNum: "..................",
+                isNew: false,
+                isUsed: false,
+                note: ""
+            });
+            renderTable();
+            saveLocal();
+        }
+
+        function deleteRow(index) {
+            if (confirm('តើអ្នកពិតជាចង់លុបសម្ភារនេះមែនទេ?')) {
+                currentItems.splice(index, 1);
+                renderTable();
+                saveLocal();
+            }
+        }
+
+        function resetToTemplate() {
+            if (confirm('តើអ្នកចង់កំណត់ទម្រង់សម្ភារឡើងវិញជាគំរូដើមឬទេ?')) {
+                currentItems = JSON.parse(JSON.stringify(defaultItems));
+                renderTable();
+                saveLocal();
+            }
+        }
+
+        function saveLocal() {
+            const classKey = document.getElementById('class-selector').value || 'default';
+            const dataToSave = {
+                items: currentItems,
+                province: document.getElementById('f-province').innerText,
+                district: document.getElementById('f-district').innerText,
+                school: document.getElementById('f-school').innerText,
+                receiver: document.getElementById('f-receiver').innerText,
+                date: document.getElementById('f-date').innerText,
+                giverName: document.getElementById('f-giver-name').innerText,
+                receiverName: document.getElementById('f-receiver-name').innerText,
+                directorName: document.getElementById('f-director-name').innerText
+            };
+            localStorage.setItem(`school_supplies_receipt_${classKey}`, JSON.stringify(dataToSave));
+        }
+
+        function loadLocal() {
+            const classKey = document.getElementById('class-selector').value || 'default';
+            const saved = localStorage.getItem(`school_supplies_receipt_${classKey}`);
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed)) {
+                        currentItems = parsed;
+                    } else {
+                        currentItems = parsed.items || JSON.parse(JSON.stringify(defaultItems));
+                        if (parsed.province) document.getElementById('f-province').innerText = parsed.province;
+                        if (parsed.district) document.getElementById('f-district').innerText = parsed.district;
+                        if (parsed.school) document.getElementById('f-school').innerText = parsed.school;
+                        if (parsed.receiver) document.getElementById('f-receiver').innerText = parsed.receiver;
+                        if (parsed.date) document.getElementById('f-date').innerText = parsed.date;
+                        if (parsed.giverName) document.getElementById('f-giver-name').innerText = parsed.giverName;
+                        if (parsed.receiverName) document.getElementById('f-receiver-name').innerText = parsed.receiverName;
+                        if (parsed.directorName) document.getElementById('f-director-name').innerText = parsed.directorName;
+                    }
+                } catch(e) {
+                    currentItems = JSON.parse(JSON.stringify(defaultItems));
+                }
+            } else {
+                currentItems = JSON.parse(JSON.stringify(defaultItems));
+            }
+            renderTable();
+        }
+
+        function initClassSelector() {
+            const selector = document.getElementById('class-selector');
+            selector.innerHTML = '';
+
+            const classes = (window.classManager && window.classManager.getClasses) ? window.classManager.getClasses() : [
+                { id: '1a', name: 'ថ្នាក់ទី ១ក' },
+                { id: '2a', name: 'ថ្នាក់ទី ២ក' },
+                { id: '3a', name: 'ថ្នាក់ទី ៣ក' },
+                { id: '4a', name: 'ថ្នាក់ទី ៤ក' },
+                { id: '5a', name: 'ថ្នាក់ទី ៥ក' },
+                { id: '6a', name: 'ថ្នាក់ទី ៦ក' }
+            ];
+
+            classes.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.id || c;
+                opt.textContent = c.name || c;
+                selector.appendChild(opt);
+            });
+
+            const curClass = (window.classManager && window.classManager.getCurrentClass) ? window.classManager.getCurrentClass() : classes[0].id;
+            selector.value = curClass;
+            updateClassLabels(selector.options[selector.selectedIndex]?.text || 'ថ្នាក់ទី ១ក');
+        }
+
+        function onClassChanged(val) {
+            if (window.classManager && window.classManager.setCurrentClass) {
+                window.classManager.setCurrentClass(val);
+            }
+            const selector = document.getElementById('class-selector');
+            updateClassLabels(selector.options[selector.selectedIndex]?.text || val);
+            loadLocal();
+        }
+
+        function updateClassLabels(className) {
+            const r = document.getElementById('f-receiver');
+            if (r && (!r.innerText || r.innerText.includes('ថ្នាក់ទី') || r.innerText.trim() === '')) {
+                r.innerText = className;
+            }
+        }
+
+        function exportToPdf() {
+            const element = document.getElementById('receipt-printable-sheet');
+            const opt = {
+                margin: 0,
+                filename: `បញ្ជីទទួលសម្ភារសាលា_${document.getElementById('class-selector').value || 'A4'}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        function exportToExcel() {
+            const data = [
+                ["ព្រះរាជាណាចក្រកម្ពុជា"],
+                ["ជាតិ សាសនា ព្រះមហាក្សត្រ"],
+                [],
+                ["ក្រសួងអប់រំ យុវជន និងកីឡា"],
+                [`មន្ទីរអប់រំ យុវជន និងកីឡា ខេត្ត/រាជធានី ${document.getElementById('f-province').innerText}`],
+                [`ការិយាល័យអប់រំ យុវជន និងកីឡា ស្រុក/ក្រុង/ខណ្ឌ ${document.getElementById('f-district').innerText}`],
+                [`សាលាបឋមសិក្សា ${document.getElementById('f-school').innerText}`],
+                [],
+                ["បញ្ជីទទួលសម្ភារសាលា"],
+                [`អ្នកទទួល/ថ្នាក់: ${document.getElementById('f-receiver').innerText}`, "", `កាលបរិច្ឆេទ: ${document.getElementById('f-date').innerText}`],
+                [],
+                ["ល.រ", "ឈ្មោះសម្ភារ", "ចំនួន (តួលេខ)", "ស្ថានភាពសម្ភារ", "ផ្សេងៗ"]
+            ];
+
+            currentItems.forEach((item, idx) => {
+                let status = [];
+                if (item.isNew) status.push("ថ្មី");
+                if (item.isUsed) status.push("ប្រើរួច");
+                data.push([
+                    idx + 1,
+                    item.name,
+                    item.qtyNum,
+                    status.join(" / "),
+                    item.note || ""
+                ]);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Receipt List");
+            XLSX.writeFile(wb, `School_Supplies_Receipt_${document.getElementById('class-selector').value || 'List'}.xlsx`);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initClassSelector();
+            loadLocal();
+
+            // Auto-save on blur
+            ['f-province', 'f-district', 'f-school', 'f-receiver', 'f-date', 'f-giver-name', 'f-receiver-name', 'f-director-name'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('blur', saveLocal);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

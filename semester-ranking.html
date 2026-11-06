@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>តារាងចំណាត់ថ្នាក់ផ្លូវការ - Official Ranking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 5mm;
+            }
+            body {
+                background: white !important;
+                margin: 0;
+                padding: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .a4-container {
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                max-width: none !important;
+            }
+            .ranking-table th {
+                background-color: transparent !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            font-family: 'Battambang', sans-serif;
+            margin: 0;
+        }
+
+        .a4-container {
+            width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
+            margin: 1rem auto;
+            background: white;
+            padding: 8mm;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            color: #000;
+        }
+
+        /* --- Header Section --- */
+
+        .official-header {
+            width: 100%;
+            position: relative;
+        }
+
+        .national-title {
+            text-align: center;
+            font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+
+        .national-title h1 {
+            font-size: 14pt;
+            margin: 0 0 2px 0;
+            color: #000;
+            font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+            font-weight: normal;
+        }
+
+        .national-title h2 {
+            font-size: 12pt;
+            margin: 0;
+            display: block;
+            font-family: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', cursive, serif;
+            font-weight: normal;
+        }
+        
+        .national-title h2::before {
+            display: none;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 5px;
+            font-size: 11pt;
+        }
+
+        .school-info {
+            width: 35%;
+            line-height: 1.5;
+        }
+
+        .school-info p {
+            margin: 0;
+        }
+
+        .report-info {
+            width: 40%;
+            text-align: center;
+            font-weight: normal;
+            font-size: 12pt;
+            padding-top: 15px;
+        }
+
+        .report-info p {
+            margin: 5px 0;
+        }
+        
+        .header-spacer {
+            width: 20%;
+        }
+
+        /* --- Table Section --- */
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11pt;
+            margin-bottom: 5px;
+            table-layout: fixed;
+            word-wrap: break-word;
+            border-top: 2px solid #000;
+            border-bottom: 2px solid #000;
+        }
+
+        .ranking-table th, .ranking-table td {
+            border: 1px solid #000;
+            padding: 0px 2px;
+            text-align: center;
+            vertical-align: middle;
+            height: 26px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .ranking-table th {
+            font-weight: bold;
+            color: #000;
+            font-size: 14pt;
+        }
+
+        /* Thick border to separate the two columns */
+        .ranking-table th:nth-child(6), .ranking-table td:nth-child(7) {
+            border-right: 2px solid #000;
+        }
+
+        /* Remove border between Last Name and First Name in table body */
+        .ranking-table td:nth-child(2),
+        .ranking-table td:nth-child(9) {
+            border-right: none;
+        }
+        .ranking-table td:nth-child(3),
+        .ranking-table td:nth-child(10) {
+            border-left: none;
+        }
+
+        .ranking-table th.vertical {
+            height: 100px;
+            position: relative;
+            vertical-align: middle;
+            padding: 0;
+        }
+
+        .ranking-table th.vertical span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            white-space: nowrap;
+        }
+
+        /* --- Statistics & Footer Section --- */
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12pt;
+            table-layout: fixed;
+            word-wrap: break-word;
+        }
+
+        .footer-table td {
+            border: none;
+            padding: 1px 4px;
+            vertical-align: middle;
+            text-align: left;
+        }
+
+        /* Top Bar for App UI */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 1rem;
+        }
+    </style>
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+
+</head>
+<body>
+    <div class="top-bar no-print" style="align-items: center; display: flex; justify-content: space-between; padding: 1rem 2rem; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <button class="btn btn-secondary" onclick="history.back()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            ត្រឡប់ក្រោយ
+        </button>
+        
+        <div style="display: flex; gap: 10px;">
+            <select id="month-select" class="form-control" style="width: auto;" onchange="changeMonth()">
+                <option value="មករា">មករា</option>
+                <option value="កុម្ភៈ">កុម្ភៈ</option>
+                <option value="មីនា">មីនា</option>
+                <option value="មេសា">មេសា</option>
+                <option value="ឧសភា">ឧសភា</option>
+                <option value="មិថុនា">មិថុនា</option>
+                <option value="កក្កដា">កក្កដា</option>
+                <option value="សីហា">សីហា</option>
+                <option value="កញ្ញា">កញ្ញា</option>
+                <option value="តុលា">តុលា</option>
+                <option value="វិច្ឆិកា">វិច្ឆិកា</option>
+                <option value="ធ្នូ">ធ្នូ</option>
+            </select>
+            <a id="btn-issue-praise-cert" href="praise-certificate.html?period=semester1" class="btn" style="background: linear-gradient(135deg, #d97706, #b45309); color: white; display: flex; align-items: center; gap: 8px; text-decoration: none; border-radius: 8px; font-weight: 600; padding: 0.5rem 1rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                ចេញប័ណ្ណសរសើរ
+            </a>
+            <button class="btn btn-primary" onclick="window.print()" style="display: flex; align-items: center; gap: 8px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                បោះពុម្ព (Print)
+            </button>
+        </div>
+    </div>
+
+    <div class="settings-panel no-print" style="background: white; padding: 15px; margin: 0 2rem 15px 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <h3 style="margin-top: 0; font-size: 14px; margin-bottom: 10px;">កែប្រែកាលបរិច្ឆេទ (Date Settings)</h3>
+        
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <!-- Lunar Date Selectors -->
+            <div style="flex: 1; min-width: 300px;">
+                <label style="font-size: 12px; color: #666; display: block; margin-bottom: 5px;">ថ្ងៃខែឆ្នាំចន្ទគតិ (Lunar Date)</label>
+                <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                    <select id="lunar-day-week" class="form-control" style="width: auto; padding: 5px 8px; font-size: 13px;" onchange="updateLunar()">
+                        <option value="ចន្ទ">ចន្ទ</option><option value="អង្គារ">អង្គារ</option><option value="ពុធ">ពុធ</option><option value="ព្រហស្បតិ៍">ព្រហស្បតិ៍</option><option value="សុក្រ">សុក្រ</option><option value="សៅរ៍" selected>សៅរ៍</option><option value="អាទិត្យ">អាទិត្យ</option>
+                    </select>
+                    <select id="lunar-phase" class="form-control" style="width: auto; padding: 5px 8px; font-size: 13px;" onchange="updateLunar()">
+                        <!-- Options generated in JS -->
+                    </select>
+                    <select id="lunar-month" class="form-control" style="width: auto; padding: 5px 8px; font-size: 13px;" onchange="updateLunar()">
+                        <option value="មិគសិរ">មិគសិរ</option><option value="បុស្ស">បុស្ស</option><option value="មាឃ">មាឃ</option><option value="ផល្គុន">ផល្គុន</option><option value="ចេត្រ">ចេត្រ</option><option value="ពិសាខ">ពិសាខ</option><option value="ជេស្ឋ" selected>ជេស្ឋ</option><option value="អាសាឍ">អាសាឍ</option><option value="បឋមាសាឍ">បឋមាសាឍ</option><option value="ទុតិយាសាឍ">ទុតិយាសាឍ</option><option value="ស្រាពណ៍">ស្រាពណ៍</option><option value="ភទ្របទ">ភទ្របទ</option><option value="អស្សុជ">អស្សុជ</option><option value="កត្តិក">កត្តិក</option>
+                    </select>
+                    <select id="lunar-zodiac" class="form-control" style="width: auto; padding: 5px 8px; font-size: 13px;" onchange="updateLunar()">
+                        <option value="ជូត">ជូត</option><option value="ឆ្លូវ">ឆ្លូវ</option><option value="ខាល">ខាល</option><option value="ថោះ">ថោះ</option><option value="រោង" selected>រោង</option><option value="ម្សាញ់">ម្សាញ់</option><option value="មមី">មមី</option><option value="មមែ">មមែ</option><option value="វក">វក</option><option value="រកា">រកា</option><option value="ច">ច</option><option value="កុរ">កុរ</option>
+                    </select>
+                    <select id="lunar-era" class="form-control" style="width: auto; padding: 5px 8px; font-size: 13px;" onchange="updateLunar()">
+                        <option value="ឯកស័ក">ឯកស័ក</option><option value="ទោស័ក">ទោស័ក</option><option value="ត្រីស័ក">ត្រីស័ក</option><option value="ចត្វាស័ក">ចត្វាស័ក</option><option value="បញ្ចស័ក">បញ្ចស័ក</option><option value="ឆស័ក" selected>ឆស័ក</option><option value="សប្តស័ក">សប្តស័ក</option><option value="អដ្ឋស័ក">អដ្ឋស័ក</option><option value="នព្វស័ក">នព្វស័ក</option><option value="សំរឹទ្ធិស័ក">សំរឹទ្ធិស័ក</option>
+                    </select>
+                    <input type="text" id="lunar-be" value="ព.ស២៥៦៨" class="form-control" style="width: 80px; padding: 5px 8px; font-size: 13px;" oninput="updateLunar()">
+                </div>
+            </div>
+            
+            <!-- Solar Date Selectors -->
+            <div style="flex: 1; min-width: 300px;">
+                <label style="font-size: 12px; color: #666; display: block; margin-bottom: 5px;">ថ្ងៃខែឆ្នាំសុរិយគតិ (Solar Date)</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span style="font-size: 13px;">ទីកន្លែង:</span>
+                    <input type="text" id="solar-location" value="ផ្លុង" class="form-control" style="width: 80px; padding: 5px 8px; font-size: 13px;" oninput="triggerSolarUpdate()">
+                    <span style="font-size: 13px;">កាលបរិច្ឆេទ:</span>
+                    <input type="date" id="solar-picker" class="form-control" style="width: 130px; padding: 5px 8px; font-size: 13px;" onchange="updateSolarDate(this.value)">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="no-print" style="margin: 1rem auto; width: 210mm; display: flex; gap: 10px; justify-content: center;">
+    <button id="btn-rank-exam" class="btn" style="background-color: #3b82f6; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer;">ចំណាត់ថ្នាក់ មធ្យមភាគប្រឡងឆមាស</button>
+    <button id="btn-rank-sem" class="btn" style="background-color: #cbd5e1; color: black; padding: 10px 20px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer;">ចំណាត់ថ្នាក់ មធ្យមភាគប្រចាំឆមាស</button>
+</div>
+<div class="a4-container">
+        <!-- Official Header -->
+        <div class="official-header">
+            <div class="national-title">
+                <h1>ព្រះរាជាណាចក្រកម្ពុជា</h1>
+                <h2>ជាតិ សាសនា ព្រះមហាក្សត្រ</h2>
+            </div>
+            
+            <div class="header-container">
+                <div class="school-info">
+                    <p id="header-district">ការិយាល័យអប់រំយុវជន និងកីឡាស្រុក.....</p>
+                    <p id="header-cluster">កម្រង អូរក្រូច</p>
+                    <p id="header-school">សាលាបឋមសិក្សា <strong>ផ្លុង</strong></p>
+                </div>
+                <div class="report-info">
+                    <p id="report-month" style="font-family: 'Moul', cursive; font-weight: normal; margin-bottom: 8px;">ចំណាត់ថ្នាក់ប្រចាំខែ ...</p>
+                    <p id="class-info-display" style="font-weight: normal; font-family: 'Battambang', sans-serif;">ថ្នាក់រៀន ឆ្នាំសិក្សា ...</p>
+                </div>
+                <div class="header-spacer"></div>
+            </div>
+        </div>
+
+        <!-- Two Column Ranking Table -->
+        <table class="ranking-table">
+            <colgroup>
+                <!-- Left Column -->
+                <col style="width: 5%;">
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+                <col style="width: 5%;">
+                <col style="width: 6.5%;">
+                <col style="width: 6.5%;">
+                <col style="width: 7%;">
+                
+                <!-- Right Column -->
+                <col style="width: 5%;">
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+                <col style="width: 5%;">
+                <col style="width: 6.5%;">
+                <col style="width: 6.5%;">
+                <col style="width: 7%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>ល.រ</th>
+                    <th colspan="2">គោត្តនាម និង នាម</th>
+                    <th>ភេទ</th>
+                    <th class="vertical"><span>មធ្យមភាគ</span></th>
+                    <th class="vertical"><span>ចំណាត់ថ្នាក់</span></th>
+                    <th class="vertical"><span>និទ្ទេស</span></th>
+
+                    <th>ល.រ</th>
+                    <th colspan="2">គោត្តនាម និង នាម</th>
+                    <th>ភេទ</th>
+                    <th class="vertical"><span>មធ្យមភាគ</span></th>
+                    <th class="vertical"><span>ចំណាត់ថ្នាក់</span></th>
+                    <th class="vertical"><span>និទ្ទេស</span></th>
+                </tr>
+            </thead>
+            <tbody id="ranking-body">
+                <!-- Data will be injected here -->
+            </tbody>
+        </table>
+
+        <!-- Statistics & Footer -->
+        <table class="footer-table">
+            <tr>
+                <td style="width: 28%;" id="stat-total">សិស្សដើមឆ្នាំសរុប = ០ នាក់</td>
+                <td style="width: 10%;" id="stat-total-pct"></td>
+                <td style="width: 14%;" id="stat-total-f">/ស្រី = ០ នាក់</td>
+                <td style="width: 10%;" id="stat-total-f-pct"></td>
+                <td style="text-align: center; width: 38%; white-space: nowrap;" id="lunar-date">ថ្ងៃសៅរ៍ ១៤កើតខែ ជេស្ឋឆ្នាំមមី អដ្ឋស័ក ព.ស២៥៧០</td>
+            </tr>
+            <tr>
+                <td id="stat-passed">សិស្សជាប់មធ្យមភាគ=០ នាក់</td>
+                <td id="stat-passed-pct">=0.00%</td>
+                <td id="stat-passed-f">/ស្រី =០ នាក់</td>
+                <td id="stat-passed-f-pct">=0.00%</td>
+                <td style="text-align: center;" id="solar-date">ផ្លុង, ថ្ងៃទី៣០ ខែ ឧសភា ឆ្នាំ២០២៦</td>
+            </tr>
+            <tr>
+                <td id="stat-failed">សិស្សធ្លាក់សរុប= ០ នាក់</td>
+                <td id="stat-failed-pct">=0.00%</td>
+                <td id="stat-failed-f">/ស្រី =០ នាក់</td>
+                <td id="stat-failed-f-pct">=0.00%</td>
+                <td style="text-align: center;">គ្រូបន្ទុកថ្នាក់</td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top;" id="stat-dropout">សិស្សបោះបង់សរុប= ០នាក់</td>
+                <td style="vertical-align: top;" id="stat-dropout-pct">=0.00%</td>
+                <td style="vertical-align: top;" id="stat-dropout-f">/ស្រី =០ នាក់</td>
+                <td style="vertical-align: top;" id="stat-dropout-f-pct">=0.00%</td>
+                <td style="text-align: center; vertical-align: bottom; text-indent: 2cm;" id="teacher-name-signature"></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center; padding-top: 5px;">បានឃើញ និងឯកភាព</td>
+                <td colspan="2"></td>
+                <td style="text-align: right; padding-top: 5px; padding-right: 75px;" id="teacher-name-display">ហុក ដានី</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;">នាយកសាលា</td>
+                <td colspan="2"></td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+
+    <script src="chhankitek.js"></script>
+    <script src="semester-ranking-new.js"></script>
+
+    <script>
+        if (window.classManager && document.getElementById("global-class-selector")) {
+            window.classManager.renderClassSelector("global-class-selector");
+        }
+    </script>
+</body>
+</html>

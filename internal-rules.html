@@ -1,0 +1,524 @@
+﻿<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បទបញ្ជាផ្ទៃក្នុង - Classroom Internal Regulations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Siemreap&family=Kantumruy+Pro:wght@400;500;600;700&family=Moul&family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+    <script src="khmer-calendar.js"></script>
+
+    <style>
+        :root {
+            --paper-font: 'Khmer OS Siemreap', 'Siemreap', 'Khmer OS Battambang', 'Battambang', 'Khmer OS Battambang', sans-serif;
+            --muol-font: 'Khmer OS Muol Light', 'Moul', 'Khmer OS Muol', cursive;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            font-family: var(--paper-font);
+            margin: 0;
+            padding: 0;
+            color: #0f172a;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .moul-font { font-family: var(--muol-font); font-weight: normal; }
+        .regular-font { font-family: var(--paper-font); }
+
+        /* Remove any pseudo elements inherited from style.css */
+        h1::before, h1::after,
+        h2::before, h2::after,
+        h3::before, h3::after,
+        h4::before, h4::after {
+            display: none !important;
+            content: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        /* Action Toolbar */
+        .no-print-toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #cbd5e1;
+            padding: 10px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .toolbar-left, .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* A4 Page Container (Strict 210mm x 297mm proportions) */
+        .a4-page-wrapper {
+            padding: 20px 10px 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .a4-sheet {
+            width: 210mm;
+            min-height: 297mm;
+            background: #ffffff;
+            margin: 0 auto;
+            padding: 18mm 20mm 16mm 20mm;
+            box-sizing: border-box;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Editable dotted line */
+        .editable-field {
+            outline: none;
+            border-bottom: 1px dotted #64748b;
+            padding: 0 4px;
+            transition: all 0.2s;
+            display: inline-block;
+            min-width: 80px;
+        }
+        .editable-field:hover, .editable-field:focus {
+            background-color: #f0fdf4;
+            border-bottom: 1.5px solid #16a34a;
+        }
+
+        /* Top Header Grid */
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+
+        .school-info-left {
+            font-size: 11.5pt;
+            line-height: 1.7;
+            color: #1e293b;
+            font-family: var(--muol-font);
+        }
+        .school-info-left .info-row {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+        .school-info-left span.label {
+            white-space: nowrap;
+        }
+        .school-info-left .dots {
+            font-family: var(--paper-font);
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+
+        .national-motto-center {
+            text-align: center !important;
+            width: 100% !important;
+            margin: 0 auto 14px auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        .national-motto-center h2 {
+            font-family: var(--muol-font) !important;
+            font-size: 13pt !important;
+            margin: 0 auto !important;
+            color: #1e293b !important;
+            font-weight: normal !important;
+            letter-spacing: 0.5px !important;
+            line-height: 1.4 !important;
+            text-align: center !important;
+            display: block !important;
+            width: 100% !important;
+        }
+        .national-motto-center h3 {
+            font-family: var(--muol-font) !important;
+            font-size: 12pt !important;
+            margin: 3px auto 4px auto !important;
+            color: #1e293b !important;
+            font-weight: normal !important;
+            letter-spacing: 0.5px !important;
+            line-height: 1.4 !important;
+            text-align: center !important;
+            display: block !important;
+            width: 100% !important;
+        }
+        .motto-divider {
+            display: block !important;
+            margin: 3px auto 0 auto !important;
+            height: 22px !important;
+            max-width: 160px !important;
+            width: auto !important;
+            object-fit: contain !important;
+        }
+
+        /* Document Title */
+        .doc-title-section {
+            text-align: center;
+            margin: 12px 0 10px 0;
+        }
+        .doc-title-section h1 {
+            font-family: var(--muol-font);
+            font-size: 15.5pt;
+            color: #1e293b;
+            margin: 0 0 4px 0;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+        }
+        .doc-title-section .academic-year {
+            font-family: var(--muol-font);
+            font-size: 11.5pt;
+            font-weight: normal;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        /* Preamble */
+        .doc-preamble {
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #1e293b;
+            margin: 8px 0 10px 0;
+            text-indent: 28px;
+        }
+
+        /* Rules / Articles List */
+        .rules-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6.5px;
+            margin-bottom: 12px;
+        }
+        .rule-row {
+            display: flex;
+            align-items: flex-start;
+            font-size: 11pt;
+            line-height: 1.48;
+            color: #1e293b;
+            text-align: justify;
+        }
+        .rule-num {
+            font-family: var(--paper-font);
+            white-space: nowrap;
+            min-width: 82px;
+            font-weight: 500;
+        }
+        .rule-colon {
+            margin-right: 6px;
+        }
+        .rule-content {
+            flex: 1;
+            outline: none;
+        }
+        .rule-content:focus {
+            background-color: #f0fdf4;
+            border-radius: 4px;
+        }
+
+        /* Signatures Section */
+        .signatures-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 14px;
+            padding: 0 10px;
+        }
+        .sig-left, .sig-right {
+            text-align: center;
+            min-width: 200px;
+        }
+        .sig-right .lunar-date {
+            font-size: 10.5pt;
+            line-height: 1.4;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+        .sig-right .solar-date {
+            font-size: 10.5pt;
+            line-height: 1.4;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+        .sig-role {
+            font-family: var(--muol-font);
+            font-size: 11pt;
+            font-weight: normal;
+            color: #1e293b;
+            margin-bottom: 60px; /* Space for signature and stamp */
+        }
+        .sig-approval-text {
+            font-size: 11pt;
+            color: #1e293b;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .sig-dots {
+            color: #64748b;
+            font-size: 11pt;
+            letter-spacing: 2px;
+        }
+
+        /* Print Media Styles */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+            body {
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .no-print-toolbar, .btn, .no-print {
+                display: none !important;
+            }
+            .a4-page-wrapper {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .a4-sheet {
+                box-shadow: none !important;
+                margin: 0 !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                max-height: 297mm !important;
+                padding: 16mm 20mm 16mm 20mm !important;
+                page-break-after: avoid !important;
+                page-break-inside: avoid !important;
+            }
+            .editable-field {
+                border-bottom: none !important;
+                background: transparent !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP TOOLBAR (HIDDEN IN PRINT) -->
+    <div class="no-print-toolbar no-print">
+        <div class="toolbar-left">
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="padding: 0.5rem 0.9rem; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span>ទំព័រដើម</span>
+            </button>
+            
+            <div id="global-class-selector" style="margin-left: 5px;"></div>
+        </div>
+
+        <div class="toolbar-right">
+            <button type="button" class="btn btn-secondary" onclick="resetToDefaultRules()" style="padding: 0.5rem 0.9rem; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                <span>ទម្រង់ដើម</span>
+            </button>
+
+            <button type="button" class="btn btn-secondary" onclick="exportToPDF()" style="padding: 0.5rem 0.9rem; font-size: 0.9rem; background: #fff1f2; color: #e11d48; border-color: #fecdd3; display: flex; align-items: center; gap: 6px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                <span>ទាញយកជា PDF</span>
+            </button>
+
+            <button type="button" class="btn btn-primary" onclick="window.print()" style="padding: 0.5rem 1.2rem; font-size: 0.92rem; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                <span>បោះពុម្ព (Print A4)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- DATE SETTINGS PANEL (HIDDEN IN PRINT) -->
+    <div class="no-print" style="max-width: 210mm; margin: 15px auto -5px auto; padding: 0 10px;">
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                <h3 style="margin: 0; font-size: 13.5px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 16px;">📅</span> <span>ការកែប្រែកាលបរិច្ឆេទ (Date Settings)</span>
+                </h3>
+                <span style="font-size: 12px; color: #64748b;">
+                    💡 កាលបរិច្ឆេទខាងក្រោមនេះនឹងបង្ហាញនៅផ្នែកខាងក្រោមស្តាំនៃលិខិតបទបញ្ជាផ្ទៃក្នុង
+                </span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px;">
+                <!-- Solar Date -->
+                <div style="background: #f8fafc; padding: 10px 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                    <label style="font-size: 12px; color: #0284c7; display: block; margin-bottom: 6px; font-weight: 700;">☀️ ថ្ងៃខែឆ្នាំសុរិយគតិ (Solar Date)</label>
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <span style="font-size: 12.5px; color: #64748b;">ទីកន្លែង៖</span>
+                        <input type="text" id="solar-location" value="វាលនិន្ទ្រា" class="form-control" style="width: 100px; padding: 5px 8px; font-size: 12.5px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff;" oninput="triggerSolarUpdate()">
+                        <span style="font-size: 12.5px; color: #64748b;">កាលបរិច្ឆេទ៖</span>
+                        <input type="date" id="solar-picker" class="form-control" style="width: 135px; padding: 5px 8px; font-size: 12.5px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff;" onchange="updateSolarDate(this.value)">
+                    </div>
+                </div>
+
+                <!-- Lunar Date -->
+                <div style="background: #f8fafc; padding: 10px 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                    <label style="font-size: 12px; color: #7c3aed; display: block; margin-bottom: 6px; font-weight: 700;">🌙 ថ្ងៃខែឆ្នាំចន្ទគតិ (Lunar Date)</label>
+                    <div style="display: flex; gap: 5px; flex-wrap: wrap; align-items: center;">
+                        <select id="lunar-day-week" class="form-control" style="width: auto; padding: 5px 6px; font-size: 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff;" onchange="updateLunar()">
+                            <option value="ចន្ទ">ចន្ទ</option><option value="អង្គារ">អង្គារ</option><option value="ពុធ">ពុធ</option><option value="ព្រហស្បតិ៍">ព្រហស្បតិ៍</option><option value="សុក្រ">សុក្រ</option><option value="សៅរ៍" selected>សៅរ៍</option><option value="អាទិត្យ">អាទិត្យ</option>
+                        </select>
+                        <select id="lunar-phase" class="form-control" style="width: auto; padding: 5px 6px; font-size: 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff;" onchange="updateLunar()">
+                            <!-- Generated dynamically in JS -->
+                        </select>
+                        <select id="lunar-month" class="form-control" style="width: auto; padding: 5px 6px; font-size: 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff;" onchange="updateLunar()">
+                            <option value="មិគសិរ">មិគសិរ</option><option value="បុស្ស">បុស្ស</option><option value="មាឃ">មាឃ</option><option value="ផល្គុន">ផល្គុន</option><option value="ចេត្រ">ចេត្រ</option><option value="ពិសាខ">ពិសាខ</option><option value="ជេស្ឋ">ជេស្ឋ</option><option value="អាសាឍ">អាសាឍ</option><option value="បឋមាសាឍ">បឋមាសាឍ</option><option value="ទុតិយាសាឍ">ទុតិយាសាឍ</option><option value="ស្រាពណ៍">ស្រាពណ៍</option><option value="ភទ្របទ">ភទ្របទ</option><option value="អស្សុជ">អស្សុជ</option><option value="កត្តិក" selected>កត្តិក</option>
+                        </select>
+                        <select id="lunar-zodiac" class="form-control" style="width: auto; padding: 5px 6px; font-size: 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff;" onchange="updateLunar()">
+                            <option value="ជូត">ជូត</option><option value="ឆ្លូវ">ឆ្លូវ</option><option value="ខាល">ខាល</option><option value="ថោះ" selected>ថោះ</option><option value="រោង">រោង</option><option value="ម្សាញ់">ម្សាញ់</option><option value="មមី">មមី</option><option value="មមែ">មមែ</option><option value="វក">វក</option><option value="រកា">រកា</option><option value="ច">ច</option><option value="កុរ">កុរ</option>
+                        </select>
+                        <select id="lunar-era" class="form-control" style="width: auto; padding: 5px 6px; font-size: 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff;" onchange="updateLunar()">
+                            <option value="ឯកស័ក">ឯកស័ក</option><option value="ទោស័ក">ទោស័ក</option><option value="ត្រីស័ក">ត្រីស័ក</option><option value="ចត្វាស័ក">ចត្វាស័ក</option><option value="បញ្ចស័ក" selected>បញ្ចស័ក</option><option value="ឆស័ក">ឆស័ក</option><option value="សប្តស័ក">សប្តស័ក</option><option value="អដ្ឋស័ក">អដ្ឋស័ក</option><option value="នព្វស័ក">នព្វស័ក</option><option value="សំរឹទ្ធិស័ក">សំរឹទ្ធិស័ក</option>
+                        </select>
+                        <input type="text" id="lunar-be" value="ព.ស ២៥៦៧" class="form-control" style="width: 95px; padding: 5px 6px; font-size: 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff;" oninput="updateLunar()">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN A4 PAGE -->
+    <div class="a4-page-wrapper">
+        <div class="a4-sheet" id="rules-a4-sheet">
+            
+            <!-- CONTENT SECTION -->
+            <div>
+                <!-- Top: Kingdom Motto Centered -->
+                <div class="national-motto-center" style="text-align: center; margin-bottom: 12px;">
+                    <h2 style="font-family: var(--muol-font); font-size: 12.5pt; margin: 0; font-weight: normal; color: #1e293b; letter-spacing: 0.5px; line-height: 1.4;">ព្រះរាជាណាចក្រកម្ពុជា</h2>
+                    <h3 style="font-family: var(--muol-font); font-size: 11.5pt; margin: 2px 0 2px 0; font-weight: normal; color: #1e293b; letter-spacing: 0.5px; line-height: 1.4;">ជាតិ សាសនា ព្រះមហាក្សត្រ</h3>
+                    <img src="header-divider.png" alt="divider" class="motto-divider" style="display: block; margin: 2px auto 0 auto; height: 20px; width: auto; max-width: 145px; object-fit: contain;">
+                </div>
+
+                <!-- Left: School Information -->
+                <div class="school-info-left" style="margin-bottom: 8px;">
+                    <div class="info-row">
+                        <span class="label">កម្រង ៖</span>
+                        <span class="editable-field" id="cluster-name" contenteditable="true" spellcheck="false">ទីពោ</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">សាលាបឋមសិក្សា</span>
+                        <span class="editable-field" id="school-name" contenteditable="true" spellcheck="false">ផ្លុង</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">ថ្នាក់ទី</span>
+                        <span class="editable-field" id="grade-name" contenteditable="true" spellcheck="false">៥ ក</span>
+                    </div>
+                </div>
+
+                <!-- TITLE SECTION -->
+                <div class="doc-title-section">
+                    <h1>បទបញ្ជាផ្ទៃក្នុង</h1>
+                    <div class="academic-year">
+                        ឆ្នាំសិក្សា <span class="editable-field" id="academic-year" contenteditable="true" spellcheck="false">២០២៥ - ២០២៦</span>
+                    </div>
+                </div>
+
+                <!-- PREAMBLE -->
+                <div class="doc-preamble" contenteditable="true" id="doc-preamble-text" spellcheck="false">
+                    យោងតាមអង្គប្រជុំលោកគ្រូ អ្នកគ្រូសម្រេចបង្កើតបទបញ្ជាដូចតទៅ៖
+                </div>
+
+                <!-- 12 RULES (ARTICLES) -->
+                <div class="rules-container" id="rules-list">
+                    <div class="rule-row">
+                        <span class="rule-num">ប្រការ១ <span class="rule-colon">៖</span></span>
+                        <span class="rule-content" contenteditable="true" spellcheck="false">សិស្សទាំងអស់ត្រូវស្អាតជានិច្ច នឹងត្រូវមានសម្លៀកបំពាក់សមរម្យ ។</span>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-num">ប្រការ២ <span class="rule-colon">៖</span></span>
+                        <span class="rule-content" contenteditable="true" spellcheck="false">សិស្សប្រុសត្រូវកាត់សក់ខ្លី សិស្សស្រីដែលមានសក់វែងត្រូវចងសក់ឱ្យបានសមរម្យ ។</span>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-num">ប្រការ៣ <span class="rule-colon">៖</span></span>
+                        <span class="rule-content" contenteditable="true" spellcheck="false">មិនត្រូវពាក់គ្រឿងអលង្ការនៅក្នុងសាលារៀន ។</span>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-num">ប្រការ៤ <span class="rule-colon">៖</span></span>
+                        <span class="rule-content" contenteditable="true" spellcheck="false">សិស្សទាំងអស់ចូលរួមគោរពទង់ជាតិរាល់ព្រឹក និងល្ងាច ។</span>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-num">ប្រការ៥ <span class="rule-colon">៖</span></span>
+                        <span class="rule-content" contenteditable="true" spellcheck="false">ពេលម៉ោងរៀនត្រូវស្ងៀមស្ងាត់ និងមានសណ្ដាប់ធ្នាប់ មិនរំខានដល់មិត្តរួមថ្នាក់ ។</span>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-num">ប្រការ៦ <span class="rule-colon">៖</span></span>
+                        <span class="rule-content" contenteditable="true" spellcheck="false">ពេលលោកគ្រូអ្នកគ្រូ ឬមានភ្ញៀវចូលក្នុងថ្នាក់សិស្សទាំងអស់ត្រូវក្រោកឈរសំពះដើម្បីសម្ដែងការគួរសម ។</span>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-num">ប្រការ៧ <span class="rule-colon">៖</span></span>
+                        <span class="rule-content" contenteditable="true" spellcheck="false">ពេលចេញលេងសិស្សទាំងអស់ត្រូវប្រកាន់អាកប្បកិរិយាសមរម្យ មិនត្រូវស្រែកឡូឡា ឈ្លោះប្រកែកគ្នា ឬប្រើប្រាស់អំពើហិង្សា ។</span>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-num">ប្រការ៨ <span class="rule-colon">៖</span></span>
+                        <span class="rule-content" contenteditable="true" spellcheck="false">មិនត្រូវជិះកង់ ឬពាក់មួកក្នុងបរិវេណសាលា ។</span>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-num">ប្រការ៩ <span class="rule-colon">៖</span></span>
+                        <span class="rule-content" contenteditable="true" spellcheck="false">មិនត្រូវចោលសំរាមផ្តេសផ្តាស ត្រូវចោលសំរាមក្នុងធុងសំរាមឱ្យបានត្រឹមត្រូវ ។</span>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-num">ប្រការ១០ <span class="rule-colon">៖</span></span>
+                        <span class="rule-content" contenteditable="true" spellcheck="false">សិស្សទាំងអស់ត្រូវមករៀនឱ្យបានទៀងទាត់ពេលវេលា ។</span>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-num">ប្រការ១១ <span class="rule-colon">៖</span></span>
+                        <span class="rule-content" contenteditable="true" spellcheck="false">ពេលសិស្សឈប់ត្រូវសុំច្បាប់ដោយមានបញ្ជាក់មូលហេតុច្បាស់លាស់ ឬអាណាព្យាបាលមកសុំផ្ទាល់ ។</span>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-num">ប្រការ១២ <span class="rule-colon">៖</span></span>
+                        <span class="rule-content" contenteditable="true" spellcheck="false">សិស្សទាំងអស់ត្រូវគោរពវិន័យសាលា និងអនុវត្តបទបញ្ជាផ្ទៃក្នុងរបស់សាលាឱ្យបានខ្ជាប់ខ្ជួន ។</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SIGNATURES SECTION -->
+            <div class="signatures-section">
+                <!-- Left: Principal Approval -->
+                <div class="sig-left">
+                    <div class="sig-approval-text">បានឃើញ និងឯកភាព</div>
+                    <div class="sig-role">នាយកសាលា</div>
+                    <div class="sig-dots" contenteditable="true" id="principal-name" spellcheck="false">...........................</div>
+                </div>
+
+                <!-- Right: Class Teacher -->
+                <div class="sig-right">
+                    <div class="lunar-date" contenteditable="true" id="lunar-date-text" spellcheck="false">ថ្ងៃសៅរ៍ ៥ រោច ខែកត្តិក ឆ្នាំថោះ បញ្ចស័ក ព.ស ២៥៦៧</div>
+                    <div class="solar-date" contenteditable="true" id="solar-date-text" spellcheck="false">វាលនិន្ទ្រា ថ្ងៃទី០២ ខែធ្នូ ឆ្នាំ២០២៣</div>
+                    <div class="sig-role">គ្រូប្រចាំថ្នាក់</div>
+                    <div class="sig-dots" contenteditable="true" id="teacher-name" spellcheck="false">...........................</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script src="internal-rules.js"></script>
+</body>
+</html>
+

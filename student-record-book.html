@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>សៀវភៅសិក្ខាគារិក</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Battambang:wght@400;700&family=Moul&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background-color: #f1f5f9; margin: 0; padding: 20px; font-family: 'Battambang', cursive; }
+        
+        .no-print { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: white; padding: 15px 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); flex-wrap: wrap; gap: 10px; }
+        .control-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Battambang', cursive; font-weight: bold; transition: 0.2s; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-outline { background: white; border: 1px solid #cbd5e1; color: #475569; }
+        .btn-outline:hover { background: #f8fafc; }
+        select { padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 14px; outline: none; }
+
+        .page-container {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+
+        /* A4 Landscape Paper Style */
+        .a4-landscape {
+            width: 29.7cm;
+            height: 21cm;
+            min-width: 29.7cm;
+            padding: 1cm;
+            margin: 0 auto 20px auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: calc(50% - 0.5cm) calc(50% - 0.5cm);
+            gap: 1cm;
+        }
+
+        .page-pane {
+            border: 4px solid #3b82f6;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Override global styles */
+        .page-pane table {
+            min-width: 0 !important;
+            max-width: 100% !important;
+        }
+        .page-pane th, .page-pane td {
+            white-space: normal !important;
+            word-break: break-all !important;
+            text-transform: none !important;
+            letter-spacing: normal !important;
+            font-size: inherit !important;
+            background: none !important;
+        }
+
+        .a4-landscape h1, .a4-landscape h2 {
+            display: block;
+            margin: 0;
+            padding: 0;
+            color: inherit;
+        }
+        .a4-landscape h1::before, .a4-landscape h2::before {
+            display: none;
+        }
+
+        @media print {
+            body, html { background: none; padding: 0; margin: 0; width: 100%; height: 100%; }
+            .page-container { overflow: visible; padding: 0; margin: 0; }
+            .no-print { display: none !important; }
+            .a4-landscape { 
+                box-shadow: none; 
+                margin: 0; 
+                padding: 1cm; 
+                width: 29.7cm; 
+                height: 20.9cm;
+                min-width: auto;
+                page-break-inside: avoid;
+                page-break-after: always;
+            }
+            @page { 
+                size: A4 landscape; 
+                margin: 0; 
+            }
+        }
+    </style>
+    <script src="auth.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+
+</head>
+<body>
+    <div class="no-print">
+        <div class="control-group">
+            <button class="btn btn-outline" onclick="window.location.href='index.html'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                ត្រឡប់ក្រោយ
+            </button>
+            <div id="global-class-selector"></div>
+            <span style="font-weight: bold; font-size: 16px; margin-left: 10px; color: #1e293b;">សៀវភៅសិក្ខាគារិក</span>
+        </div>
+        <div class="control-group">
+            <select id="student-select" style="min-width: 250px;" onchange="renderRecordBook()">
+                <option value="all">-- បោះពុម្ពទាំងអស់ (All Students) --</option>
+            </select>
+            <input type="text" id="school-year-input" value="2025~2026" style="width: 100px;" title="ឆ្នាំសិក្សា" oninput="renderRecordBook()">
+            <button class="btn btn-primary" onclick="window.print()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                បោះពុម្ព (Print)
+            </button>
+        </div>
+    </div>
+
+    <div class="page-container" id="book-container">
+        <!-- Content generated by JS -->
+    </div>
+
+    <script src="student-record-book.js?v=34"></script>
+</body>
+</html>

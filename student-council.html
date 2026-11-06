@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ក្រុមប្រឹក្សាកុមារប្រចាំថ្នាក់ - Children's Council Structure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Battambang:wght@400;700;900&family=Moul&family=Kantumruy+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="khmer-calendar.js"></script>
+
+    <!-- Firebase & Core Modules -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+
+    <style>
+        :root {
+            --primary-blue: #0b3c8f;
+            --primary-accent: #0284c7;
+            --gold-accent: #c59b27;
+        }
+
+        body {
+            background-color: #cbd5e1;
+            font-family: 'Battambang', sans-serif;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .moul-font { font-family: 'Moul', cursive; }
+        .battambang-font { font-family: 'Battambang', sans-serif; }
+
+        /* Top Action Bar */
+        .top-action-bar {
+            background: #ffffff;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .bar-left, .bar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-toolbar {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #334155;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family: inherit;
+            text-decoration: none;
+        }
+        .btn-toolbar:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+            border-color: #94a3b8;
+        }
+        .btn-toolbar.btn-primary {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #ffffff;
+            border: none;
+        }
+        .btn-toolbar.btn-primary:hover {
+            background: linear-gradient(135deg, #0369a1, #075985);
+        }
+        .btn-toolbar.btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            border: none;
+        }
+        .btn-toolbar.btn-success:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+
+        /* Page Layout */
+        .page-wrapper {
+            padding: 24px 16px 50px 16px;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            background: #ffffff;
+            padding: 10mm 12mm;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            border-radius: 6px;
+            box-sizing: border-box;
+            position: relative;
+            margin: auto;
+        }
+
+        /* MoEYS Double Frame */
+        .sheet-border {
+            border: 3.5px solid #0b3c8f;
+            padding: 14px 16px;
+            border-radius: 4px;
+            position: relative;
+            box-sizing: border-box;
+            background: #ffffff;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sheet-border::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            border: 1.5px solid #0b3c8f;
+            pointer-events: none;
+        }
+
+        .nation-header-center {
+            text-align: center;
+            width: 100%;
+            margin: 0 auto 6px auto;
+        }
+        .nation-header-center h2 {
+            font-family: 'Moul', cursive;
+            font-size: 11.5pt;
+            margin: 0;
+            color: #1e293b;
+            font-weight: normal;
+        }
+        .nation-header-center h3 {
+            font-family: 'Moul', cursive;
+            font-size: 10.5pt;
+            margin: 2px 0 0 0;
+            color: #1e293b;
+            font-weight: normal;
+        }
+        .emblem-icon {
+            font-size: 10pt;
+            letter-spacing: 4px;
+            margin-top: 2px;
+            color: #475569;
+        }
+
+        .school-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 9.8pt;
+            line-height: 1.5;
+            margin-bottom: 6px;
+            color: #1e293b;
+        }
+
+        .main-title {
+            text-align: center;
+            font-family: 'Moul', cursive;
+            font-size: 1.35rem;
+            color: #0b3c8f;
+            margin: 4px 0 12px 0;
+            letter-spacing: 0.5px;
+        }
+
+        /* Hierarchy Chart Tree */
+        .hierarchy-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .council-card {
+            border-radius: 10px;
+            padding: 8px 16px;
+            text-align: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            min-width: 160px;
+        }
+        .council-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-president {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-color: #d97706;
+            width: 250px;
+        }
+        .card-president .role-title {
+            font-family: 'Moul', cursive;
+            color: #b45309;
+            font-size: 9.8pt;
+        }
+
+        .vice-presidents-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            width: 100%;
+        }
+
+        .card-vp {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            padding: 6px 8px;
+        }
+        .card-vp .role-title {
+            font-weight: 700;
+            color: #1d4ed8;
+            font-size: 8.5pt;
+            line-height: 1.3;
+            margin-bottom: 3px;
+        }
+
+        .group-leaders-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            width: 100%;
+        }
+
+        .card-leader {
+            background: #f0fdf4;
+            border-color: #22c55e;
+            padding: 6px 8px;
+        }
+        .card-leader .role-title {
+            font-weight: 700;
+            color: #15803d;
+            font-size: 8.5pt;
+        }
+
+        .student-name-box {
+            font-family: 'Battambang', sans-serif;
+            font-weight: 700;
+            font-size: 9.5pt;
+            color: #0f172a;
+            margin-top: 2px;
+            min-height: 20px;
+        }
+
+        /* Duties Description Table */
+        .duties-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8.6pt;
+            margin-top: 10px;
+        }
+        .duties-table th {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 6px;
+            font-weight: 700;
+            color: #0b3c8f;
+        }
+        .duties-table td {
+            border: 1px solid #cbd5e1;
+            padding: 5px 8px;
+            line-height: 1.45;
+        }
+
+        /* Signatures Section */
+        .signatures-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 14px;
+            font-size: 9.5pt;
+            line-height: 1.6;
+        }
+
+        .sig-block-left {
+            text-align: center;
+            width: 42%;
+        }
+        .sig-block-right {
+            text-align: center;
+            width: 48%;
+        }
+
+        .sig-role {
+            font-family: 'Moul', cursive;
+            font-size: 9.8pt;
+            margin: 4px 0 45px 0;
+            color: #0b3c8f;
+        }
+
+        .sig-name {
+            font-family: 'Moul', cursive;
+            font-size: 9.5pt;
+            color: #1e293b;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal-card {
+            background: white;
+            border-radius: 16px;
+            max-width: 420px;
+            width: 100%;
+            padding: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .top-action-bar, .modal-overlay {
+                display: none !important;
+            }
+            .page-wrapper {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .a4-page {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+                padding: 6mm 8mm !important;
+                width: 100% !important;
+                min-height: auto !important;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 8mm;
+            }
+            .council-card:hover {
+                transform: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Action Bar -->
+    <header class="top-action-bar">
+        <div class="bar-left">
+            <a href="index.html" class="btn-toolbar" title="ត្រឡប់ទៅផ្ទាំងដើម">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                ទំព័រដើម
+            </a>
+            <div id="global-class-selector"></div>
+        </div>
+
+        <div class="bar-right">
+            <button type="button" class="btn-toolbar" onclick="autoAssignCouncil()" title="ជ្រើសរើសសិស្សស្វ័យប្រវត្តិតាមចំណាត់ថ្នាក់">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                ជ្រើសរើសស្វ័យប្រវត្តិ
+            </button>
+            <button type="button" class="btn-toolbar btn-primary" onclick="exportCouncilPDF()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                ទាញយក PDF
+            </button>
+            <button type="button" class="btn-toolbar btn-success" onclick="window.print()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                បោះពុម្ព (Print)
+            </button>
+        </div>
+    </header>
+
+    <!-- Page Content Container -->
+    <div class="page-wrapper">
+        <div class="a4-page" id="printable-student-council">
+            <div class="sheet-border">
+                
+                <div>
+                    <!-- Center Nation Header -->
+                    <div class="nation-header-center">
+                        <h2>ព្រះរាជាណាចក្រកម្ពុជា</h2>
+                        <h3>ជាតិ សាសនា ព្រះមហាក្សត្រ</h3>
+                        <img src="header-divider.png" alt="divider" class="nation-header-divider" onerror="this.onerror=null; this.src='images/header-divider.png';">
+                    </div>
+
+                    <!-- School Metadata Row -->
+                    <div class="school-info-row">
+                        <div>
+                            <div>សាលាបឋមសិក្សា ៖ <strong id="lbl-school-name">សាលាបឋមសិក្សា ផ្លុង</strong></div>
+                            <div>កម្រង ៖ <strong id="lbl-cluster-name">ទីពោ</strong></div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div>ថ្នាក់ទី ៖ <strong id="lbl-class-name">៥ ក</strong></div>
+                            <div>ឆ្នាំសិក្សា ៖ <strong id="lbl-academic-year">២០២៥ - ២០២៦</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- Main Document Title -->
+                    <div class="main-title">រចនាសម្ព័ន្ធក្រុមប្រឹក្សាកុមារប្រចាំថ្នាក់</div>
+
+                    <!-- Hierarchy Tree Diagram -->
+                    <div class="hierarchy-container">
+                        
+                        <!-- Level 1: President -->
+                        <div class="council-card card-president" onclick="openMemberModal('president')" title="ចុចដើម្បីផ្លាស់ប្តូរ">
+                            <div class="role-title">⭐ ប្រធានក្រុមប្រឹក្សាកុមារ (ប្រធានថ្នាក់)</div>
+                            <div class="student-name-box" id="name-president">កែម សុផាន់ណា (ស)</div>
+                        </div>
+
+                        <!-- Level 2: 4 Vice Presidents -->
+                        <div class="vice-presidents-row">
+                            <div class="council-card card-vp" onclick="openMemberModal('vp1')" title="ចុចដើម្បីផ្លាស់ប្តូរ">
+                                <div class="role-title">អនុប្រធានទី ១<br>(ទទួលបន្ទុកការសិក្សា)</div>
+                                <div class="student-name-box" id="name-vp1">កែ សុគាម (ប)</div>
+                            </div>
+                            <div class="council-card card-vp" onclick="openMemberModal('vp2')" title="ចុចដើម្បីផ្លាស់ប្តូរ">
+                                <div class="role-title">អនុប្រធានទី ២<br>(ទទួលបន្ទុកវិន័យ-ចលនា)</div>
+                                <div class="student-name-box" id="name-vp2">ខន ប៊ុនថង (ប)</div>
+                            </div>
+                            <div class="council-card card-vp" onclick="openMemberModal('vp3')" title="ចុចដើម្បីផ្លាស់ប្តូរ">
+                                <div class="role-title">អនុប្រធានទី ៣<br>(ទទួលបន្ទុកអនាម័យ)</div>
+                                <div class="student-name-box" id="name-vp3">ខែត លីនដា (ស)</div>
+                            </div>
+                            <div class="council-card card-vp" onclick="openMemberModal('vp4')" title="ចុចដើម្បីផ្លាស់ប្តូរ">
+                                <div class="role-title">អនុប្រធានទី ៤<br>(កីឡា & សិល្បៈ)</div>
+                                <div class="student-name-box" id="name-vp4">ឃួន ស្រីឃួច (ស)</div>
+                            </div>
+                        </div>
+
+                        <!-- Level 3: 4 Group Leaders -->
+                        <div class="group-leaders-row">
+                            <div class="council-card card-leader" onclick="openMemberModal('g1')" title="ចុចដើម្បីផ្លាស់ប្តូរ">
+                                <div class="role-title">🚩 ប្រធានក្រុមទី ១</div>
+                                <div class="student-name-box" id="name-g1">ងឿន ភីម (ស)</div>
+                            </div>
+                            <div class="council-card card-leader" onclick="openMemberModal('g2')" title="ចុចដើម្បីផ្លាស់ប្តូរ">
+                                <div class="role-title">🚩 ប្រធានក្រុមទី ២</div>
+                                <div class="student-name-box" id="name-g2">ចំរើន បញ្ញា (ស)</div>
+                            </div>
+                            <div class="council-card card-leader" onclick="openMemberModal('g3')" title="ចុចដើម្បីផ្លាស់ប្តូរ">
+                                <div class="role-title">🚩 ប្រធានក្រុមទី ៣</div>
+                                <div class="student-name-box" id="name-g3">ចំរើន សុធារិទ្ធ (ប)</div>
+                            </div>
+                            <div class="council-card card-leader" onclick="openMemberModal('g4')" title="ចុចដើម្បីផ្លាស់ប្តូរ">
+                                <div class="role-title">🚩 ប្រធានក្រុមទី ៤</div>
+                                <div class="student-name-box" id="name-g4">ឆៃនី នីតា (ស)</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Roles & Duties Summary -->
+                    <table class="duties-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 140px;">តួនាទី</th>
+                                <th>ភារកិច្ច និងការទទួលខុសត្រូវស្នូល</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>ប្រធានថ្នាក់</strong></td>
+                                <td>ដឹកនាំរួម សម្របសម្រួលសកម្មភាពក្នុងថ្នាក់ និងធ្វើរបាយការណ៍ជូនលោកគ្រូ-អ្នកគ្រូបន្ទុកថ្នាក់ជាប្រចាំ។</td>
+                            </tr>
+                            <tr>
+                                <td><strong>អនុប្រធានការសិក្សា</strong></td>
+                                <td>ជំរុញការរៀនសូត្រ តាមដានការធ្វើកិច្ចការផ្ទះ ជួយសិស្សរៀនយឺត និងរៀបចំក្រុមស្វ័យសិក្សា។</td>
+                            </tr>
+                            <tr>
+                                <td><strong>អនុប្រធានវិន័យ-ចលនា</strong></td>
+                                <td>ត្រួតពិនិត្យវត្តមាន សណ្ដាប់ធ្នាប់ ឯកសណ្ឋាន និងជួយដោះស្រាយទំនាស់តូចតាចដោយសន្តិវិធី។</td>
+                            </tr>
+                            <tr>
+                                <td><strong>អនុប្រធានអនាម័យ</strong></td>
+                                <td>ដឹកនាំវេនអនាម័យក្នុង និងក្រៅបន្ទប់រៀន ថែរក្សាធុងសំរាម សម្ភារៈថ្នាក់ និងលាងសម្អាតដៃ។</td>
+                            </tr>
+                            <tr>
+                                <td><strong>អនុប្រធានកីឡា-សិល្បៈ</strong></td>
+                                <td>ដឹកនាំការហាត់ប្រាណពេលព្រឹក ល្បែងប្រជាប្រិយ ចម្រៀងជាតិ និងសកម្មភាពកម្សាន្តនានា។</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <!-- Bottom Signatures Section -->
+                <div class="signatures-area">
+                    <div class="sig-block-left">
+                        <div>បានឃើញ និងឯកភាព</div>
+                        <div class="sig-role">នាយកសាលា</div>
+                        <div class="sig-name" id="sig-director-name">...................................................</div>
+                    </div>
+
+                    <div class="sig-block-right">
+                        <div id="lbl-lunar-date">ថ្ងៃ..................កើត ខែ.............. ឆ្នាំម្សាញ់ ព.ស. ២៥៦៩</div>
+                        <div id="lbl-solar-date">ធ្វើនៅ..................., ថ្ងៃទី..... ខែ.......... ឆ្នាំ២០២៦</div>
+                        <div class="sig-role">គ្រូបន្ទុកថ្នាក់</div>
+                        <div class="sig-name" id="sig-teacher-name">...................................................</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Member Modal -->
+    <div class="modal-overlay" id="member-edit-modal">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 10px;">
+                <h3 style="margin: 0; font-size: 1.1rem; color: #0f172a;" id="modal-role-title">ជ្រើសរើសសិស្សសម្រាប់តួនាទី</h3>
+                <button type="button" onclick="closeMemberModal()" style="border: none; background: #f1f5f9; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; color: #64748b;">&times;</button>
+            </div>
+            
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 0.9rem; font-weight: 700; color: #334155; margin-bottom: 6px;">ជ្រើសរើសសិស្ស ៖</label>
+                <select id="modal-member-picker" style="width: 100%; padding: 10px 12px; border-radius: 10px; border: 1.5px solid #cbd5e1; font-family: inherit; font-size: 0.95rem; font-weight: 600; outline: none;">
+                    <!-- Populated by JS -->
+                </select>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <button type="button" class="btn-toolbar" onclick="closeMemberModal()">បោះបង់</button>
+                <button type="button" class="btn-toolbar btn-primary" onclick="confirmMemberAssignment()">រក្សាទុក</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const KHMER_DIGITS = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
+        function toKhmerNumber(num) {
+            if (num === null || num === undefined) return '';
+            return num.toString().split('').map(d => KHMER_DIGITS[d] !== undefined ? KHMER_DIGITS[d] : d).join('');
+        }
+
+        let currentStudents = [];
+        let councilData = {};
+        let activeKeyToEdit = null;
+
+        const ROLE_NAMES = {
+            president: 'ប្រធានក្រុមប្រឹក្សាកុមារ / ប្រធានថ្នាក់',
+            vp1: 'អនុប្រធានទី ១ (ទទួលបន្ទុកការសិក្សា)',
+            vp2: 'អនុប្រធានទី ២ (ទទួលបន្ទុកវិន័យ-ចលនា)',
+            vp3: 'អនុប្រធានទី ៣ (ទទួលបន្ទុកអនាម័យ)',
+            vp4: 'អនុប្រធានទី ៤ (កីឡា & សិល្បៈ)',
+            g1: 'ប្រធានក្រុមទី ១',
+            g2: 'ប្រធានក្រុមទី ២',
+            g3: 'ប្រធានក្រុមទី ៣',
+            g4: 'ប្រធានក្រុមទី ៤'
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadClassAndSchoolMeta();
+            loadClassStudents();
+            loadCouncilData();
+            setupKhmerDates();
+        });
+
+        function loadClassAndSchoolMeta() {
+            if (!window.classManager) return;
+            const info = window.classManager.getSchoolInfo ? window.classManager.getSchoolInfo() : {};
+            const className = window.classManager.getCurrentClassName ? window.classManager.getCurrentClassName() : 'ថ្នាក់ទី ៥ ក';
+            const yearName = window.classManager.getCurrentAcademicYearName ? window.classManager.getCurrentAcademicYearName() : '២០២៥ - ២០២៦';
+
+            if (document.getElementById('lbl-school-name')) document.getElementById('lbl-school-name').textContent = info.school || 'សាលាបឋមសិក្សា ផ្លុង';
+            if (document.getElementById('lbl-cluster-name')) document.getElementById('lbl-cluster-name').textContent = info.cluster || 'ទីពោ';
+            if (document.getElementById('lbl-class-name')) document.getElementById('lbl-class-name').textContent = className;
+            if (document.getElementById('lbl-academic-year')) document.getElementById('lbl-academic-year').textContent = yearName;
+            if (document.getElementById('sig-teacher-name')) document.getElementById('sig-teacher-name').textContent = info.teacher || '...................................................';
+            if (document.getElementById('sig-director-name')) document.getElementById('sig-director-name').textContent = info.director || '...................................................';
+        }
+
+        function loadClassStudents() {
+            const key = window.getKey ? window.getKey('studentProfilesData') : 'studentProfilesData';
+            let data = [];
+            try {
+                data = JSON.parse(localStorage.getItem(key)) || [];
+                if (data.length === 0 && key === 'studentProfilesData') {
+                    data = JSON.parse(localStorage.getItem('students')) || [];
+                }
+            } catch(e) {}
+            currentStudents = data;
+        }
+
+        function loadCouncilData() {
+            const storageKey = window.getKey ? window.getKey('studentCouncilData') : 'studentCouncilData';
+            let saved = null;
+            try {
+                saved = JSON.parse(localStorage.getItem(storageKey));
+            } catch(e) {}
+
+            if (saved && typeof saved === 'object') {
+                councilData = saved;
+            } else {
+                autoAssignCouncil(false);
+            }
+            renderCouncilDOM();
+        }
+
+        function renderCouncilDOM() {
+            Object.keys(ROLE_NAMES).forEach(k => {
+                const el = document.getElementById(`name-${k}`);
+                if (el) {
+                    const member = councilData[k];
+                    if (member && member.name) {
+                        const isG = (member.gender === 'ស' || member.gender === 'ស្រី' || member.gender === 'F');
+                        const gStr = isG ? 'ស' : 'ប';
+                        el.textContent = `${member.name} (${gStr})`;
+                    } else {
+                        el.textContent = '..............................';
+                    }
+                }
+            });
+        }
+
+        function autoAssignCouncil(promptUser = true) {
+            if (promptUser && !confirm('តើអ្នកពិតជាចង់រៀបចំសមាជិកក្រុមប្រឹក្សាកុមារស្វ័យប្រវត្តិតាមបញ្ជីឈ្មោះឬទេ?')) {
+                return;
+            }
+
+            councilData = {};
+            const keys = Object.keys(ROLE_NAMES);
+            keys.forEach((k, idx) => {
+                if (idx < currentStudents.length) {
+                    const s = currentStudents[idx];
+                    councilData[k] = {
+                        id: s.id || '',
+                        name: s.name || '',
+                        gender: s.gender || 'ប'
+                    };
+                } else {
+                    councilData[k] = null;
+                }
+            });
+
+            saveCouncilData();
+            renderCouncilDOM();
+        }
+
+        function saveCouncilData() {
+            const storageKey = window.getKey ? window.getKey('studentCouncilData') : 'studentCouncilData';
+            try {
+                localStorage.setItem(storageKey, JSON.stringify(councilData));
+            } catch(e) {}
+        }
+
+        function openMemberModal(key) {
+            activeKeyToEdit = key;
+            const modal = document.getElementById('member-edit-modal');
+            const title = document.getElementById('modal-role-title');
+            const picker = document.getElementById('modal-member-picker');
+
+            if (title) title.textContent = ROLE_NAMES[key] || 'ជ្រើសរើសសិស្ស';
+            if (picker) {
+                picker.innerHTML = '<option value="">-- សូមជ្រើសរើសសិស្ស --</option>';
+                currentStudents.forEach(s => {
+                    const isG = (s.gender === 'ស' || s.gender === 'ស្រី' || s.gender === 'F');
+                    const gStr = isG ? 'ស្រី' : 'ប្រុស';
+                    const opt = document.createElement('option');
+                    opt.value = s.id || s.name;
+                    opt.textContent = `${s.name} (${gStr}) ${s.id ? '- ' + s.id : ''}`;
+                    picker.appendChild(opt);
+                });
+
+                const currentAssigned = councilData[key];
+                if (currentAssigned) {
+                    picker.value = currentAssigned.id || currentAssigned.name;
+                } else {
+                    picker.value = '';
+                }
+            }
+
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeMemberModal() {
+            const modal = document.getElementById('member-edit-modal');
+            if (modal) modal.style.display = 'none';
+            activeKeyToEdit = null;
+        }
+
+        function confirmMemberAssignment() {
+            if (!activeKeyToEdit) return;
+            const picker = document.getElementById('modal-member-picker');
+            const chosen = picker ? picker.value : '';
+
+            if (chosen) {
+                const s = currentStudents.find(st => (st.id && st.id.toString() === chosen) || st.name === chosen);
+                if (s) {
+                    councilData[activeKeyToEdit] = {
+                        id: s.id || '',
+                        name: s.name || '',
+                        gender: s.gender || 'ប'
+                    };
+                }
+            } else {
+                councilData[activeKeyToEdit] = null;
+            }
+
+            saveCouncilData();
+            renderCouncilDOM();
+            closeMemberModal();
+        }
+
+        function setupKhmerDates() {
+            const now = new Date();
+            const sDay = toKhmerNumber(now.getDate());
+            const khmerMonths = ['មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'];
+            const sMonth = khmerMonths[now.getMonth()];
+            const sYear = toKhmerNumber(now.getFullYear());
+
+            let location = 'ផ្លុង';
+            if (window.classManager && window.classManager.getSchoolInfo) {
+                const info = window.classManager.getSchoolInfo();
+                location = info.district || info.school || 'ផ្លុង';
+            }
+
+            const elSolar = document.getElementById('lbl-solar-date');
+            if (elSolar) {
+                elSolar.textContent = `ធ្វើនៅ${location}, ថ្ងៃទី ${sDay} ខែ ${sMonth} ឆ្នាំ ${sYear}`;
+            }
+
+            const elLunar = document.getElementById('lbl-lunar-date');
+            if (elLunar) {
+                if (typeof KhmerCalendar !== 'undefined' && KhmerCalendar.toKhmerLunarDate) {
+                    try {
+                        const lunar = KhmerCalendar.toKhmerLunarDate(now);
+                        if (lunar && lunar.lunarDateText) {
+                            elLunar.textContent = lunar.lunarDateText;
+                        }
+                    } catch(e) {
+                        elLunar.textContent = `ថ្ងៃព្រហស្បតិ៍ ៩ កើត ខែពិសាខ ឆ្នាំម្សាញ់ ព.ស. ២៥៦៩`;
+                    }
+                }
+            }
+        }
+
+        function exportCouncilPDF() {
+            const element = document.getElementById('printable-student-council');
+            const className = window.classManager && window.classManager.getCurrentClassName ? window.classManager.getCurrentClassName() : 'Class';
+            const opt = {
+                margin: [5, 5, 5, 5],
+                filename: `Student_Council_${className.replace(/\s+/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2.2, useCORS: true, letterRendering: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>

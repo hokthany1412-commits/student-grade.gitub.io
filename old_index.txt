@@ -1,0 +1,591 @@
+﻿Created At: 2026-08-10T08:29:25Z
+Completed At: 2026-08-10T08:29:25Z
+File Path: `file:///d:/student-grade-system-final/index.html`
+Total Lines: 690
+Total Bytes: 51882
+Showing lines 1 to 690
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: <!DOCTYPE html>
+2: <html lang="km">
+3: <head>
+4:     <meta charset="UTF-8">
+5:     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+6:     <title>áž”áŸ’ážšáž–áŸáž“áŸ’áž’ážŸáž˜áŸ’ážšáž¶áž”áŸ‹áž‚áŸ’ážšáž”áŸ‹áž‚áŸ’ážšáž„áž‘áž·áž“áŸ’áž“áž“áŸáž™ážŸáž·ážŸáŸ’ážŸ áž“áž·áž„áž–áž·áž“áŸ’áž‘áž»</title>
+7:     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Battambang:wght@400;700;900&display=swap" rel="stylesheet">
+8:     <link rel="stylesheet" href="style.css">
+9:     <script src="theme.js"></script>
+10:     <script src="classManager.js"></script>
+11: 
+12:     <!-- Firebase Cloud Sync -->
+13:     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+14:     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+15:     <script src="firebase-config.js"></script>
+16:     <script src="db-sync.js"></script>
+17: </head>
+18: <body class="modern-dashboard-body">
+19:     <!-- Top Navbar -->
+20:     <header class="modern-navbar">
+21:         <div class="nav-left">
+22:             <div class="nav-logo">
+23:                 <!-- Placeholder for Logo -->
+24:                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: white;"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+25:             </div>
+26:             <div class="nav-titles">
+27:                 <h1>ážŸáž¶áž›áž¶áž”áž‹áž˜ážŸáž·áž€áŸ’ážŸáž¶ áž•áŸ’áž›áž»áž„</h1>
+28:                 <h2>áž€áž˜áŸ’áž˜ážœáž·áž’áž¸áž‚áŸ’ážšáž”áŸ‹áž‚áŸ’ážšáž„áž‘áž·áž“áŸ’áž“áž“áŸáž™ážáŸ’áž“áž¶áž€áŸ‹</h2>
+29:             </div>
+30:         </div>
+31:         
+32:         <div class="nav-right">
+33:             <div class="nav-dropdown">
+34:                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+35:                 <span>áž•áŸ’áž‘áŸƒáž”áŸ’ážšáž–áŸáž“áŸ’áž’</span>
+36:                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+37:                 
+38:                 <!-- Dropdown Menu -->
+39:                 <div class="dropdown-menu">
+40:                     <a href="index.html" class="dropdown-item">
+41:                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+42:                         áž‘áŸ†áž–áŸážšážŠáž¾áž˜ (Dashboard)
+43:                     </a>
+44:                     <a href="student-profile.html" class="dropdown-item">
+45:                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+46:                         áž”áŸ’ážšážœážáŸ’ážáž·ážšáž¼áž”ážŸáž·ážŸáŸ’ážŸ (Students)
+47:                     </a>
+48:                     <a href="grades.html" class="dropdown-item">
+49:                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+50:                         áž”áž‰áŸ’áž…áž¼áž›áž–áž·áž“áŸ’áž‘áž» (Grades)
+51:                     </a>
+52:                     <a href="ranking.html" class="dropdown-item">
+53:                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+54:                         ážáž¶ážšáž¶áž„áž…áŸ†ážŽáž¶ážáŸ‹ážáŸ’áž“áž¶áž€áŸ‹ (Ranking)
+55:                     </a>
+56:                     <a href="honor-roll.html" class="dropdown-item">
+57:                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+58:                         ážáž¶ážšáž¶áž„áž€áž·ážáŸ’ážáž·áž™ážŸ (Honor Roll)
+59:                     </a>
+60:                     <a href="parent-contact.html" class="dropdown-item">
+61:                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+62:                         ážŸáŸ€ážœáž—áŸ…áž‘áŸ†áž“áž¶áž€áŸ‹áž‘áŸ†áž“áž„
+63:                     </a>
+64:                 </div>
+65:             </div>
+66:             
+67:             <div class="nav-dropdown">
+68:                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+69:                 <span>ážáŸ’áž˜áŸ‚ážš</span>
+70:                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+71:             </div>
+72: 
+73:             <div class="nav-time">
+74:                 <span class="time-main" id="real-time">09:50 AM</span>
+75:                 <span class="date-sub" id="real-date">ážáŸ’áž„áŸƒážŸáž»áž€áŸ’ážš áž‘áž¸áŸ¢áŸ¦ ážáŸ‚áž˜áž·ážáž»áž“áž¶ áž†áŸ’áž“áž¶áŸ†áŸ¢áŸ áŸ¢áŸ¦</span>
+76:             </div>
+77: 
+78:             <div class="nav-profile">
+79:                 <span class="role-text">áž‚áŸ’ážšáž¼áž”áž“áŸ’áž‘áž»áž€ážáŸ’áž“áž¶áž€áŸ‹</span>
+80:                 <div class="profile-circle">
+81:                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+82:                 </div>
+83:             </div>
+84: 
+85:             <button class="nav-logout" onclick="alert('áž…áž¶áž€áž…áŸáž‰')">
+86:                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+87:             </button>
+88:         </div>
+89:     </header>
+90: 
+91:     <!-- Main Content -->
+92:     <main class="modern-main">
+93:         <div class="main-title-area">
+94:             <div class="title-line"></div>
+95:             <h2 class="main-heading">áž”áŸ’ážšáž–áŸáž“áŸ’áž’ážŸáž˜áŸ’ážšáž¶áž”áŸ‹áž‚áŸ’ážšáž”áŸ‹áž‚áŸ’ážšáž„áž‘áž·áž“áŸ’áž“áž“áŸáž™ážŸáž·ážŸáŸ’ážŸ áž“áž·áž„áž–áž·áž“áŸ’áž‘áž»</h2>
+96:         </div>
+97: 
+98:         <!-- 4 Large Cards -->
+99:         <div class="cards-grid">
+100:             <!-- Card 1 -->
+101:             <div class="modern-card card-blue" onclick="window.location.href='student-profile.html'">
+102:                 <div class="card-icon-wrapper blue-bg">
+103:                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8" style="width: 32px; height: 32px; stroke: none !important;"><path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clip-rule="evenodd" /><path d="M5.082 14.254a8.287 8.287 0 00-1.308 5.135 9.687 9.687 0 01-1.764-.44l-.115-.04a.563.563 0 01-.373-.487l-.01-.121a3.75 3.75 0 016.576-3.036c.32.491.32 1.007 0 1.504l-.01.017a.75.75 0 01-.692.353 9.458 9.458 0 00-.709-.015 11.026 11.026 0 00-1.589.131zM18.918 14.254a8.287 8.287 0 011.308 5.135 9.687 9.687 0 001.764-.44l.115-.04a.563.563 0 00.373-.487l.01-.121a3.75 3.75 0 00-6.576-3.036c-.32.491-.32 1.007 0 1.504l.01.017a.75.75 0 00.692.353c.245.006.49.011.709.015.526.009 1.062.053 1.589.131z" /></svg>
+104:                 </div>
+105:                 <div class="card-text">
+106:                     <h3>áž”áŸ’ážšážœážáŸ’ážáž·ážšáž¼áž”ážŸáž·ážŸáŸ’ážŸ</h3>
+107:                     <p>STUDENT PROFILE</p>
+108:                 </div>
+109:                 <div class="card-arrow">
+110:                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-blue"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+111:                 </div>
+112:             </div>
+113: 
+114:             <!-- Card 2 -->
+115:             <div class="modern-card card-teal" onclick="window.location.href='teacher.html'">
+116:                 <div class="card-icon-wrapper teal-bg">
+117:                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8" style="width: 32px; height: 32px; stroke: none !important;"><path d="M11.7 2.805a.75.75 0 01.6 0A60.65 60.65 0 0122.83 8.72a.75.75 0 01-.231 1.337 49.949 49.949 0 00-9.902 3.912l-.157.081a.75.75 0 01-.742 0 61.265 61.265 0 00-4.413-2.317 2.25 2.25 0 00-.659-.208l-.208-.046a.75.75 0 01-.5-1.127 60.9 60.9 0 0111.455-5.918z" /><path d="M14.654 13.927a.75.75 0 01.46-.089l.345.03c.523.045 1.042.106 1.554.182a.75.75 0 01.597.904l-.066.529a6.002 6.002 0 01-11.408-2.617l-.022-.191a.75.75 0 01.644-.827c.451-.05 .906-.09 1.365-.118a.75.75 0 01.507.13 60.949 60.949 0 005.992 2.054z" /></svg>
+118:                 </div>
+119:                 <div class="card-text">
+120:                     <h3>áž”áŸ’ážšážœážáŸ’ážáž·ážšáž¼áž”áž‚áŸ’ážšáž¼</h3>
+121:                     <p>TEACHER PROFILE</p>
+122:                 </div>
+123:                 <div class="card-arrow">
+124:                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-teal"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+125:                 </div>
+126:             </div>
+127: 
+128:             <!-- Card 3 -->
+129:             <div class="modern-card card-pink" onclick="window.location.href='semester1.html'">
+130:                 <div class="card-icon-wrapper pink-bg">
+131:                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8" style="width: 32px; height: 32px; stroke: none !important;"><path fill-rule="evenodd" d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625zM7.5 15a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 017.5 15zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H8.25z" clip-rule="evenodd" /><path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" /></svg>
+132:                 </div>
+133:                 <div class="card-text">
+134:                     <h3>áž€áž¶ážšáž„áž¶ážšáž†áž˜áž¶ážŸáž‘áž¸áŸ¡</h3>
+135:                     <p>SEMESTER 1 GRADES</p>
+136:                 </div>
+137:                 <div class="card-arrow">
+138:                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-pink"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+139:                 </div>
+140:             </div>
+141: 
+142:             <!-- Card 4 -->
+143:             <div class="modern-card card-black" onclick="window.location.href='semester2.html'">
+144:                 <div class="card-icon-wrapper black-bg">
+145:                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8" style="width: 32px; height: 32px; stroke: none !important;"><path fill-rule="evenodd" d="M4.5 2.25A.75.75 0 004 3.5v17A2.5 2.5 0 006.5 23h12.25a.75.75 0 000-1.5H6.5a1 1 0 01-1-1V3.5a.75.75 0 00-.75-.75h-.25z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M10.5 1.5c-.828 0-1.5.672-1.5 1.5v17c0 .828.672 1.5 1.5 1.5h9c.828 0 1.5-.672 1.5-1.5v-17c0-.828-.672-1.5-1.5-1.5h-9zM12 9.75a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75zm0 3a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5h2.25a.75.75 0 000-1.5h-2.25z" clip-rule="evenodd" /></svg>
+146:                 </div>
+147:                 <div class="card-text">
+148:                     <h3>áž€áž¶ážšáž„áž¶ážšáž†áž˜áž¶ážŸáž‘áž¸áŸ¢</h3>
+149:                     <p>SEMESTER 2 GRADES</p>
+150:                 </div>
+151:                 <div class="card-arrow black-arrow-wrapper">
+152:                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: white;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+153:                 </div>
+154:             </div>
+155: 
+156:             <!-- Card 5 (Annual Results) -->
+157:             <div class="modern-card card-orange" style="border-left-color: #f59e0b; grid-column: 1 / -1;" onclick="window.location.href='annual-grades.html'">
+158:                 <div class="card-icon-wrapper orange-bg">
+159:                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8" style="width: 32px; height: 32px; stroke: none !important;"><path fill-rule="evenodd" d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 00-.584.859 6.753 6.753 0 006.138 5.6 27.395 27.395 0 002.208.036v1.517a4.498 4.498 0 01-2.936 4.238c-.147.054-.298.1-.453.136a.75.75 0 00-.573.744v3.125c0 .356.26.662.613.722 1.488.256 3.018.389 4.56.389 1.543 0 3.073-.133 4.561-.389a.75.75 0 00.613-.722v-3.125a.75.75 0 00-.573-.744 4.505 4.505 0 01-.452-.136 4.498 4.498 0 01-2.937-4.238v-1.517a27.394 27.394 0 002.208-.036 6.753 6.753 0 006.138-5.6.75.75 0 00-.584-.859 40.505 40.505 0 00-3.072-.543v-.858c0-.966-.826-1.75-1.85-1.75h-10.3c-1.024 0-1.85.784-1.85 1.75zm1.5 0v.81c0 .248.01.496.03.743.08 1.077.202 2.146.364 3.204.09.584.195 1.163.313 1.737A25.923 25.923 0 015.66 7.747 5.253 5.253 0 013.064 4.14 39.06 39.06 0 016.666 3.42V2.62c0-.14.113-.25.25-.25h-.25zM17.334 2.62v.8c.884.148 1.753.327 2.602.534A5.253 5.253 0 0118.34 7.746c-.57.818-1.221 1.576-1.942 2.257.118-.574.224-1.153.313-1.737.162-1.058.284-2.127.364-3.204.02-.247.03-.495.03-.743v-.81h-.25c.137 0 .25.11.25.25z" clip-rule="evenodd" /></svg>
+160:                 </div>
+161:                 <div class="card-text">
+162:                     <h3>áž›áž‘áŸ’áž’áž•áž›ážŠáŸ†ážŽáž¶áž…áŸ‹áž†áŸ’áž“áž¶áŸ†</h3>
+163:                     <p>ANNUAL RESULTS</p>
+164:                 </div>
+165:                 <div class="card-arrow">
+166:                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+167:                 </div>
+168:             </div>
+169:         </div>
+170: 
+171:         <!-- Quick Actions (Honor Roll & Ranking) -->
+172:         <div style="background: white; border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+173:             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+174:                 <h3 style="margin: 0; font-size: 1.1rem; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+175:                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+176:                     áž‡áŸ’ážšáž¾ážŸážšáž¾ážŸážáŸ‚ ážŠáž¾áž˜áŸ’áž”áž¸áž˜áž¾áž›ážáž¶ážšáž¶áž„áž€áž·ážáŸ’ážáž·áž™ážŸ áž¬áž…áŸ†ážŽáž¶ážáŸ‹ážáŸ’áž“áž¶áž€áŸ‹
+177:                 </h3>
+178:                 <select id="dashboard-month-select" class="form-control" style="width: 150px; font-family: 'Battambang', sans-serif; font-size: 1rem; padding: 0.5rem; border-color: #cbd5e1;">
+179:                     <option value="áž˜áž€ážšáž¶">áž˜áž€ážšáž¶</option>
+180:                     <option value="áž€áž»áž˜áŸ’áž—áŸˆ">áž€áž»áž˜áŸ’áž—áŸˆ</option>
+181:                     <option value="áž˜áž¸áž“áž¶">áž˜áž¸áž“áž¶</option>
+182:                     <option value="áž˜áŸážŸáž¶">áž˜áŸážŸáž¶</option>
+183:                     <option value="áž§ážŸáž—áž¶">áž§ážŸáž—áž¶</option>
+184:                     <option value="áž˜áž·ážáž»áž“áž¶">áž˜áž·ážáž»áž“áž¶</option>
+185:                     <option value="áž€áž€áŸ’áž€ážŠáž¶">áž€áž€áŸ’áž€ážŠáž¶</option>
+186:                     <option value="ážŸáž¸áž áž¶">ážŸáž¸áž áž¶</option>
+187:                     <option value="áž€áž‰áŸ’áž‰áž¶">áž€áž‰áŸ’áž‰áž¶</option>
+188:                     <option value="ážáž»áž›áž¶">ážáž»áž›áž¶</option>
+189:                     <option value="ážœáž·áž…áŸ’áž†áž·áž€áž¶">ážœáž·áž…áŸ’áž†áž·áž€áž¶</option>
+190:                     <option value="áž’áŸ’áž“áž¼">áž’áŸ’áž“áž¼</option>
+191:                     <option value="áž†áž˜áž¶ážŸáž‘áž¸áŸ¡" style="font-weight: bold; color: #ec4899;">áž†áž˜áž¶ážŸáž‘áž¸áŸ¡</option>
+192:                     <option value="áž†áž˜áž¶ážŸáž‘áž¸áŸ¢" style="font-weight: bold; color: #1e293b;">áž†áž˜áž¶ážŸáž‘áž¸áŸ¢</option>
+193:                     <option value="ážŠáŸ†ážŽáž¶áž…áŸ‹áž†áŸ’áž“áž¶áŸ†" style="font-weight: bold; color: #f59e0b;">ážŠáŸ†ážŽáž¶áž…áŸ‹áž†áŸ’áž“áž¶áŸ†</option>
+194:                 </select>
+195:             </div>
+196:             
+197:             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+198:                 <button class="btn" onclick="goToReport('honor-roll.html')" style="background-color: #d4af37; color: #1e293b; border: none; padding: 1.2rem; font-size: 1.1rem; border-radius: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(212, 175, 55, 0.4); cursor: pointer; transition: transform 0.2s;">
+199:                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+200:                     áž˜áž¾áž›ážáž¶ážšáž¶áž„áž€áž·ážáŸ’ážáž·áž™ážŸ (Honor Roll)
+201:                 </button>
+202:                 <button class="btn" onclick="goToReport('ranking.html')" style="background-color: #3b82f6; color: white; border: none; padding: 1.2rem; font-size: 1.1rem; border-radius: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4); cursor: pointer; transition: transform 0.2s;">
+203:                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+204:                     áž˜áž¾áž›ážáž¶ážšáž¶áž„áž…áŸ†ážŽáž¶ážáŸ‹ážáŸ’áž“áž¶áž€áŸ‹ (Ranking)
+205:                 </button>
+206:             </div>
+207:         </div>
+208:         
+209:         <script>
+210:             function goToReport(page) {
+211:                 const month = document.getElementById('dashboard-month-select').value;
+212:                 localStorage.setItem('lastSelectedMonth', month);
+213:                 window.location.href = `${page}?month=${month}&title=${month}`;
+214:             }
+215:             
+216:             // Restore last selected month on load
+217:             document.addEventListener('DOMContentLoaded', () => {
+218:                 const lastMonth = localStorage.getItem('lastSelectedMonth');
+219:                 if (lastMonth) {
+220:                     const select = document.getElementById('dashboard-month-select');
+221:                     if (select) {
+222:                         let optionExists = Array.from(select.options).some(opt => opt.value === lastMonth);
+223:                         if (optionExists) {
+224:                             select.value = lastMonth;
+225:                         }
+226:                     }
+227:                 }
+228:             });
+229:         </script>
+230: 
+231:         <!-- Utilities Section -->
+232:         <div class="utilities-section">
+233:             <h4 class="utils-title">
+234:                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+235:                 áž˜áž»ážáž„áž¶ážšáž”áž“áŸ’ážáŸ‚áž˜ (UTILITIES)
+236:             </h4>
+237:             <div class="utils-grid">
+238:                 <!-- Util 1 -->
+239:                 <div class="util-card" onclick="window.location.href='summary-report.html'">
+240:                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+241:                     <span>ážšáž”áž¶áž™áž€áž¶ážšážŽáŸážŸážšáž»áž”</span>
+242:                 </div>
+243:                 
+244:                 <!-- Util 2 -->
+245:                 <div class="util-card" onclick="window.location.href='teacher-attendance.html'">
+246:                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+247:                     <span>áž”áž‰áŸ’áž‡áž¸ážœážáŸ’ážáž˜áž¶áž“áž‚áŸ’ážšáž¼</span>
+248:                 </div>
+249:                 
+250:                 <!-- Util 3 -->
+251:                 <div class="util-card" onclick="window.location.href='student-record-book.html'">
+252:                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+253:                     <span>ážŸáŸ€ážœáž—áŸ…ážŸáž·áž€áŸ’ážáž¶áž‚áž¶ážšáž·áž€</span>
+254:                 </div>
+255: 
+256:                 <!-- Util 4 -->
+257:                 <div class="util-card" onclick="window.location.href='student-record.html'">
+258:                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+259:                     <span>ážŸáŸ€ážœáž—áŸ…ážáž¶áž˜ážŠáž¶áž“</span>
+260:                 </div>
+261: 
+262:                 <!-- Util 5 -->
+263:                 <div class="util-card" onclick="window.location.href='student-attendance.html'">
+264:                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+265:                     <span>áž”áž‰áŸ’áž‡áž¸ážœážáŸ’ážáž˜áž¶áž“ážŸáž·ážŸáŸ’ážŸ</span>
+266:                 </div>
+267:                 
+268:                 <!-- Util 5 -->
+269:                 <div class="util-card" onclick="openSettingsModal()">
+270:                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+271:                     <span>áž€áž¶ážšáž€áŸ†ážŽážáŸ‹</span>
+272:                 </div>
+273:                 
+274:                 <!-- Util 6: HPV Report -->
+275:                 <div class="util-card" onclick="window.location.href='hpv-report.html'">
+276:                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+277:                     <span>ážœáŸ‰áž¶áž€áŸ‹ážŸáž¶áŸ†áž„ HPV</span>
+278:                 </div>
+279:                 
+280:                 <!-- Util 6: Parent Contact -->
+281:                 <div class="util-card" onclick="window.location.href='parent-contact.html'">
+282:                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+283:                     <span>ážŸáŸ€ážœáž—áŸ…áž‘áŸ†áž“áž¶áž€áŸ‹áž‘áŸ†áž“áž„</span>
+284:                 </div>
+285:             </div>
+286:         </div>
+287:     </main>
+288: 
+289:     <!-- Settings Modal -->
+290:     <div id="settings-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+291:         <div style="background: white; padding: 2rem; border-radius: 16px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+292:             <h2 style="margin-top: 0; margin-bottom: 1.5rem; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+293:                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+294:                 áž€áž¶ážšáž€áŸ†ážŽážáŸ‹ (Settings)
+295:             </h2>
+296:             
+297:             <div style="margin-bottom: 1.5rem;">
+298:                 <label style="display: block; margin-bottom: 8px; font-weight: 500;">áž–ážŽáŸŒážšáž”áž¶ážšážáž¶áž„áž›áž¾ (Navbar Color)</label>
+299:                 <div style="display: flex; align-items: center; gap: 10px;">
+300:                     <input type="color" id="navbar-color" value="#0f5132" style="width: 50px; height: 40px; padding: 0; border: none; border-radius: 8px; cursor: pointer;">
+301:                     <button class="btn btn-secondary" onclick="document.getElementById('navbar-color').value='#0f5132'" style="padding: 0.5rem 1rem;">áž–ážŽáŸŒážŠáž¾áž˜ (Reset)</button>
+302:                 </div>
+303:             </div>
+304:             
+305:             <div style="margin-bottom: 2rem;">
+306:                 <label style="display: block; margin-bottom: 8px; font-weight: 500;">ážšáž…áž“áž¶áž”áž‘áž•áŸ’áž‘áŸƒážáž¶áž„áž€áŸ’ážšáŸ„áž™ (Background Theme)</label>
+307:                 <div style="display: flex; gap: 10px; flex-wrap: wrap;" id="theme-selector">
+308:                     <div class="theme-btn" data-theme="default" style="width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 2px solid #3b82f6; background: linear-gradient(135deg, #e0f2fe, #fce7f3);" onclick="selectBgTheme('default')"></div>
+309:                     <div class="theme-btn" data-theme="ocean" style="width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; background: linear-gradient(135deg, #ccfbf1, #bfdbfe);" onclick="selectBgTheme('ocean')"></div>
+310:                     <div class="theme-btn" data-theme="sunset" style="width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; background: linear-gradient(135deg, #ffedd5, #fecdd3);" onclick="selectBgTheme('sunset')"></div>
+311:                     <div class="theme-btn" data-theme="nature" style="width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; background: linear-gradient(135deg, #dcfce7, #fef08a);" onclick="selectBgTheme('nature')"></div>
+312:                     <div class="theme-btn" data-theme="custom" style="width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; display: flex; align-items: center; justify-content: center; background: #f1f5f9; position: relative;" title="áž‡áŸ’ážšáž¾ážŸážšáž¾ážŸáž–ážŽáŸŒ" onclick="document.getElementById('custom-bg-color').click()">
+313:                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+314:                         <input type="color" id="custom-bg-color" style="opacity: 0; position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer;" onchange="selectCustomBgColor(this.value)">
+315:                     </div>
+316:                 </div>
+317:             </div>
+318: 
+319:             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 1.5rem 0;">
+320: 
+321:             <div style="margin-bottom: 2rem;">
+322:                 <label style="display: block; margin-bottom: 8px; font-weight: 500;">áž—áŸ’áž‡áž¶áž”áŸ‹áž‘áŸ… Google Sheets (Google Apps Script URL)</label>
+323:                 <input type="text" id="google-sheets-url" placeholder="áž”áž‰áŸ’áž…áž¼áž› Web App URL áž‘áž¸áž“áŸáŸ‡..." style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #cbd5e1; font-family: 'Battambang', sans-serif; margin-bottom: 15px;">
+324:                 
+325:                 <label style="display: block; margin-bottom: 8px; font-weight: 500;">áž•áŸ’áž‘áŸážšáž‘áž·áž“áŸ’áž“áž“áŸáž™ (Backup / Restore / Export)</label>
+326:                 <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+327:                     <button class="btn btn-primary" onclick="exportData()" style="flex: 1; background: #10b981; border: none;">áž‘áž¶áž‰áž™áž€áž‘áž·áž“áŸ’áž“áž“áŸáž™ (Backup)</button>
+328:                     <button class="btn btn-primary" onclick="document.getElementById('import-data-file').click()" style="flex: 1; background: #f59e0b; border: none;">áž”áž‰áŸ’áž…áž¼áž›áž‘áž·áž“áŸ’áž“áž“áŸáž™ (Restore)</button>
+329:                     <input type="file" id="import-data-file" style="display: none;" accept=".json" onchange="importData(event)">
+330:                 </div>
+331:                 <div style="display: flex; gap: 10px;">
+332:                     <button class="btn btn-primary" onclick="exportToGoogleSheets()" style="flex: 1; background: #217346; border: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+333:                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+334:                         áž‘áž¶áž‰áž™áž€áž…áž¼áž› Google Sheets (Excel)
+335:                     </button>
+336:                 </div>
+337:                 <p style="font-size: 0.8rem; color: #64748b; margin-top: 8px;">áž”áŸ’ážšáž¾áž˜áž»ážáž„áž¶ážšáž“áŸáŸ‡ážŠáž¾áž˜áŸ’áž”áž¸áž•áŸ’áž‘áŸážšáž‘áž·áž“áŸ’áž“áž“áŸáž™áž–áž¸áž€áž»áŸ†áž–áŸ’áž™áž¼áž‘áŸážšáž‘áŸ… Website áž¬áž‘áž¶áž‰áž™áž€áž‘áž·áž“áŸ’áž“áž“áŸáž™áž‘áž¶áŸ†áž„áž¢ážŸáŸ‹áž‡áž¶ Excel ážŸáž˜áŸ’ážšáž¶áž”áŸ‹ Google SheetsáŸ”</p>
+338:             </div>
+339:             
+340:             <div style="display: flex; gap: 10px; justify-content: flex-end;">
+341:                 <button type="button" class="btn btn-secondary" onclick="closeSettingsModal()">áž”áŸ„áŸ‡áž”áž„áŸ‹</button>
+342:                 <button type="button" class="btn btn-primary" onclick="applySettings()" style="background: #3b82f6; border: none;">ážšáž€áŸ’ážŸáž¶áž‘áž»áž€</button>
+343:             </div>
+344:         </div>
+345:     </div>
+346: 
+347:     <script>
+348:         // Update clock and date
+349:         function updateClock() {
+350:             const now = new Date();
+351:             let hours = now.getHours();
+352:             let minutes = now.getMinutes();
+353:             const ampm = hours >= 12 ? 'PM' : 'AM';
+354:             hours = hours % 12;
+355:             hours = hours ? hours : 12; 
+356:             minutes = minutes < 10 ? '0' + minutes : minutes;
+357:             document.getElementById('real-time').textContent = hours + ':' + minutes + ' ' + ampm;
+358:             
+359:             const days = ['áž¢áž¶áž‘áž·ážáŸ’áž™', 'áž…áŸáž“áŸ’áž‘', 'áž¢áž„áŸ’áž‚áž¶ážš', 'áž–áž»áž’', 'áž–áŸ’ážšáž ážŸáŸ’áž”ážáž·áŸ', 'ážŸáž»áž€áŸ’ážš', 'ážŸáŸ…ážšáŸ'];
+360:             const months = ['áž˜áž€ážšáž¶', 'áž€áž»áž˜áŸ’áž—áŸˆ', 'áž˜áž¸áž“áž¶', 'áž˜áŸážŸáž¶', 'áž§ážŸáž—áž¶', 'áž˜áž·ážáž»áž“áž¶', 'áž€áž€áŸ’áž€ážŠáž¶', 'ážŸáž¸áž áž¶', 'áž€áž‰áŸ’áž‰áž¶', 'ážáž»áž›áž¶', 'ážœáž·áž…áŸ’áž†áž·áž€áž¶', 'áž’áŸ’áž“áž¼'];
+361:             const khmerNums = ['áŸ ', 'áŸ¡', 'áŸ¢', 'áŸ£', 'áŸ¤', 'áŸ¥', 'áŸ¦', 'áŸ§', 'áŸ¨', 'áŸ©'];
+362:             const toKhmer = (num) => num.toString().split('').map(d => khmerNums[d] || d).join('');
+363:             
+364:             const dayName = days[now.getDay()];
+365:             const dayStr = toKhmer(now.getDate());
+366:             const monthName = months[now.getMonth()];
+367:             const yearStr = toKhmer(now.getFullYear());
+368:             
+369:             document.getElementById('real-date').textContent = `ážáŸ’áž„áŸƒ${dayName} áž‘áž¸${dayStr} ážáŸ‚${monthName} áž†áŸ’áž“áž¶áŸ†${yearStr}`;
+370:         }
+371:         setInterval(updateClock, 1000);
+372:         updateClock();
+373: 
+374:         // Settings Modal Logic
+375:         let currentBgTheme = localStorage.getItem('theme_bg_name') || 'default';
+376:         let currentCustomColor = localStorage.getItem('theme_bg_custom_color') || '#f1f5f9';
+377: 
+378:         function selectBgTheme(themeName) {
+379:             currentBgTheme = themeName;
+380:             document.querySelectorAll('.theme-btn').forEach(btn => {
+381:                 btn.style.border = btn.dataset.theme === themeName ? '2px solid #3b82f6' : '2px solid transparent';
+382:             });
+383:         }
+384: 
+385:         function selectCustomBgColor(color) {
+386:             currentCustomColor = color;
+387:             const customBtn = document.querySelector('.theme-btn[data-theme="custom"]');
+388:             if (customBtn) customBtn.style.background = color;
+389:             selectBgTheme('custom');
+390:         }
+391: 
+392:         function openSettingsModal() {
+393:             document.getElementById('settings-modal').style.display = 'flex';
+394:             
+395:             const navColor = localStorage.getItem('theme_navbar');
+396:             if (navColor) document.getElementById('navbar-color').value = navColor;
+397: 
+398:             const sheetUrl = localStorage.getItem('google_sheets_url');
+399:             if (sheetUrl) document.getElementById('google-sheets-url').value = sheetUrl;
+400:             
+401:             selectBgTheme(currentBgTheme);
+402:             if (currentBgTheme === 'custom') {
+403:                 document.getElementById('custom-bg-color').value = currentCustomColor;
+404:                 const customBtn = document.querySelector('.theme-btn[data-theme="custom"]');
+405:                 if (customBtn) customBtn.style.background = currentCustomColor;
+406:             }
+407:         }
+408: 
+409:         function closeSettingsModal() {
+410:             document.getElementById('settings-modal').style.display = 'none';
+411:         }
+412: 
+413:         function applySettings() {
+414:             const navColor = document.getElementById('navbar-color').value;
+415:             const sheetUrl = document.getElementById('google-sheets-url').value;
+416:             
+417:             // Save to localStorage
+418:             localStorage.setItem('theme_navbar', navColor);
+419:             localStorage.setItem('google_sheets_url', sheetUrl);
+420:             localStorage.setItem('theme_bg_name', currentBgTheme);
+421:             if (currentBgTheme === 'custom') {
+422:                 localStorage.setItem('theme_bg_custom_color', currentCustomColor);
+423:             }
+424:             
+425:             // Apply to document
+426:             document.documentElement.style.setProperty('--navbar-bg', navColor);
+427:             
+428:             if (currentBgTheme === 'custom') {
+429:                 document.documentElement.style.setProperty('--bg-main-color', currentCustomColor);
+430:                 document.documentElement.style.setProperty('--bg-main-image', 'none');
+431:             } else {
+432:                 const theme = window.bgThemes ? window.bgThemes[currentBgTheme] : null;
+433:                 if(theme) {
+434:                     document.documentElement.style.setProperty('--bg-main-color', theme.color);
+435:                     document.documentElement.style.setProperty('--bg-main-image', theme.image);
+436:                 } else {
+437:                     // Fallback to reload if window.bgThemes is missing
+438:                     window.location.reload();
+439:                 }
+440:             }
+441:             
+442:             closeSettingsModal();
+443:         }
+444: 
+445:         function exportData() {
+446:             const data = {};
+447:             for (let i = 0; i < localStorage.length; i++) {
+448:                 const key = localStorage.key(i);
+449:                 data[key] = localStorage.getItem(key);
+450:             }
+451:             const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+452:             const url = URL.createObjectURL(blob);
+453:             const a = document.createElement('a');
+454:             a.href = url;
+455:             a.download = `student-system-backup-${new Date().toISOString().split('T')[0]}.json`;
+456:             document.body.appendChild(a);
+457:             a.click();
+458:             document.body.removeChild(a);
+459:             URL.revokeObjectURL(url);
+460:         }
+461: 
+462:         function importData(event) {
+463:             const file = event.target.files[0];
+464:             if (!file) return;
+465:             
+466:             const reader = new FileReader();
+467:             reader.onload = function(e) {
+468:                 try {
+469:                     const data = JSON.parse(e.target.result);
+470:                     if (confirm('ážáž¾áž¢áŸ’áž“áž€áž–áž·ážáž‡áž¶áž…áž„áŸ‹áž”áž‰áŸ’áž…áž¼áž›áž‘áž·áž“áŸ’áž“áž“áŸáž™áž“áŸáŸ‡áž˜áŸ‚áž“áž‘áŸ? áž‘áž·áž“áŸ’áž“áž“áŸáž™áž…áž¶ážŸáŸ‹áž“áž¹áž„ážáŸ’ážšáž¼ážœáž”áž¶áž“áž‡áŸ†áž“áž½ážŸáŸ”')) {
+471:                         localStorage.clear();
+472:                         for (const key in data) {
+473:                             localStorage.setItem(key, data[key]);
+474:                         }
+475:                         alert('áž”áž‰áŸ’áž‡áž¼áž›áž‘áž·áž“áŸ’áž“áž“áŸáž™áž‡áŸ„áž‚áž‡áŸáž™! áž”áŸ’ážšáž–áŸáž“áŸ’áž’áž“áž¹áž„ážáŸ’ážšáž¼ážœ RefresháŸ”');
+476:                         window.location.reload();
+477:                     }
+478:                 } catch (err) {
+479:                     alert('áž˜áž¶áž“áž”áž‰áŸ’áž áž¶áž€áŸ’áž“áž»áž„áž€áž¶ážšáž¢áž¶áž“ File áž‘áž·áž“áŸ’áž“áž“áŸáž™áŸ”');
+480:                 }
+481:             };
+482:             reader.readAsText(file);
+483:             event.target.value = ''; // Reset input
+484:         }
+485:         async function exportToGoogleSheets() {
+486:             let sheetUrl = document.getElementById('google-sheets-url').value;
+487:             
+488:             if (!sheetUrl) {
+489:                 sheetUrl = localStorage.getItem('google_sheets_url');
+490:             }
+491: 
+492:             if (!sheetUrl) {
+493:                 alert('ážŸáž¼áž˜áž”áž‰áŸ’áž…áž¼áž› Web App URL áž“áŸ…áž€áŸ’áž“áž»áž„áž€áž¶ážšáž€áŸ†ážŽážáŸ‹ (Settings) áž‡áž¶áž˜áž»áž“ážŸáž·áž“!');
+494:                 return;
+495:             }
+496: 
+497:             // Save it automatically so they don't have to click Save
+498:             localStorage.setItem('google_sheets_url', sheetUrl);
+499: 
+500:             const exportBtn = document.querySelector('button[onclick="exportToGoogleSheets()"]');
+501:             const originalText = exportBtn.innerHTML;
+502:             exportBtn.innerHTML = 'áž€áŸ†áž–áž»áž„áž”áž‰áŸ’áž‡áž¼áž“áž‘áž·áž“áŸ’áž“áž“áŸáž™...';
+503:             exportBtn.disabled = true;
+504: 
+505:             try {
+506:                 let payload = [];
+507: 
+508:                 // Function to add a sheet if data exists
+509:                 const addSheet = (data, sheetName) => {
+510:                     if (data && data.length > 0) {
+511:                         payload.push({ sheetName: sheetName, rows: data });
+512:                     }
+513:                 };
+514: 
+515:                 // Retrieve and parse data based on current active class
+516:                 const getKey = window.classManager ? window.classManager.getKey : (k) => k;
+517: 
+518:                 // 1. Master Summary Sheet
+519:                 let summaryData = [];
+520:                 let students = JSON.parse(localStorage.getItem(getKey('studentProfilesData'))) || [];
+521:                 const months = ['áž˜áž€ážšáž¶', 'áž€áž»áž˜áŸ’áž—áŸˆ', 'áž˜áž¸áž“áž¶', 'áž˜áŸážŸáž¶', 'áž§ážŸáž—áž¶', 'áž˜áž·ážáž»áž“áž¶', 'áž€áž€áŸ’áž€ážŠáž¶', 'ážŸáž¸áž áž¶', 'áž€áž‰áŸ’áž‰áž¶', 'ážáž»áž›áž¶', 'ážœáž·áž…áŸ’áž†áž·áž€áž¶', 'áž’áŸ’áž“áž¼'];
+522:                 
+523:                 students.forEach(student => {
+524:                     let studentSummary = {
+525:                         'áž¢ážáŸ’ážáž›áŸáž (ID)': student.id,
+526:                         'ážˆáŸ’áž˜áŸ„áŸ‡ (Name)': student.name,
+527:                         'áž—áŸáž‘ (Gender)': student.gender
+528:                     };
+529:                     
+530:                     months.forEach(month => {
+531:                         let grades = JSON.parse(localStorage.getItem(getKey(`studentGrades_${month}`))) || [];
+532:                         let sGrade = grades.find(g => g.id === student.id);
+533:                         studentSummary[`áž˜áž’áŸ’áž™áž˜áž—áž¶áž‚_${month}`] = sGrade ? sGrade.average : '';
+534:                         studentSummary[`áž…áŸ†ážŽáž¶ážáŸ‹ážáŸ’áž“áž¶áž€áŸ‹_${month}`] = sGrade ? sGrade.rank : '';
+535:                     });
+536:                     
+537:                     ['semester1ExamGrades', 'semester2ExamGrades', 'annualExamGrades'].forEach(key => {
+538:                         let periodName = key.replace('semester1ExamGrades', 'áž†áž˜áž¶ážŸáž‘áž¸áŸ¡').replace('semester2ExamGrades', 'áž†áž˜áž¶ážŸáž‘áž¸áŸ¢').replace('annualExamGrades', 'áž”áŸ’ážšáž…áž¶áŸ†áž†áŸ’áž“áž¶áŸ†');
+539:                         let data = JSON.parse(localStorage.getItem(getKey(key)));
+540:                         if (data) {
+541:                             if (Array.isArray(data)) { // Semester grades
+542:                                 let sGrade = data.find(g => g.id === student.id);
+543:                                 studentSummary[`áž˜áž’áŸ’áž™áž˜áž—áž¶áž‚_${periodName}`] = sGrade ? (sGrade.sem_avg !== undefined ? sGrade.sem_avg : sGrade.average) : '';
+544:                                 studentSummary[`áž…áŸ†ážŽáž¶ážáŸ‹ážáŸ’áž“áž¶áž€áŸ‹_${periodName}`] = sGrade ? sGrade.rank : '';
+545:                             } else { // Annual grades (Object)
+546:                                 let sGrade = data[student.id];
+547:                                 studentSummary[`áž˜áž’áŸ’áž™áž˜áž—áž¶áž‚_${periodName}`] = sGrade ? sGrade.annualAvg : '';
+548:                                 studentSummary[`áž…áŸ†ážŽáž¶ážáŸ‹ážáŸ’áž“áž¶áž€áŸ‹_${periodName}`] = sGrade ? sGrade.rank : '';
+549:                             }
+550:                         } else {
+551:                             studentSummary[`áž˜áž’áŸ’áž™áž˜áž—áž¶áž‚_${periodName}`] = '';
+552:                             studentSummary[`áž…áŸ†ážŽáž¶ážáŸ‹ážáŸ’áž“áž¶áž€áŸ‹_${periodName}`] = '';
+553:                         }
+554:                     });
+555:                     
+556:                     summaryData.push(studentSummary);
+557:                 });
+558:                 if (summaryData.length > 0) {
+559:                     addSheet(summaryData, 'ážšáž”áž¶áž™áž€áž¶ážšážŽáŸážŸážšáž»áž” (Summary)');
+560:                 }
+561: 
+562:                 // 2. All Grades Database
+563:                 let allGrades = [];
+564:                 months.forEach(month => {
+565:                     let grades = JSON.parse(localStorage.getItem(getKey(`studentGrades_${month}`)));
+566:                     if (grades && grades.length > 0) {
+567:                         grades.forEach(s => {
+568:                             let flat = { 'áž€áž¶áž›áž”ážšáž·áž…áŸ’áž†áŸáž‘ (Period)': `ážáŸ‚${month}`, ...s };
+569:                             if (flat.grades) {
+570:                                 for (let key in flat.grades) {
+571:                                     flat[`áž–áž·áž“áŸ’áž‘áž»_${key}`] = flat.grades[key];
+572:                                 }
+573:                                 delete flat.grades;
+574:                             }
+575:                             allGrades.push(flat);
+576:                         });
+577:                     }
+578:                 });
+579:                 
+580:                 ['semester1ExamGrades', 'semester2ExamGrades', 'annualExamGrades'].forEach(key => {
+581:             
+<truncated 6518 bytes>
+
+NOTE: The output was truncated because it was too long. Use a more targeted query or a smaller range to get the information you need.

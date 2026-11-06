@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បញ្ជីសម្រង់ឈ្មោះ និងផ្តល់វ៉ាក់សាំងការពារមហារីកមាត់ស្បូន (HPV)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Battambang:wght@400;700&family=Moul&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Include html2pdf library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --report-font: 'Battambang', sans-serif;
+            --title-font: 'Moul', cursive;
+        }
+
+        body {
+            font-family: var(--report-font);
+        }
+
+        .report-sheet {
+            background: #ffffff;
+            color: #000000;
+            padding: 25px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            font-family: var(--report-font);
+        }
+
+        .appendix-tag {
+            color: #dc2626;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            font-family: 'Battambang', sans-serif;
+        }
+
+        .report-main-title {
+            text-align: center;
+            font-family: var(--title-font);
+            font-size: 1.22rem;
+            line-height: 1.8;
+            margin: 10px 0 20px 0;
+            color: #000;
+            font-weight: normal;
+        }
+
+        .header-meta-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 0.98rem;
+            color: #000;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .meta-field {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .meta-input {
+            border: none;
+            border-bottom: 1px dotted #333;
+            background: transparent;
+            font-family: inherit;
+            font-size: 0.98rem;
+            color: #000;
+            padding: 2px 5px;
+            min-width: 140px;
+            outline: none;
+        }
+
+        .meta-input:focus {
+            border-bottom-color: #2563eb;
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        /* HPV Table Styling */
+        .hpv-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            font-size: 0.92rem;
+        }
+
+        .hpv-table th, .hpv-table td {
+            border: 1px solid #333333;
+            padding: 6px 4px;
+            color: #000;
+            vertical-align: middle;
+        }
+
+        .hpv-table th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .hpv-table th i {
+            font-style: italic;
+            font-weight: normal;
+            font-size: 0.88rem;
+        }
+
+        .hpv-table td.center {
+            text-align: center;
+        }
+
+        .hpv-table td.left {
+            text-align: left;
+            padding-left: 8px;
+        }
+
+        .hpv-footer-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            color: #000;
+        }
+
+        .signature-block {
+            text-align: left;
+            line-height: 1.9;
+            min-width: 250px;
+        }
+
+        .stat-badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 12px;
+            margin-bottom: 1.25rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg, #ffffff);
+            border-radius: 12px;
+            padding: 14px 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            border: 1px solid var(--border-color, #e2e8f0);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+            border-color: #ec4899;
+        }
+        .stat-card.active-card {
+            border-color: #db2777;
+            background: #fdf2f8;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .stat-info h4 {
+            margin: 0;
+            font-size: 0.84rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .stat-info .stat-num {
+            margin: 3px 0 0 0;
+            font-size: 1.18rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .filter-controls-panel {
+            background: var(--card-bg, #ffffff);
+            border: 1px solid var(--border-color, #e2e8f0);
+            border-radius: 12px;
+            padding: 12px 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .filter-tab-btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #475569;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .filter-tab-btn:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        .filter-tab-btn.active {
+            background: #db2777;
+            color: white;
+            border-color: #db2777;
+            box-shadow: 0 4px 10px rgba(219, 39, 119, 0.25);
+        }
+
+        @media print {
+            @page { 
+                size: landscape; 
+                margin: 8mm 10mm; 
+            }
+            .app-header, .filter-controls-panel, .stat-badge-grid, .no-print { display: none !important; }
+            body { background: white !important; padding: 0 !important; color: black !important; }
+            .app-container { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+            .report-sheet { 
+                background: none !important; 
+                box-shadow: none !important; 
+                border: none !important; 
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .meta-input {
+                border-bottom: 1px dotted #000 !important;
+            }
+            .hpv-table {
+                width: 100% !important;
+            }
+            .hpv-table th, .hpv-table td {
+                border: 1px solid #000 !important;
+                color: #000 !important;
+                font-size: 9.5pt !important;
+                padding: 4px 3px !important;
+            }
+            .hpv-table th { 
+                background-color: #f3f4f6 !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+            }
+            .appendix-tag {
+                color: #dc2626 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            tr { page-break-inside: avoid; }
+        }
+        
+        /* Fix for html2pdf rendering */
+        .pdf-export-mode {
+            background: white !important;
+            color: black !important;
+            box-shadow: none !important;
+            padding: 10px !important;
+            width: 1100px !important;
+        }
+        .pdf-export-mode * {
+            color: black !important;
+        }
+        .pdf-export-mode .appendix-tag {
+            color: #dc2626 !important;
+        }
+        .pdf-export-mode .hpv-table th {
+            background-color: #f3f4f6 !important;
+            -webkit-print-color-adjust: exact;
+        }
+        .pdf-export-mode .hpv-table th, 
+        .pdf-export-mode .hpv-table td {
+            border: 1px solid black !important;
+        }
+    </style>
+
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div class="logo-area" style="display: flex; align-items: center;">
+                <div id="global-class-selector" style="margin-right: 15px;"></div>
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="margin-right: 15px; padding: 0.5rem 1rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    ត្រឡប់ក្រោយ
+                </button>
+                <div class="logo-icon" style="background: #ec4899;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                </div>
+                <h1 style="font-size: 1.35rem;">បញ្ជីសម្រង់ឈ្មោះ និងផ្តល់វ៉ាក់សាំង HPV</h1>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="downloadExcel()" style="background: #10b981; color: white; border-color: #10b981;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 5px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="17"></line><line x1="16" y1="13" x2="8" y2="17"></line></svg>
+                    Excel
+                </button>
+                <button class="btn btn-secondary" onclick="downloadWord()" style="background: #2563eb; color: white; border-color: #2563eb;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 5px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                    Word
+                </button>
+                <button class="btn btn-secondary" onclick="downloadPDF()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    PDF
+                </button>
+                <button class="btn btn-primary" onclick="window.print()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 5px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    បោះពុម្ព (Print)
+                </button>
+            </div>
+        </header>
+
+        <!-- STATS BADGES SUMMARY -->
+        <div class="stat-badge-grid no-print">
+            <div class="stat-card" id="card-age13-14" onclick="selectFilterMode('age13_14')">
+                <div class="stat-icon" style="background: #fdf2f8; color: #db2777;">🌸</div>
+                <div class="stat-info">
+                    <h4>កុមារីអាយុ ១៣-១៤ ឆ្នាំ</h4>
+                    <div class="stat-num"><span id="stat-count-13-14">0</span> នាក់</div>
+                </div>
+            </div>
+            <div class="stat-card" id="card-age9" onclick="selectFilterMode('age9')">
+                <div class="stat-icon" style="background: #eff6ff; color: #2563eb;">🌼</div>
+                <div class="stat-info">
+                    <h4>កុមារីអាយុ ៩ ឆ្នាំ</h4>
+                    <div class="stat-num"><span id="stat-count-9">0</span> នាក់</div>
+                </div>
+            </div>
+            <div class="stat-card" id="card-missed" onclick="selectFilterMode('missed')">
+                <div class="stat-icon" style="background: #fffbeb; color: #d97706;">🌺</div>
+                <div class="stat-info">
+                    <h4>កុមារីខកខាន (១០-១២ ឆ្នាំ)</h4>
+                    <div class="stat-num"><span id="stat-count-missed">0</span> នាក់</div>
+                </div>
+            </div>
+            <div class="stat-card" id="card-all-girls" onclick="selectFilterMode('all_girls')">
+                <div class="stat-icon" style="background: #f0fdf4; color: #16a34a;">👧</div>
+                <div class="stat-info">
+                    <h4>កុមារីទាំងអស់ក្នុងថ្នាក់</h4>
+                    <div class="stat-num"><span id="stat-count-all">0</span> នាក់</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-controls-panel no-print">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <label for="filter-mode" style="font-weight: 600; font-size: 0.95rem;">🎯 លក្ខខណ្ឌសិស្ស ៖</label>
+                <select id="filter-mode" onchange="onFilterSelectChange()" style="padding: 7px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.95rem; background: white; font-weight: 500;">
+                    <option value="age13_14">១. ក្រុមអាយុ ១៣ ដល់ ១៤ឆ្នាំ (កើត ១៣-សីហា-២០១១ ដល់ ១២-សីហា-២០១៣)</option>
+                    <option value="all_eligible">២. រួមបញ្ចូលគ្រប់ក្រុមគោលដៅ (អាយុ ៩ឆ្នាំ + ១០-១២ឆ្នាំ + ១៣-១៤ឆ្នាំ)</option>
+                    <option value="age9">៣. ក្រុមអាយុ ៩ឆ្នាំ (កើត ០១-វិច្ឆិកា-២០១៦ ដល់ ០៩-វិច្ឆិកា-២០១៧)</option>
+                    <option value="missed">៤. ក្រុមខកខានមិនបានចាក់ (កើត ១៣-សីហា-២០១៣ ដល់ ៣១-តុលា-២០១៦)</option>
+                    <option value="all_girls">៥. កុមារីទាំងអស់ក្នុងថ្នាក់ (All Female Students)</option>
+                </select>
+            </div>
+            <div style="font-size: 0.9rem; color: #64748b;">
+                ចំនួនកុមារីក្នុងបញ្ជី ៖ <strong id="student-count-badge" style="color: #ec4899; font-size: 1.05rem;">0</strong> នាក់
+            </div>
+        </div>
+
+        <main class="main-content">
+            <div class="report-sheet" id="print-area">
+                <!-- Top Left Red Code -->
+                <div class="appendix-tag">ឧបសម្ព័ន្ធ ៤.៣.១B</div>
+
+                <!-- Main Report Title -->
+                <h2 class="report-main-title" id="report-main-title">បញ្ជីសម្រង់ឈ្មោះកុមារីអាយុ១៣ឆ្នាំ ដល់១៤ឆ្នាំ និងបញ្ជីផ្តល់វ៉ាក់សាំងការពារមហារីកមាត់ស្បូន (HPV)</h2>
+
+                <!-- Meta Header Info -->
+                <div class="header-meta-grid">
+                    <div class="meta-row">
+                        <div class="meta-field">
+                            <span>ឈ្មោះមណ្ឌលសុខភាព</span>
+                            <input type="text" id="meta-health-center" class="meta-input" placeholder="..................................." oninput="saveHpvMeta()">
+                        </div>
+                        <div class="meta-field">
+                            <span>ឈ្មោះស្រុកប្រតិបត្តិ</span>
+                            <input type="text" id="meta-district" class="meta-input" placeholder="..................................." oninput="saveHpvMeta()">
+                        </div>
+                        <div class="meta-field">
+                            <span>ឈ្មោះខេត្ត</span>
+                            <input type="text" id="meta-province" class="meta-input" placeholder="..................................." oninput="saveHpvMeta()">
+                        </div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-field">
+                            <span>ឈ្មោះថ្នាក់រៀន</span>
+                            <input type="text" id="meta-class" class="meta-input" placeholder="..................................." oninput="saveHpvMeta()">
+                        </div>
+                        <div class="meta-field" style="margin-left: auto;">
+                            <span>ឈ្មោះសាលារៀន</span>
+                            <input type="text" id="meta-school" class="meta-input" style="min-width: 200px;" placeholder="..................................." oninput="saveHpvMeta()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HPV Main Table -->
+                <table class="hpv-table" id="hpv-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="width: 40px;">ល.រ</th>
+                            <th rowspan="2" style="min-width: 140px;">ឈ្មោះកុមារី</th>
+                            <th rowspan="2" style="width: 105px;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
+                            <th rowspan="2" style="min-width: 135px;">ឈ្មោះឪពុក ម្ដាយ ឬ<br>អាណាព្យាបាល</th>
+                            <th rowspan="2" style="width: 105px;">លេខទូរស័ព្ទ<br>ទំនាក់ទំនង</th>
+                            <th colspan="2" style="width: 180px;">អាសយដ្ឋាន</th>
+                            <th colspan="4">ការផ្តល់វ៉ាក់សាំងការពារមហារីកមាត់ស្បូន (HPV)</th>
+                        </tr>
+                        <tr>
+                            <th style="width: 90px;">ភូមិ</th>
+                            <th style="width: 90px;">ឃុំ</th>
+                            <th style="width: 95px;"><i>ថ្ងៃ ខែ ឆ្នាំផ្តល់</i></th>
+                            <th style="width: 75px;"><i>នៅសាលារៀន</i></th>
+                            <th style="width: 65px;"><i>នៅភូមិ</i></th>
+                            <th style="width: 90px;"><i>មណ្ឌលសុខភាព</i></th>
+                        </tr>
+                    </thead>
+                    <tbody id="hpv-table-body">
+                        <!-- Data inserted dynamically -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" style="font-weight: bold; text-align: center; background-color: #f8fafc;">សរុប</td>
+                            <td id="total-students-cell" class="center" style="font-weight: bold; background-color: #f8fafc;"></td>
+                            <td style="background-color: #f8fafc;"></td>
+                            <td style="background-color: #f8fafc;"></td>
+                            <td style="background-color: #f8fafc;"></td>
+                            <td style="background-color: #f8fafc;"></td>
+                            <td style="background-color: #f8fafc;"></td>
+                            <td style="background-color: #f8fafc;"></td>
+                            <td style="background-color: #f8fafc;"></td>
+                            <td style="background-color: #f8fafc;"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <!-- Bottom Footer Section -->
+                <div class="hpv-footer-info">
+                    <div style="font-size: 0.93rem; line-height: 1.6; max-width: 65%;">
+                        <strong>ចំណាំ៖</strong>
+                        <div id="note-dob-range" style="margin-top: 2px;"></div>
+                    </div>
+                    <div class="signature-block">
+                        <div>ហត្ថលេខា: ....................................................</div>
+                        <div>អ្នករាយការណ៍: <input type="text" id="meta-reporter" class="meta-input" style="min-width: 140px; border-bottom: 1px dotted #333;" placeholder="..................................." oninput="saveHpvMeta()"></div>
+                        <div>ថ្ងៃ ខែ ឆ្នាំ: <input type="text" id="meta-date" class="meta-input" style="min-width: 140px; border-bottom: 1px dotted #333;" placeholder=".........../............/..............." oninput="saveHpvMeta()"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="hpv-report.js"></script>
+
+    <script>
+        if (window.classManager && document.getElementById("global-class-selector")) {
+            window.classManager.renderClassSelector("global-class-selector");
+        }
+    </script>
+</body>
+</html>

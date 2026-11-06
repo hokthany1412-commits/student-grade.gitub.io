@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>សៀវភៅតាមដានការសិក្សា</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Battambang:wght@400;700&family=Moul&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background-color: #f1f5f9; margin: 0; padding: 20px; font-family: 'Battambang', cursive; }
+        
+        .no-print { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: white; padding: 15px 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); flex-wrap: wrap; gap: 10px; }
+        .control-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Battambang', cursive; font-weight: bold; transition: 0.2s; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-outline { background: white; border: 1px solid #cbd5e1; color: #475569; }
+        .btn-outline:hover { background: #f8fafc; }
+        select { padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 14px; outline: none; }
+
+        .page-container {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+
+        /* A4 Landscape Paper Style */
+        .a4-landscape {
+            width: 29.7cm;
+            height: 21cm;
+            min-width: 29.7cm;
+            padding: 1cm;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: calc(50% - 0.5cm) calc(50% - 0.5cm);
+            gap: 1cm; /* space between left and right pages */
+        }
+
+        .page-pane {
+            border: 4px solid #3b82f6; /* Blue border as requested in the picture */
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Ensures content doesn't bleed out */
+        }
+
+        /* Left Pane Styles */
+        .nation-title { text-align: center; margin-bottom: 20px; }
+        .nation-title h1 { font-family: 'Battambang', cursive; font-size: 11pt; margin: 0; font-weight: normal; }
+        .nation-title h2 { font-family: 'Battambang', cursive; font-size: 11pt; margin: 3px 0 0 0; font-weight: normal; }
+        
+        .ministry-title { text-align: center; font-size: 11pt; margin: 15px 0 5px 0; }
+        .book-title { text-align: center; color: #2563eb; font-family: 'Moul', cursive; font-size: 16pt; margin: 10px 0; }
+        
+        .school-type { text-align: center; color: #2563eb; font-size: 11pt; margin-bottom: 20px; }
+
+        .info-section { width: 100%; font-size: 9.5pt; line-height: 1.6; margin-top: 10px; }
+        .flex-row { display: flex; align-items: flex-end; margin-bottom: 8px; }
+        .flex-row .label { white-space: nowrap; margin-right: 5px; }
+        .flex-row .val { flex: 1; border-bottom: 1px dotted #000; text-align: center; min-height: 16px; margin: 0 5px; }
+        .col-label { display: inline-block; width: 110px; }
+        
+
+
+        /* Right Pane Styles */
+        .month-title { text-align: center; font-size: 11pt; margin-bottom: 10px; font-weight: bold; }
+        
+        .grade-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8.5pt;
+            text-align: center;
+        }
+        .grade-table th, .grade-table td {
+            border: 1px solid #000;
+            padding: 3px;
+            word-wrap: break-word;
+        }
+        .grade-table th { font-weight: normal; }
+        .subject-col { text-align: left; width: 120px; }
+        
+        .tick { font-family: sans-serif; font-weight: bold; font-size: 12pt; }
+        
+        .bottom-stats {
+            margin-top: 15px;
+            font-size: 10pt;
+            width: 100%;
+        }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .stat-box { display: flex; align-items: center; }
+        .stat-box .val { min-width: 50px; text-align: center; margin: 0 5px; color: #e11d48; font-weight: bold; }
+
+        .signature-area {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 10pt;
+        }
+
+        /* Override global styles that might break the print layout */
+        table {
+            min-width: 0 !important;
+        }
+        .info-table td {
+            padding: 0 !important;
+            border-bottom: none !important;
+            vertical-align: middle;
+        }
+        .grade-table th, .grade-table td {
+            padding: 2px !important;
+            line-height: 1.2 !important;
+            text-align: center !important;
+        }
+        .grade-table th.subject-col, .grade-table td.subject-col {
+            text-align: left !important;
+            padding-left: 5px !important;
+        }
+
+        .a4-landscape h1, .a4-landscape h2 {
+            display: block;
+            margin: 0;
+            padding: 0;
+            color: inherit;
+        }
+        .a4-landscape h1::before, .a4-landscape h2::before {
+            display: none;
+        }
+
+        @media print {
+            body, html { background: none; padding: 0; margin: 0; width: 100%; height: 100%; }
+            .page-container { overflow: visible; padding: 0; margin: 0; }
+            .no-print { display: none !important; }
+            .a4-landscape { 
+                box-shadow: none; 
+                margin: 0; 
+                padding: 1cm; 
+                width: 29.7cm; 
+                height: 20.9cm; /* Slightly less than 21cm to prevent extra blank page */
+                min-width: auto;
+                page-break-inside: avoid;
+                page-break-after: avoid;
+            }
+            .print-no-appearance {
+                appearance: none !important;
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                border: none !important;
+                background: transparent !important;
+            }
+            @page { 
+                size: A4 landscape; 
+                margin: 0; 
+            }
+        }
+    </style>
+
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+
+</head>
+<body>
+
+    <div class="no-print">
+        <div class="control-group">
+            <button class="btn btn-outline" onclick="window.location.href='index.html'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 5px;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                ត្រឡប់ក្រោយ
+            </button>
+            <div id="global-class-selector"></div>
+            <div id="month-label-1" style="font-weight: bold; color: #1e293b; border-left: 2px solid #cbd5e1; padding-left: 15px;">
+                ជ្រើសរើសខែ៖
+            </div>
+            <select id="month-selector" onchange="renderRecordBook()">
+                <option value="មករា">មករា</option>
+                <option value="កុម្ភៈ">កុម្ភៈ</option>
+                <option value="មីនា">មីនា</option>
+                <option value="មេសា">មេសា</option>
+                <option value="ឧសភា">ឧសភា</option>
+                <option value="មិថុនា">មិថុនា</option>
+                <option value="កក្កដា">កក្កដា</option>
+                <option value="សីហា">សីហា</option>
+                <option value="កញ្ញា">កញ្ញា</option>
+                <option value="តុលា">តុលា</option>
+                <option value="វិច្ឆិកា">វិច្ឆិកា</option>
+                <option value="ធ្នូ">ធ្នូ</option>
+            </select>
+            <button class="btn btn-outline" style="padding: 5px 8px; height: 35px;" onclick="openDateSettings(1)" title="កំណត់កាលបរិច្ឆេទ">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </button>
+            
+            <div id="month-label-2" style="display: none; font-weight: bold; color: #1e293b; border-left: 2px solid #cbd5e1; padding-left: 15px;">
+                ខែ (ស្តាំ)៖
+            </div>
+            <select id="month-selector-2" style="display: none;" onchange="updatePrintSide()">
+                <option value="មករា">មករា</option>
+                <option value="កុម្ភៈ">កុម្ភៈ</option>
+                <option value="មីនា">មីនា</option>
+                <option value="មេសា">មេសា</option>
+                <option value="ឧសភា">ឧសភា</option>
+                <option value="មិថុនា">មិថុនា</option>
+                <option value="កក្កដា">កក្កដា</option>
+                <option value="សីហា">សីហា</option>
+                <option value="កញ្ញា">កញ្ញា</option>
+                <option value="តុលា">តុលា</option>
+                <option value="វិច្ឆិកា">វិច្ឆិកា</option>
+                <option value="ធ្នូ">ធ្នូ</option>
+            </select>
+            <button id="date-btn-2" class="btn btn-outline" style="display: none; padding: 5px 8px; height: 35px;" onclick="openDateSettings(2)" title="កំណត់កាលបរិច្ឆេទ">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </button>
+            
+            <div style="font-weight: bold; color: #1e293b; border-left: 2px solid #cbd5e1; padding-left: 15px;">
+                ជ្រើសរើសសិស្ស៖
+            </div>
+            <select id="student-selector" onchange="renderRecordBook()">
+                <option value="">-- សូមជ្រើសរើសសិស្ស --</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <div style="font-weight: bold; color: #1e293b; border-left: 2px solid #cbd5e1; padding-left: 15px;">
+                ទំព័របោះពុម្ព៖
+            </div>
+            <select id="print-side-selector" onchange="updatePrintSide()">
+                <option value="both">ទាំងសងខាង (ពេញ)</option>
+                <option value="left">តែប្រវត្តិរូប (ខាងឆ្វេង)</option>
+                <option value="right">តែពិន្ទុ (ខាងស្តាំ)</option>
+                <option value="double-grades">ពិន្ទុទាំង២ខាង (ឆ្វេងស្តាំ)</option>
+            </select>
+            
+            <button class="btn btn-primary" onclick="window.print()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 5px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                បោះពុម្ព (Print)
+            </button>
+        </div>
+    </div>
+
+    <!-- Date Settings Modal -->
+    <div id="date-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>ការកំណត់កាលបរិច្ឆេទ</h2>
+                <button class="close-btn" onclick="closeDateSettings()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>កាលបរិច្ឆេទសម្រាប់ខែ <span id="modal-month-name"></span></label>
+                <input type="date" id="custom-date-picker" class="form-control">
+                <small style="color: #64748b; margin-top: 5px; display: block;">ទុកចោលបើចង់ប្រើទម្រង់ដើម (ថ្ងៃទី.......ខែ.......ឆ្នាំ២០...)</small>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-primary" onclick="saveDateSettings()" style="width: 100%;">រក្សាទុក</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-container">
+        <div class="a4-landscape" id="record-book-content" style="display: none;">
+        <!-- LEFT PANE: Profile -->
+        <div class="page-pane" id="left-pane">
+            <div class="nation-title" style="margin-bottom: 15px;">
+                <h1 style="font-weight: bold; font-family: 'Moul', cursive; font-size: 11pt;">ព្រះរាជាណាចក្រកម្ពុជា</h1>
+                <h2 style="font-weight: bold; font-family: 'Moul', cursive; font-size: 11pt; margin-top: 5px;">ជាតិ សាសនា ព្រះមហាក្សត្រ</h2>
+                <div style="font-size: 14pt; margin-top: 5px; color: #64748b; letter-spacing: 2px;">❖❖❖❖❖</div>
+            </div>
+            
+            <div class="ministry-title" style="font-weight: bold; font-size: 11pt; margin-top: 25px;">ក្រសួងអប់រំ យុវជន និង កីឡា</div>
+            <div class="book-title" style="color: #3b82f6; margin: 15px 0; font-size: 14pt;">សៀវភៅតាមដានការសិក្សា</div>
+            <div class="school-type" style="color: #3b82f6; font-weight: bold; margin-bottom: 25px;">សាលាបឋមសិក្សាចំណេះដឹងទូទៅ</div>
+            
+            <table class="info-table" style="width: 100%; border-collapse: collapse; font-size: 9.5pt; line-height: 2.2; table-layout: fixed;">
+                <colgroup>
+                    <col style="width: 18%;">
+                    <col style="width: 3%;">
+                    <col style="width: 31%;">
+                    <col style="width: 48%;">
+                </colgroup>
+                <tr>
+                    <td>ឈ្មោះសាលា</td>
+                    <td>៖</td>
+                    <td id="st-school" style="font-weight: bold;"></td>
+                    <td style="white-space: nowrap;">កម្រងសាលា <span id="st-cluster" style="margin-left: 10px; font-weight: bold;"></span></td>
+                </tr>
+                <tr>
+                    <td>ឈ្មោះសិស្ស</td>
+                    <td>៖</td>
+                    <td id="st-name" style="font-family: 'Moul', cursive; font-size: 10pt; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></td>
+                    <td style="white-space: nowrap;">ភេទ <span id="st-gender" style="margin: 0 3px;"></span> រៀនថ្នាក់ទី <span id="st-class" style="margin: 0 3px;"></span> <span id="st-id-container">អត្តលេខ <span id="st-id" style="background-color: #84cc16; color: white; padding: 1px 4px; font-weight: bold; margin-left: 3px;"></span></span></td>
+                </tr>
+                <tr>
+                    <td>ថ្ងៃខែឆ្នាំកំណើត</td>
+                    <td>៖</td>
+                    <td id="st-dob"></td>
+                    <td style="white-space: nowrap;">ទីកន្លែងកំណើត នៅភូមិ/ក្រុម <span id="st-pob-village" style="margin: 0 5px; font-weight: bold;"></span> ឃុំ/សង្កាត់ <span id="st-pob-commune" style="margin-left: 5px; font-weight: bold;"></span></td>
+                </tr>
+                <tr>
+                    <td>ស្រុក/ខណ្ឌ</td>
+                    <td>៖</td>
+                    <td id="st-pob-district" style="font-weight: bold;"></td>
+                    <td style="white-space: nowrap;">ខេត្ត/ក្រុង <span id="st-pob-province" style="margin-left: 5px; font-weight: bold;"></span></td>
+                </tr>
+                <tr>
+                    <td>ឪពុកឈ្មោះ</td>
+                    <td>៖</td>
+                    <td id="st-father"></td>
+                    <td style="white-space: nowrap;">មុខរបរ <span id="st-father-job" style="margin-left: 5px;"></span></td>
+                </tr>
+                <tr>
+                    <td>ម្តាយឈ្មោះ</td>
+                    <td>៖</td>
+                    <td id="st-mother"></td>
+                    <td style="white-space: nowrap;">មុខរបរ <span id="st-mother-job" style="margin-left: 5px;"></span></td>
+                </tr>
+                <tr>
+                    <td style="white-space: nowrap;">អាណាព្យាបាលឈ្មោះ</td>
+                    <td>៖</td>
+                    <td id="st-guardian"></td>
+                    <td style="white-space: nowrap;">មុខរបរ <span id="st-guardian-job" style="margin-left: 5px;"></span></td>
+                </tr>
+                <tr>
+                    <td style="white-space: nowrap;">ស្នាក់នៅផ្ទះលេខ</td>
+                    <td>៖</td>
+                    <td id="st-curr-house"></td>
+                    <td style="white-space: nowrap;">នៅភូមិ/ក្រុម <span id="st-curr-village" style="margin: 0 5px;"></span> ឃុំ/សង្កាត់ <span id="st-curr-commune" style="margin-left: 5px;"></span></td>
+                </tr>
+                <tr>
+                    <td>ស្រុក/ខណ្ឌ</td>
+                    <td>៖</td>
+                    <td id="st-curr-district"></td>
+                    <td style="white-space: nowrap;">ខេត្ត/ក្រុង <span id="st-curr-province" style="margin-left: 5px;"></span></td>
+                </tr>
+            </table>
+
+            <div style="text-align: center; margin-top: 30px; font-size: 10pt;">
+                ឆ្នាំសិក្សា <span id="st-year">2025-2026</span>
+            </div>
+        </div>
+
+        <!-- RIGHT PANE: Grades -->
+        <div class="page-pane" id="right-pane">
+            <div class="month-title" style="font-weight: bold; font-family: 'Moul', cursive; font-size: 11pt; margin-bottom: 5px;">លទ្ធផលនៃការសិក្សាប្រចាំខែ <span id="display-month">...</span></div>
+            
+            <table class="grade-table" style="width: 100%; table-layout: fixed; font-size: 8.5pt;">
+                <colgroup>
+                    <col style="width: 28%;"> <!-- Subject -->
+                    <col style="width: 10%;"> <!-- ល្អ -->
+                    <col style="width: 14%;"> <!-- ល្អបង្គួរ -->
+                    <col style="width: 13%;"> <!-- មធ្យម -->
+                    <col style="width: 12%;"> <!-- ខ្សោយ -->
+                    <col style="width: 23%;"> <!-- ផ្សេងៗ -->
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="subject-col" style="vertical-align: middle;">មុខវិជ្ជា</th>
+                        <th colspan="4">និទ្ទេស</th>
+                        <th rowspan="2" style="vertical-align: middle; font-size: 7.5pt; line-height: 1.2;">ចំណុចដែលត្រូវកែលម្អបន្ថែម</th>
+                    </tr>
+                    <tr>
+                        <th style="font-size: 8pt; line-height: 1.2;">ល្អ<br><span style="font-size: 6pt;">ពិន្ទុ 8-10</span></th>
+                        <th style="font-size: 8pt; line-height: 1.2;">ល្អបង្គួរ<br><span style="font-size: 6pt;">ពិន្ទុ 6.5-7.9</span></th>
+                        <th style="font-size: 8pt; line-height: 1.2;">មធ្យម<br><span style="font-size: 6pt;">ពិន្ទុ 5-6.4</span></th>
+                        <th style="font-size: 8pt; line-height: 1.2;">ខ្សោយ<br><span style="font-size: 6pt;">ពិន្ទុ 4.9-0</span></th>
+                    </tr>
+                </thead>
+                <tbody id="subjects-tbody">
+                    <!-- JS will inject rows here -->
+                </tbody>
+            </table>
+
+            <div class="bottom-stats" style="margin-top: 8px; font-size: 9pt;">
+                <div class="stat-row" style="margin-bottom: 3px;">
+                    <div class="stat-box">មធ្យមភាគ: <span class="val" id="stat-avg" style="color: #374151; margin-left: 10px;">...</span></div>
+                    <div class="stat-box">ចំណាត់ថ្នាក់: <span class="val" id="stat-rank" style="color: #ef4444; margin-left: 10px;">...</span></div>
+                    <div class="stat-box">និទ្ទេស: <span class="val" id="stat-grade" style="color: #374151; margin-left: 10px;">...</span></div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-box">វិន័យនិងសីលធម៌: 
+                        <select class="val print-no-appearance" style="min-width: 80px; border: none; font-family: 'Battambang', sans-serif; font-size: 14pt; color: #374151; cursor: pointer; outline: none; border-bottom: 1px dotted #ccc;">
+                            <option value="">ជ្រើសរើស...</option>
+                            <option value="ល្អ">ល្អ</option>
+                            <option value="ល្អបង្គួរ">ល្អបង្គួរ</option>
+                            <option value="ល្អណាស់">ល្អណាស់</option>
+                        </select>
+                    </div>
+                    <div class="stat-box">អវត្តមានច្បាប់: <span class="val" id="stat-abs-p" style="color: #374151; margin-left: 10px;">0</span></div>
+                    <div class="stat-box">ឥតច្បាប់: <span class="val" id="stat-abs-a" style="color: #374151; margin-left: 10px;">0</span></div>
+                </div>
+            </div>
+
+            <div class="signature-area" style="font-weight: normal; margin-top: 8px;">
+                <div style="width: 40%; text-align: center;">
+                    <div style="margin-bottom: 5px;">បានឃើញ និង ឯកភាព</div>
+                    <div style="font-weight: bold; font-family: 'Moul', cursive; font-size: 10pt;">នាយកសាលា</div>
+                </div>
+                <div style="width: 60%; display: flex; justify-content: flex-end; padding-right: 20px;">
+                    <div style="text-align: center;">
+                        <div style="margin-bottom: 5px;"><span id="sig-location"></span>, <span id="sig-date-full"></span></div>
+                        <div style="margin-bottom: 0;">គ្រូបន្ទុកថ្នាក់</div>
+                        <div style="font-family: 'Battambang', cursive; margin-top: 50px; font-weight: bold; margin-left: 2cm;" id="sig-teacher"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    <script src="student-record.js?v=2"></script>
+</body>
+</html>

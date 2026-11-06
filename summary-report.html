@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>តារាងចំនួនសិស្សតាមថ្នាក់ (សម្រាប់គ្រូ) - Student Statistics Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul&family=Kantumruy+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Include html2pdf and xlsx libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <style>
+        /* === SCREEN STYLES === */
+        body {
+            background-color: #f1f5f9;
+            font-family: 'Battambang', sans-serif;
+            color: #0f172a;
+            margin: 0;
+            padding: 0;
+        }
+
+        .moul-font { font-family: 'Moul', cursive; }
+
+        /* Top Navigation Toolbar */
+        .top-navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-family: 'Kantumruy Pro', 'Battambang', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #334155;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover {
+            background: #f8fafc;
+            color: #0f172a;
+            transform: translateY(-1px);
+        }
+
+        .nav-btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+        }
+        .nav-btn-primary:hover {
+            background: #1d4ed8;
+            color: #ffffff;
+        }
+
+        .nav-btn-success {
+            background: #10b981;
+            color: #ffffff;
+            border-color: #10b981;
+        }
+        .nav-btn-success:hover {
+            background: #059669;
+            color: #ffffff;
+        }
+
+        .nav-btn-warning {
+            background: #f59e0b;
+            color: #ffffff;
+            border-color: #f59e0b;
+        }
+        .nav-btn-warning:hover {
+            background: #d97706;
+            color: #ffffff;
+        }
+
+        /* Screen A4 Document Sheet Card */
+        .a4-sheet-container {
+            width: 210mm;
+            max-width: 100%;
+            min-height: 297mm;
+            margin: 1.5rem auto;
+            background: #ffffff;
+            padding: 2.5cm 10mm 8mm 10mm;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            color: #000000;
+            position: relative;
+        }
+
+        /* Header block */
+        .official-header-section {
+            position: relative;
+            text-align: center;
+            margin-bottom: 4px;
+            padding-top: 4px;
+            width: 100%;
+            overflow: visible;
+        }
+
+        .pri-badge-oval {
+            position: absolute;
+            top: 4px;
+            right: 0;
+            border: 1.5px solid #000000;
+            border-radius: 50px;
+            padding: 2px 14px;
+            font-family: 'Inter', 'Battambang', sans-serif;
+            font-weight: 700;
+            font-size: 11pt;
+            letter-spacing: 1px;
+            background: #ffffff;
+        }
+
+        .form-main-title {
+            font-family: 'Moul', cursive;
+            font-size: 13pt;
+            margin: 0;
+            padding-top: 6px;
+            padding-bottom: 2px;
+            color: #000000;
+            line-height: 1.8 !important;
+            overflow: visible;
+        }
+
+        .form-academic-year {
+            font-family: 'Moul', cursive;
+            font-size: 11pt;
+            margin: 0 0 4px 0;
+            padding-top: 2px;
+            color: #000000;
+            line-height: 1.7 !important;
+            overflow: visible;
+        }
+
+        .location-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+            font-size: 9pt;
+            font-weight: bold;
+            flex-wrap: wrap;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .editable-dot-line {
+            border: none;
+            border-bottom: 1px dotted #000000;
+            background: transparent;
+            font-family: 'Battambang', sans-serif;
+            font-size: inherit;
+            font-weight: bold;
+            color: #000000;
+            text-align: center;
+            outline: none;
+            padding: 0 2px;
+        }
+        .editable-dot-line:focus {
+            border-bottom: 1.5px solid #2563eb;
+            background: #eff6ff;
+        }
+
+        /* 2-Column Grid Layout */
+        .form-grid-layout {
+            display: grid;
+            grid-template-columns: 49.5% 49.5%;
+            gap: 1%;
+            width: 100%;
+            align-items: start;
+            min-width: 0;
+        }
+
+        .form-column-left,
+        .form-column-right {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .section-box {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .section-title-kh {
+            font-size: 8.5pt;
+            font-weight: bold;
+            margin: 0 0 2px 0;
+            color: #000000;
+            line-height: 1.2;
+        }
+
+        .section-subtitle-kh {
+            font-size: 7.8pt;
+            font-weight: normal;
+            margin: 0 0 2px 0;
+            color: #000000;
+            line-height: 1.15;
+        }
+
+        /* Official Tables */
+        .moeys-table,
+        .teacher-info-table {
+            width: 100% !important;
+            min-width: 0 !important;
+            border-collapse: collapse !important;
+            border: 1px solid #000000 !important;
+            font-size: 8pt;
+            background: #ffffff;
+            table-layout: fixed;
+        }
+
+        .moeys-table th, 
+        .moeys-table td,
+        .teacher-info-table td {
+            border: 1px solid #000000;
+            padding: 2.5px 3px;
+            text-align: center;
+            vertical-align: middle;
+            color: #000000;
+            line-height: 1.35;
+            overflow: visible;
+            word-wrap: break-word;
+        }
+
+        .moeys-table thead th {
+            font-weight: bold;
+            background-color: #ffffff;
+            font-size: 8pt;
+        }
+
+        .moeys-table td.text-left {
+            text-align: left;
+            padding-left: 4px;
+        }
+
+        .moeys-table td.font-bold,
+        .moeys-table th.font-bold {
+            font-weight: bold;
+        }
+
+        /* Teacher Bio Table (Section 1) */
+        .teacher-info-table td.label-cell {
+            width: 44%;
+            font-weight: bold;
+            text-align: left;
+            padding: 2px 4px;
+        }
+
+        .teacher-info-table td.val-cell {
+            width: 56%;
+            text-align: center;
+            padding: 2px 4px;
+        }
+
+        /* Circle toggle styling */
+        .circle-choice {
+            display: inline-block;
+            cursor: pointer;
+            padding: 0 4px;
+            border-radius: 50%;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+
+        .circle-choice.circled {
+            border: 1.2px solid #000000;
+            border-radius: 50%;
+            font-weight: bold;
+            padding: 0 3px;
+        }
+
+        /* Table Inputs */
+        .cell-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-family: 'Battambang', sans-serif;
+            font-size: 8pt;
+            font-weight: bold;
+            color: #000000;
+            outline: none;
+            padding: 0;
+            margin: 0;
+            line-height: 1.15;
+            box-sizing: border-box;
+        }
+
+        .cell-input:focus {
+            background: #dbeafe;
+            border-radius: 2px;
+        }
+
+        /* Disadvantaged Table Specifics */
+        .disability-highlight-row td {
+            color: #d90429 !important;
+            font-weight: bold !important;
+        }
+
+        .disability-footnote {
+            color: #d90429;
+            font-size: 7.5pt;
+            margin-top: 2px;
+            line-height: 1.2;
+        }
+
+        .disability-footnote-sub {
+            color: #000000;
+            font-size: 7.2pt;
+            line-height: 1.2;
+        }
+
+        .gray-header td {
+            background-color: #e5e7eb !important;
+            font-weight: bold;
+        }
+
+        /* Footer Signature Block */
+        .form-footer-signature {
+            margin-top: 4px;
+            text-align: right;
+            font-size: 8pt;
+            line-height: 1.25;
+            width: 100%;
+        }
+
+        .form-footer-signature .sig-line {
+            margin-bottom: 2px;
+        }
+
+        /* === PRINT STYLES (100% Clean A4 Single Page Fit with 2.5cm Top Margin) === */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin-top: 2.5cm;
+                margin-right: 6mm;
+                margin-bottom: 4mm;
+                margin-left: 6mm;
+            }
+
+            *, *:before, *:after {
+                box-sizing: border-box !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .no-print, .top-navbar, .app-header, .tab-buttons {
+                display: none !important;
+            }
+
+            html, body {
+                background: #ffffff !important;
+                background-color: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                min-width: 0 !important;
+                font-family: 'Battambang', sans-serif !important;
+                color: #000000 !important;
+            }
+
+            .a4-sheet-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-height: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                page-break-inside: avoid !important;
+            }
+
+            .official-header-section {
+                margin-bottom: 2px !important;
+                padding-top: 4px !important;
+                position: relative !important;
+                width: 100% !important;
+                overflow: visible !important;
+            }
+
+            .form-main-title {
+                font-size: 11.5pt !important;
+                margin: 0 !important;
+                padding-top: 6px !important;
+                padding-bottom: 2px !important;
+                line-height: 1.8 !important;
+                overflow: visible !important;
+            }
+
+            .form-academic-year {
+                font-size: 9.5pt !important;
+                margin: 0 0 2px 0 !important;
+                padding-top: 2px !important;
+                line-height: 1.7 !important;
+                overflow: visible !important;
+            }
+
+            .pri-badge-oval {
+                border: 1.2px solid #000000 !important;
+                padding: 1px 10px !important;
+                font-size: 8.5pt !important;
+                top: 4px !important;
+            }
+
+            .location-info-row {
+                font-size: 7.5pt !important;
+                margin-bottom: 2px !important;
+            }
+
+            .editable-dot-line {
+                font-size: 7.5pt !important;
+                border-bottom: 1px dotted #000000 !important;
+            }
+
+            .form-grid-layout {
+                grid-template-columns: 49.5% 49.5% !important;
+                gap: 1% !important;
+                width: 100% !important;
+            }
+
+            .form-column-left,
+            .form-column-right {
+                gap: 4px !important;
+            }
+
+            .section-title-kh {
+                font-size: 7.5pt !important;
+                margin-bottom: 1px !important;
+            }
+
+            .section-subtitle-kh {
+                font-size: 7pt !important;
+                margin-bottom: 1px !important;
+            }
+
+            .moeys-table,
+            .teacher-info-table {
+                font-size: 7pt !important;
+                border: 1px solid #000000 !important;
+            }
+
+            .moeys-table th, 
+            .moeys-table td,
+            .teacher-info-table td {
+                font-size: 7.2pt !important;
+                padding: 1.5px 2px !important;
+                line-height: 1.3 !important;
+                overflow: visible !important;
+                word-wrap: break-word !important;
+            }
+
+            .moeys-table thead th {
+                font-size: 7pt !important;
+            }
+
+            .cell-input {
+                font-size: 7pt !important;
+                line-height: 1.1 !important;
+                border: none !important;
+            }
+
+            .circle-choice.circled {
+                border: 1px solid #000000 !important;
+                padding: 0 2px !important;
+            }
+
+            .disability-highlight-row td {
+                color: #000000 !important;
+                font-weight: bold !important;
+            }
+
+            .disability-footnote,
+            .disability-footnote-sub {
+                color: #000000 !important;
+                font-size: 6.5pt !important;
+            }
+
+            .form-footer-signature {
+                font-size: 7.2pt !important;
+                margin-top: 2px !important;
+            }
+        }
+    </style>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION & CONTROLS (Screen only) -->
+    <header class="top-navbar no-print">
+        <div class="toolbar-group">
+            <button class="nav-btn" onclick="window.location.href='index.html'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span>ត្រឡប់ក្រោយ</span>
+            </button>
+            <div id="global-class-selector"></div>
+            <span id="active-class-indicator" style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.88rem;">ថ្នាក់បច្ចុប្បន្ន</span>
+        </div>
+
+        <div class="toolbar-group">
+            <button class="nav-btn" onclick="recalculateFromRoster()" title="ទាញ និងគណនាទិន្នន័យពីបញ្ជីសិស្សឡើងវិញ">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                <span>🔄 គណនាឡើងវិញ</span>
+            </button>
+            <button class="nav-btn nav-btn-warning" onclick="exportStatsToExcel()" title="ទាញយកជាឯកសារ Excel">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+                <span>📊 Excel</span>
+            </button>
+            <button class="nav-btn nav-btn-success" onclick="exportStatsToPDF()" title="ទាញយកជាឯកសារ PDF">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>📥 PDF</span>
+            </button>
+            <button class="nav-btn nav-btn-primary" onclick="window.print()" title="បោះពុម្ពទម្រង់ជាក្រដាស A4">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                <span>🖨️ បោះពុម្ព (Print)</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- THE OFFICIAL A4 PAPER FORM (100% Exact Matching Ministry Template) -->
+    <main class="a4-sheet-container" id="printable-statistics-form">
+        
+        <!-- Header Section -->
+        <div class="official-header-section">
+            <div class="pri-badge-oval">PRI</div>
+            <div class="form-main-title">តារាងចំនួនសិស្សតាមថ្នាក់ (សម្រាប់គ្រូ)</div>
+            <div class="form-academic-year" id="stat-academic-year-title">ឆ្នាំសិក្សា ២០២៦_២០២៧</div>
+        </div>
+
+        <!-- Location info lines -->
+        <div class="location-info-row">
+            <div style="flex: 1; display: flex; align-items: baseline;">
+                <span>រាជធានី/ខេត្តៈ</span>
+                <input type="text" id="stat-province" class="editable-dot-line" style="flex: 1; min-width: 100px;" value="កំពង់ធំ">
+            </div>
+            <div style="flex: 1; display: flex; align-items: baseline;">
+                <span>ក្រុង/ស្រុក/ខណ្ឌ</span>
+                <input type="text" id="stat-district" class="editable-dot-line" style="flex: 1; min-width: 100px;" value="សន្ទុក">
+            </div>
+        </div>
+        <div class="location-info-row" style="margin-bottom: 8px;">
+            <div style="flex: 1; display: flex; align-items: baseline;">
+                <span>សាលា :</span>
+                <input type="text" id="stat-school" class="editable-dot-line" style="flex: 1; min-width: 220px;" value="សាលាបឋមសិក្សា ផ្លុង">
+            </div>
+            <div style="display: flex; align-items: baseline; margin-left: 20px;">
+                <span>ថ្នាក់ទី:</span>
+                <input type="text" id="stat-class-name" class="editable-dot-line font-bold" style="width: 130px; font-weight: bold; text-align: center;" value="ថ្នាក់ទី ៥ ក">
+            </div>
+        </div>
+
+        <!-- 2-Column Main Form Body -->
+        <div class="form-grid-layout">
+            
+            <!-- LEFT COLUMN -->
+            <div class="form-column-left">
+                
+                <!-- SECTION 1: Teacher Bio -->
+                <div class="section-box">
+                    <div class="section-title-kh">១.ព័ត៌មានសាវតាគ្រូទទួលបន្ទុកថ្នាក់:</div>
+                    <table class="teacher-info-table">
+                        <tr>
+                            <td class="label-cell">ឈ្មោះជាអក្សរខ្មែរ</td>
+                            <td class="val-cell">
+                                <input type="text" id="stat-teacher-name" class="cell-input font-bold" value="ស៊ឹង ដារ៉ា">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">ភេទ(សូមគូសរង្វង់)</td>
+                            <td class="val-cell">
+                                <span id="circle-male" class="circle-choice circled" onclick="toggleTeacherGender('ប្រុស')">ប្រុស</span>
+                                <span> / </span>
+                                <span id="circle-female" class="circle-choice" onclick="toggleTeacherGender('ស្រី')">ស្រី</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">អាយុ</td>
+                            <td class="val-cell">
+                                <input type="text" id="stat-teacher-age" class="cell-input font-bold" value="៣៥">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">ជនជាតិដើមភាគតិច</td>
+                            <td class="val-cell">
+                                <span id="circle-ind-yes" class="circle-choice" onclick="toggleTeacherIndigenous(true)">ពិតមែន</span>
+                                <span> / </span>
+                                <span id="circle-ind-no" class="circle-choice circled" onclick="toggleTeacherIndigenous(false)">ទេ</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">កម្រិតវប្បធម៌</td>
+                            <td class="val-cell">
+                                <input type="text" id="stat-teacher-edu" class="cell-input font-bold" value="សញ្ញាបត្របឋមភូមិ">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- SECTION 2: Age Breakdown (សិស្សថ្មី សិស្សឡើងថ្នាក់ និងសិស្សត្រួតថ្នាក់) -->
+                <div class="section-box">
+                    <div class="section-title-kh">២-សិស្សថ្មី សិស្សឡើងថ្នាក់ និងសិស្សត្រួតថ្នាក់</div>
+                    <div class="section-subtitle-kh" style="display: flex; align-items: baseline; gap: 4px;">
+                        <span>ក្នុងឆ្នាំសិក្សា<span id="stat-academic-year-sub">២០២៦_២០២៧</span> ចំនួនសិស្សរាប់ត្រឹមថ្ងៃទី</span>
+                        <input type="text" id="stat-asof-date" class="editable-dot-line" style="flex: 1;" value="០១ វិច្ឆិកា ២០២៦">
+                    </div>
+                    
+                    <table class="moeys-table" id="table-age-breakdown">
+                        <thead>
+                            <tr>
+                                <th rowspan="3" style="width: 16%;">អាយុ</th>
+                                <th colspan="6">ចំនួនសិស្ស</th>
+                            </tr>
+                            <tr>
+                                <th colspan="2" style="width: 28%;">សិស្សថ្មី</th>
+                                <th colspan="2" style="width: 28%;">សិស្សត្រួតថ្នាក់</th>
+                                <th colspan="2" style="width: 28%;">សរុប</th>
+                            </tr>
+                            <tr>
+                                <th style="width: 14%;">សរុប</th>
+                                <th style="width: 14%;">ស្រី</th>
+                                <th style="width: 14%;">សរុប</th>
+                                <th style="width: 14%;">ស្រី</th>
+                                <th style="width: 14%;">សរុប</th>
+                                <th style="width: 14%;">ស្រី</th>
+                            </tr>
+                            <tr>
+                                <th style="font-weight: normal; font-size: 7.5pt;">ឆ្នាំ</th>
+                                <th></th><th></th><th></th><th></th><th></th><th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-age-breakdown">
+                            <!-- Rows: 70_71, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15+ -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="font-weight: bold; background: #ffffff;">
+                                <td style="font-weight: bold;">សរុប</td>
+                                <td id="age-sum-new-tot">0</td>
+                                <td id="age-sum-new-fem">0</td>
+                                <td id="age-sum-rep-tot">0</td>
+                                <td id="age-sum-rep-fem">0</td>
+                                <td id="age-sum-grand-tot" style="font-weight: bold;">0</td>
+                                <td id="age-sum-grand-fem" style="font-weight: bold;">0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- SECTION 4: Indigenous Minorities (សិស្សតាមជនជាតិដើមភាគតិច) -->
+                <div class="section-box">
+                    <div class="section-title-kh">៤-សិស្សតាមជនជាតិដើមភាគតិច</div>
+                    <table class="moeys-table" id="table-indigenous">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="width: 38%;">ក្រុមអាយុ</th>
+                                <th colspan="2">សិស្សជនជាតិដើមភាគតិច</th>
+                            </tr>
+                            <tr>
+                                <th style="width: 31%;">សរុប</th>
+                                <th style="width: 31%;">ស្រី</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>6</td>
+                                <td><input type="number" id="ind-6-tot" class="cell-input" value="0" min="0" oninput="calculateIndigenousTotals()"></td>
+                                <td><input type="number" id="ind-6-fem" class="cell-input" value="0" min="0" oninput="calculateIndigenousTotals()"></td>
+                            </tr>
+                            <tr>
+                                <td>6_11</td>
+                                <td><input type="number" id="ind-6-11-tot" class="cell-input" value="0" min="0" oninput="calculateIndigenousTotals()"></td>
+                                <td><input type="number" id="ind-6-11-fem" class="cell-input" value="0" min="0" oninput="calculateIndigenousTotals()"></td>
+                            </tr>
+                            <tr>
+                                <td>12+</td>
+                                <td><input type="number" id="ind-12-tot" class="cell-input" value="0" min="0" oninput="calculateIndigenousTotals()"></td>
+                                <td><input type="number" id="ind-12-fem" class="cell-input" value="0" min="0" oninput="calculateIndigenousTotals()"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="font-weight: bold;">
+                                <td>សរុប</td>
+                                <td id="ind-sum-tot">0</td>
+                                <td id="ind-sum-fem">0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="form-column-right">
+                
+                <!-- SECTION 2 (ច): Early Childhood Program -->
+                <div class="section-box">
+                    <div class="section-title-kh">២.(ច) ចំនួនសិស្សថ្នាក់ទី១បានឆ្លងកម្មវិធីកុមារតូច</div>
+                    <div class="section-subtitle-kh">(ក្រៅពីថ្នាក់ទី១ មិនបាច់បំពេញតារាង ២.(ច) នេះទេ)</div>
+                    <table class="moeys-table">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="width: 32%;">ប្រភេទ</th>
+                                <th colspan="4">ថ្នាក់ទី១ (សិស្សម្នាក់អាចរាប់បានតែមួយដង)</th>
+                            </tr>
+                            <tr>
+                                <th colspan="2" style="width: 34%;">សិស្សថ្មី</th>
+                                <th colspan="2" style="width: 34%;">សិស្សត្រួតថ្នាក់</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th>សរុប</th>
+                                <th>ស្រី</th>
+                                <th>សរុប</th>
+                                <th>ស្រី</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-left">មត្តេយ្យរដ្ឋ</td>
+                                <td><input type="number" id="ec-gov-new-tot" class="cell-input" value="0" min="0"></td>
+                                <td><input type="number" id="ec-gov-new-fem" class="cell-input" value="0" min="0"></td>
+                                <td><input type="number" id="ec-gov-rep-tot" class="cell-input" value="0" min="0"></td>
+                                <td><input type="number" id="ec-gov-rep-fem" class="cell-input" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">មត្តេយ្យឯកជន</td>
+                                <td><input type="number" id="ec-pvt-new-tot" class="cell-input" value="0" min="0"></td>
+                                <td><input type="number" id="ec-pvt-new-fem" class="cell-input" value="0" min="0"></td>
+                                <td><input type="number" id="ec-pvt-rep-tot" class="cell-input" value="0" min="0"></td>
+                                <td><input type="number" id="ec-pvt-rep-fem" class="cell-input" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">មត្តេយ្យសហគមន៍</td>
+                                <td><input type="number" id="ec-com-new-tot" class="cell-input" value="0" min="0"></td>
+                                <td><input type="number" id="ec-com-new-fem" class="cell-input" value="0" min="0"></td>
+                                <td><input type="number" id="ec-com-rep-tot" class="cell-input" value="0" min="0"></td>
+                                <td><input type="number" id="ec-com-rep-fem" class="cell-input" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">ការអប់រំតាមផ្ទះ/តាមវត្ត...</td>
+                                <td><input type="number" id="ec-oth-new-tot" class="cell-input" value="0" min="0"></td>
+                                <td><input type="number" id="ec-oth-new-fem" class="cell-input" value="0" min="0"></td>
+                                <td><input type="number" id="ec-oth-rep-tot" class="cell-input" value="0" min="0"></td>
+                                <td><input type="number" id="ec-oth-rep-fem" class="cell-input" value="0" min="0"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- SECTION 2(ឆ): Disadvantaged & Difficulty Categories -->
+                <div class="section-box" style="margin-top: 2px;">
+                    <div class="section-title-kh">២.(ឆ) ចំនួនសិស្សជួបការលំបាកតាមកម្រិតថ្នាក់(សិស្សម្នាក់អាចរាប់ច្រើនដង</div>
+                    <div class="section-subtitle-kh">តាមភាពជាក់ស្តែងបើសិស្សនោះពិការ ឬមានប៉ះពាល់ចំណុចច្រើនក្នុងបរិយាយ)</div>
+                    
+                    <table class="moeys-table" id="table-difficulties">
+                        <thead>
+                            <tr>
+                                <th colspan="2" rowspan="2" style="width: 58%;">បរិយាយ</th>
+                                <th colspan="2">ចំនួនសិស្សជួបការលំបាក</th>
+                            </tr>
+                            <tr>
+                                <th style="width: 21%;">សរុប</th>
+                                <th style="width: 21%;">ស្រី</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-difficulties">
+                            <!-- Category 1 -->
+                            <tr class="gray-header">
+                                <td colspan="4" class="text-left">សិស្សពិការ*</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="8" style="width: 20px; padding:0; text-align:center; vertical-align:middle;">
+                                    <div style="transform: rotate(-90deg); white-space: nowrap; margin-left: -2px;">ប្រភេទទី១</div>
+                                </td>
+                                <td class="text-left">ពិបាកក្នុងការធ្វើចលនា</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_walk" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_walk" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">ពិបាកក្នុងការស្តាប់</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_hear" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_hear" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">ពិបាកក្នុងការនិយាយ</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_speak" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_speak" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">ពិបាកក្នុងការមើល</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_see" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_see" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">ពិការសតិបញ្ញាខាងចងចាំ</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_memory" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_memory" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">ពិការសតិបញ្ញា</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_intellect" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_intellect" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">ពិបាកខាងផ្លូវចិត្ត</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_mental" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_mental" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">ពិការផ្សេងៗ (ក្រៅពីខាងលើ)</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_multiple" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_multiple" value="0" min="0"></td>
+                            </tr>
+
+                            <!-- Category 2 -->
+                            <tr class="gray-header">
+                                <td colspan="4" class="text-left">សិស្សជួបការលំបាកផ្នែកសុខភាព*</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2" style="width: 20px; padding:0; text-align:center; vertical-align:middle;">
+                                    <div style="transform: rotate(-90deg); white-space: nowrap; margin-left: -2px;">ប្រភេទទី២</div>
+                                </td>
+                                <td class="text-left">ខ្វះអាហារូបត្ថម្ភធ្ងន់ធ្ងរ</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_nutrition" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_nutrition" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">សុខភាព/ជំងឺប្រចាំកាយ</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_health1" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_health1" value="0" min="0"></td>
+                            </tr>
+
+                            <!-- Category 3 -->
+                            <tr class="gray-header">
+                                <td colspan="4" class="text-left">សិស្សជួបការលំបាក*</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="6" style="width: 20px; padding:0; text-align:center; vertical-align:middle;">
+                                    <div style="transform: rotate(-90deg); white-space: nowrap; margin-left: -2px;">ប្រភេទទី៣</div>
+                                </td>
+                                <td class="text-left">មកពីគ្រួសារផ្លាស់ប្តូរទីលំនៅ</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_migrant" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_migrant" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">កុមារកំព្រា</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_orphan" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_orphan" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">កុមាររងគ្រោះដោយ HIV/AIDS</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_hiv" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_hiv" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">កុមាររងអំពើហិង្សាក្នុងគ្រួសារ</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_violence" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_violence" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">កុមាររងការកេងប្រវ័ញ្ចពលកម្ម</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_exploit" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_exploit" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">កុមារដែលមកពីគ្រួសារក្រីក្រ</td>
+                                <td><input type="number" class="cell-input diff-tot" data-id="diff_poor" value="0" min="0"></td>
+                                <td><input type="number" class="cell-input diff-fem" data-id="diff_poor" value="0" min="0"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="moeys-table" style="margin-top: 2px;">
+                        <tbody>
+                            <tr class="gray-header">
+                                <td colspan="3" class="text-left">ចំនួនកុមារទទួលបានការគាំពារសុខភាព និងប្រើប្រាស់ឧបករណ៍</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left" style="width: 58%;">-ចំនួនកុមារទទួលបានកិច្ចអន្តរាគមន៍របស់សុខាភិបាល</td>
+                                <td style="width: 21%;"><input type="number" id="stat-health-support-tot" class="cell-input" value="0" min="0"></td>
+                                <td style="width: 21%;"><input type="number" id="stat-health-support-fem" class="cell-input" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">-ចំនួនកុមារទទួលបានកិច្ចគាំពារ និងប្រើប្រាស់ឧបករណ៍របស់សុខាភិបាល</td>
+                                <td><input type="number" id="stat-disability-support-tot" class="cell-input" value="0" min="0"></td>
+                                <td><input type="number" id="stat-disability-support-fem" class="cell-input" value="0" min="0"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footnote and Signatures Block (Moved to Bottom) -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 6px; padding-top: 4px;">
+            <div style="flex: 1;">
+                <div class="disability-footnote">
+                    *ចំនួនសិស្សពិការៈ សិស្សពិការម្នាក់រាប់បានតែម្ដងគត់
+                </div>
+                <div class="disability-footnote-sub">
+                    (ទោះបីសិស្សនោះពិការភាពច្រើនប្រភេទក៏ដោយ)
+                </div>
+            </div>
+            
+            <div class="form-footer-signature" style="width: auto; text-align: center;">
+                <div class="sig-line">
+                    <span>ធ្វើនៅ</span>
+                    <input type="text" id="stat-created-place" class="editable-dot-line" style="width: 90px;" value="សន្ទុក">
+                    <span>ថ្ងៃទី</span>
+                    <input type="text" id="stat-created-date" class="editable-dot-line" style="width: 120px;" value="០១ វិច្ឆិកា ២០២៦">
+                </div>
+                <div class="sig-line" style="margin-top: 6px;">
+                    <span>ហត្ថលេខាគ្រូទទួលបន្ទុកថ្នាក់</span>
+                </div>
+                <div class="sig-line" style="margin-top: 30px;">
+                    <input type="text" id="stat-teacher-sig" class="editable-dot-line" style="width: 140px;" value="ស៊ឹង ដារ៉ា">
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="summary-report.js"></script>
+
+    <script>
+        if (window.classManager && document.getElementById("global-class-selector")) {
+            window.classManager.renderClassSelector("global-class-selector");
+        }
+    </script>
+</body>
+</html>

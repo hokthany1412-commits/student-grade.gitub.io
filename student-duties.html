@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ការបែងចែកតួនាទីសិស្ស - Student Duties Assignment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Battambang:wght@400;700&family=Moul&family=Kantumruy+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        .moul-font { font-family: 'Moul', cursive; }
+        .battambang-font { font-family: 'Battambang', sans-serif; }
+
+        /* A4 Page Container */
+        .duty-page-container {
+            width: 210mm;
+            max-width: 100%;
+            min-height: 285mm;
+            margin: 0 auto 30px auto;
+            background: white;
+            padding: 8mm 8mm;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            border-radius: 6px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Ornate Double Frame Border matching MoEYS classic documents */
+        .duty-frame {
+            border: 3.5px solid #0b3c8f;
+            padding: 12px 14px;
+            border-radius: 4px;
+            position: relative;
+            box-sizing: border-box;
+            background: #ffffff;
+            width: 100%;
+        }
+
+        .duty-frame::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            border: 1.5px solid #0b3c8f;
+            pointer-events: none;
+        }
+
+        /* Centered Nation Header (Top Middle) */
+        .nation-header-center {
+            text-align: center !important;
+            width: 100% !important;
+            margin: 0 auto 4px auto !important;
+            display: block !important;
+        }
+        .nation-header-center h2 {
+            font-family: 'Moul', cursive !important;
+            font-size: 11.5pt !important;
+            margin: 0 auto !important;
+            color: #1e293b !important;
+            font-weight: normal !important;
+            letter-spacing: 0.5px !important;
+            display: block !important;
+            text-align: center !important;
+        }
+        .nation-header-center h2::before,
+        .nation-header-center h2::after {
+            display: none !important;
+            content: none !important;
+        }
+        .nation-header-center h3 {
+            font-family: 'Moul', cursive !important;
+            font-size: 10.5pt !important;
+            margin: 3px auto 0 auto !important;
+            color: #1e293b !important;
+            font-weight: normal !important;
+            letter-spacing: 0.5px !important;
+            display: block !important;
+            text-align: center !important;
+        }
+        .nation-header-center h3::before,
+        .nation-header-center h3::after {
+            display: none !important;
+            content: none !important;
+        }
+        .emblem-icon {
+            font-size: 11pt !important;
+            letter-spacing: 4px !important;
+            margin-top: 3px !important;
+            color: #475569 !important;
+            text-align: center !important;
+            display: block !important;
+        }
+
+        .school-info-left {
+            font-size: 10pt;
+            line-height: 1.6;
+            color: #1e293b;
+            text-align: left;
+        }
+
+        /* Main Title */
+        .duty-main-title {
+            text-align: center !important;
+            font-family: 'Moul', cursive !important;
+            font-size: 1.65rem !important;
+            color: #0b3c8f !important;
+            margin: 4px auto 12px auto !important;
+            letter-spacing: 1px !important;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.08) !important;
+            display: block !important;
+        }
+        .duty-main-title::before,
+        .duty-main-title::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        /* Roles Grid */
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .role-card {
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: #ffffff;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            border: 1.5px solid #cbd5e1;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .role-card-header {
+            font-family: 'Moul', cursive;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px dashed #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .role-card-header .role-title {
+            color: #0b3c8f;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .role-card-header .role-badge {
+            font-family: 'Battambang', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        /* Role item row */
+        .role-item-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 9.5pt;
+        }
+
+        .role-item-label {
+            width: 135px;
+            flex-shrink: 0;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .role-item-input {
+            flex: 1;
+            border: none;
+            border-bottom: 1.5px dotted #64748b;
+            background: #f8fafc;
+            font-family: 'Battambang', sans-serif;
+            font-size: 9.5pt;
+            color: #0f172a;
+            padding: 3px 6px;
+            outline: none;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+        .role-item-input:hover {
+            background: #eff6ff;
+            border-bottom-color: #2563eb;
+        }
+        .role-item-input:focus {
+            border-bottom: 2px solid #2563eb;
+            background: #ffffff;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Duty description box */
+        .duty-desc {
+            font-size: 8.5pt;
+            color: #64748b;
+            line-height: 1.4;
+            margin-top: 4px;
+            background: #f8fafc;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border-left: 3px solid #3b82f6;
+        }
+
+        /* Bottom Section: Signatures */
+        .duty-bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            font-size: 9.5pt;
+            line-height: 1.6;
+            margin-top: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .signatures-col-left {
+            text-align: center;
+            margin-top: 14px;
+        }
+
+        .signatures-col-right {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            margin-left: auto;
+            padding-right: 12px;
+            padding-left: 25px;
+        }
+
+        /* Print Settings - ONLY print the duty sheet */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 4mm 4mm 4mm 4mm;
+            }
+            html, body {
+                background: #ffffff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                font-family: 'Battambang', sans-serif !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .app-header, 
+            .no-print, 
+            .duty-tool-panel, 
+            #sort-toast-notif, 
+            #duty-toast-notif, 
+            button, 
+            nav, 
+            header {
+                display: none !important;
+            }
+            .app-container, .main-content {
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                background: transparent !important;
+            }
+            .duty-page-container {
+                width: 100% !important;
+                min-height: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            .role-item-input {
+                border-bottom: 1px dotted #333333 !important;
+            }
+        }
+    </style>
+</head>
+<body class="battambang-font">
+    <div class="app-container">
+        <!-- APP HEADER -->
+        <header class="app-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div class="logo-area" style="display: flex; align-items: center; gap: 10px;">
+                <div id="global-class-selector"></div>
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="padding: 0.5rem 1rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    ត្រឡប់ក្រោយ
+                </button>
+                <div class="logo-icon" style="background: linear-gradient(135deg, #0b3c8f, #2563eb);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 style="margin: 0; font-size: 1.4rem;">ការបែងចែកតួនាទីសិស្ស</h1>
+                    <p class="subtitle" style="margin: 0; font-size: 0.85rem;">Student Duties & Leadership Roles</p>
+                </div>
+            </div>
+
+            <div class="no-print" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="saveDuties()" style="background: #2563eb; color: white; border: none; font-weight: 600;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 4px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    រក្សាទុក (Save)
+                </button>
+                <button class="btn btn-secondary" onclick="autoAssignLeadership()" style="background: #10b981; color: white; border-color: #10b981; font-weight: 600;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 4px;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    បំពេញស្វ័យប្រវត្តិ (Auto)
+                </button>
+                <button class="btn btn-secondary" onclick="downloadWord()" style="background: #6366f1; color: white; border-color: #6366f1;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                    ទាញជា Word
+                </button>
+                <button class="btn btn-secondary" onclick="downloadPDF()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    ទាញជា PDF
+                </button>
+                <button class="btn btn-primary" onclick="window.print()" style="background: #e11d48; border-color: #e11d48;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 4px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    បោះពុម្ព (Print)
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- TOOLBAR / QUICK SETTINGS & DATE SETTINGS -->
+            <div class="duty-tool-panel no-print glass-panel" style="margin-bottom: 20px; padding: 16px; border-radius: 12px; background: white; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <span style="font-weight: 600; color: #1e293b;">⚡ ជម្រើសរហ័ស ៖</span>
+                        <button type="button" class="btn btn-secondary" onclick="autoAssignLeadership()" style="font-size: 0.88rem; padding: 0.4rem 0.85rem; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; cursor: pointer;">
+                            🔄 ចាប់ឈ្មោះសិស្សពីបញ្ជីថ្នាក់មកបំពេញ
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="clearAllDuties()" style="font-size: 0.88rem; padding: 0.4rem 0.85rem; color: #ef4444; border: 1px solid #fecaca; background: #fff5f5; cursor: pointer;">
+                            🗑️ សម្អាតឈ្មោះទាំងអស់
+                        </button>
+                    </div>
+                    <div style="color: #64748b; font-size: 0.85rem;">
+                        💡 លោកគ្រូ-អ្នកគ្រូអាចកំណត់ថ្ងៃខែចន្ទគតិ និងសុរិយគតិខាងក្រោមនេះ
+                    </div>
+                </div>
+
+                <!-- DATE SETTINGS ROW -->
+                <div>
+                    <h3 style="margin: 0 0 8px 0; font-size: 13.5px; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+                        <span>📅</span> <span>កែប្រែកាលបរិច្ឆេទ (Date Settings)</span>
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px;">
+                        <!-- Solar Date -->
+                        <div style="background: #f8fafc; padding: 10px 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                            <label style="font-size: 12px; color: #475569; display: block; margin-bottom: 6px; font-weight: 600;">☀️ ថ្ងៃខែឆ្នាំសុរិយគតិ (Solar Date)</label>
+                            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                <input type="text" id="solar-location" value="ផ្លុង" style="width: 80px; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" placeholder="ទីកន្លែង">
+                                <span>, ថ្ងៃទី</span>
+                                <input type="text" id="solar-day" style="width: 45px; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; text-align: center;">
+                                <span>ខែ</span>
+                                <select id="solar-month" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                                    <option value="មករា">មករា</option>
+                                    <option value="កុម្ភៈ">កុម្ភៈ</option>
+                                    <option value="មីនា">មីនា</option>
+                                    <option value="មេសា">មេសា</option>
+                                    <option value="ឧសភា">ឧសភា</option>
+                                    <option value="មិថុនា">មិថុនា</option>
+                                    <option value="កក្កដា">កក្កដា</option>
+                                    <option value="សីហា">សីហា</option>
+                                    <option value="កញ្ញា">កញ្ញា</option>
+                                    <option value="តុលា">តុលា</option>
+                                    <option value="វិច្ឆិកា">វិច្ឆិកា</option>
+                                    <option value="ធ្នូ">ធ្នូ</option>
+                                </select>
+                                <span>ឆ្នាំ</span>
+                                <input type="text" id="solar-year" style="width: 75px; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; text-align: center;">
+                            </div>
+                        </div>
+
+                        <!-- Lunar Date -->
+                        <div style="background: #f8fafc; padding: 10px 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                            <label style="font-size: 12px; color: #475569; display: block; margin-bottom: 6px; font-weight: 600;">🌙 ថ្ងៃខែឆ្នាំចន្ទគតិ (Lunar Date)</label>
+                            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                                <span>ថ្ងៃ</span>
+                                <select id="lunar-day-name" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                                    <option value="អាទិត្យ">អាទិត្យ</option>
+                                    <option value="ចន្ទ">ចន្ទ</option>
+                                    <option value="អង្គារ">អង្គារ</option>
+                                    <option value="ពុធ">ពុធ</option>
+                                    <option value="ព្រហស្បតិ៍">ព្រហស្បតិ៍</option>
+                                    <option value="សុក្រ">សុក្រ</option>
+                                    <option value="សៅរ៍">សៅរ៍</option>
+                                </select>
+                                <select id="lunar-phase" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                                    <!-- Populated by JS -->
+                                </select>
+                                <span>ខែ</span>
+                                <select id="lunar-month" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                                    <option value="មិគសិរ">មិគសិរ</option>
+                                    <option value="បុស្ស">បុស្ស</option>
+                                    <option value="មាឃ">មាឃ</option>
+                                    <option value="ផល្គុន">ផល្គុន</option>
+                                    <option value="ចេត្រ">ចេត្រ</option>
+                                    <option value="ពិសាខ">ពិសាខ</option>
+                                    <option value="ជេស្ឋ">ជេស្ឋ</option>
+                                    <option value="អាសាឍ">អាសាឍ</option>
+                                    <option value="ស្រាពណ៍">ស្រាពណ៍</option>
+                                    <option value="ភទ្របទ">ភទ្របទ</option>
+                                    <option value="អស្សុជ">អស្សុជ</option>
+                                    <option value="កត្តិក">កត្តិក</option>
+                                </select>
+                                <span>ឆ្នាំ</span>
+                                <select id="lunar-zodiac" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                                    <option value="ជូត">ជូត</option>
+                                    <option value="ឆ្លូវ">ឆ្លូវ</option>
+                                    <option value="ខាល">ខាល</option>
+                                    <option value="ថោះ">ថោះ</option>
+                                    <option value="រោង">រោង</option>
+                                    <option value="ម្សាញ់">ម្សាញ់</option>
+                                    <option value="មមី">មមី</option>
+                                    <option value="មមែ">មមែ</option>
+                                    <option value="វក">វក</option>
+                                    <option value="រកា">រកា</option>
+                                    <option value="ច">ច</option>
+                                    <option value="កុរ">កុរ</option>
+                                </select>
+                                <select id="lunar-era" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                                    <option value="ឯកស័ក">ឯកស័ក</option>
+                                    <option value="ទោស័ក">ទោស័ក</option>
+                                    <option value="ត្រីស័ក">ត្រីស័ក</option>
+                                    <option value="ចត្វាស័ក">ចត្វាស័ក</option>
+                                    <option value="បញ្ចស័ក">បញ្ចស័ក</option>
+                                    <option value="ឆស័ក">ឆស័ក</option>
+                                    <option value="សប្តស័ក">សប្តស័ក</option>
+                                    <option value="អដ្ឋស័ក">អដ្ឋស័ក</option>
+                                    <option value="នព្វស័ក">នព្វស័ក</option>
+                                    <option value="សំរឹទ្ធិស័ក">សំរឹទ្ធិស័ក</option>
+                                </select>
+                                <span>ព.ស</span>
+                                <input type="text" id="lunar-be-year" style="width: 60px; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; text-align: center;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRINTABLE A4 STUDENT DUTIES PAGE -->
+            <div class="duty-page-container" id="duty-print-area">
+                <div class="duty-frame">
+                    <!-- HEADER SECTION: CENTERED KINGDOM MOTTO -->
+                    <div class="nation-header-center">
+                        <h2>ព្រះរាជាណាចក្រកម្ពុជា</h2>
+                        <h3>ជាតិ សាសនា ព្រះមហាក្សត្រ</h3>
+                        <img src="header-divider.png" alt="divider" class="nation-header-divider" onerror="this.onerror=null; this.src='images/header-divider.png';">
+                    </div>
+
+                    <!-- SCHOOL INFO LEFT -->
+                    <div class="school-info-left" style="text-align: left; font-size: 10pt; line-height: 1.6; color: #1e293b; margin-top: -30px; margin-bottom: 6px;">
+                        <div>កម្រងសាលា ៖ <span id="lbl-cluster" style="font-weight: bold; border-bottom: 1px dotted #333;">........................</span></div>
+                        <div>សាលាបឋមសិក្សា ៖ <span id="lbl-school" style="font-weight: bold; border-bottom: 1px dotted #333;">........................</span></div>
+                        <div>ថ្នាក់ទី ៖ <span id="lbl-class" style="font-weight: bold; border-bottom: 1px dotted #333;">..............</span></div>
+                    </div>
+
+                    <!-- MAIN TITLE -->
+                    <h1 class="duty-main-title">ការបែងចែកតួនាទីសិស្សក្នុងថ្នាក់រៀន</h1>
+
+                    <!-- ROLES GRID (2 COLUMNS) -->
+                    <div class="roles-grid">
+                        
+                        <!-- CARD 1: គណៈកម្មការគ្រប់គ្រងថ្នាក់ -->
+                        <div class="role-card" style="border-top: 4px solid #0b3c8f;">
+                            <div class="role-card-header">
+                                <span class="role-title">👑 គណៈកម្មការថ្នាក់រៀន</span>
+                                <span class="role-badge">ដឹកនាំរួម</span>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ប្រធានថ្នាក់ ៖</span>
+                                <select id="role-president" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ អនុប្រធានទី១ ៖</span>
+                                <select id="role-vice1" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ អនុប្រធានទី២ ៖</span>
+                                <select id="role-vice2" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="duty-desc">
+                                <strong>ភារកិច្ច ៖</strong> ដឹកនាំសិស្សរួម សម្របសម្រួលសកម្មភាព គ្រប់គ្រងវិន័យ និងជួយគ្រូបន្ទុកថ្នាក់។
+                            </div>
+                        </div>
+
+                        <!-- CARD 2: ក្រុមវិន័យ និងវត្តមាន -->
+                        <div class="role-card" style="border-top: 4px solid #ea580c;">
+                            <div class="role-card-header">
+                                <span class="role-title" style="color: #c2410c;">📋 វិន័យ និងវត្តមាន</span>
+                                <span class="role-badge" style="background: #fff7ed; color: #c2410c;">សណ្ដាប់ធ្នាប់</span>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ប្រធានផ្នែកវិន័យ ៖</span>
+                                <select id="role-discipline" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ជំនួយការវិន័យ ៖</span>
+                                <select id="role-discipline-asst" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ កត់ត្រាវត្តមាន ៖</span>
+                                <select id="role-attendance" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="duty-desc">
+                                <strong>ភារកិច្ច ៖</strong> តាមដានសណ្ដាប់ធ្នាប់ ឯកសណ្ឋាន ស្រង់វត្តមាន និងរាយការណ៍ជូនគ្រូ។
+                            </div>
+                        </div>
+
+                        <!-- CARD 3: អនាម័យ និងបរិស្ថានថ្នាក់រៀន -->
+                        <div class="role-card" style="border-top: 4px solid #10b981;">
+                            <div class="role-card-header">
+                                <span class="role-title" style="color: #047857;">🧹 អនាម័យ និងបរិស្ថាន</span>
+                                <span class="role-badge" style="background: #ecfdf5; color: #047857;">បៃតង-ស្អាត</span>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ប្រធានអនាម័យ ៖</span>
+                                <select id="role-hygiene" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ជំនួយការអនាម័យ ៖</span>
+                                <select id="role-hygiene-asst" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ថែសួន/រុក្ខជាតិ ៖</span>
+                                <select id="role-gardener" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="duty-desc">
+                                <strong>ភារកិច្ច ៖</strong> ត្រួតពិនិត្យវេនសម្អាតបន្ទប់រៀន ទុកដាក់សំរាម និងស្រោចទឹកផ្កា។
+                            </div>
+                        </div>
+
+                        <!-- CARD 4: ការសិក្សា និងបណ្ណាល័យ -->
+                        <div class="role-card" style="border-top: 4px solid #8b5cf6;">
+                            <div class="role-card-header">
+                                <span class="role-title" style="color: #6d28d9;">📚 ការសិក្សា & បណ្ណាល័យ</span>
+                                <span class="role-badge" style="background: #f5f3ff; color: #6d28d9;">ចំណេះដឹង</span>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ប្រធានសិក្សា ៖</span>
+                                <select id="role-study" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ មើលការខុសត្រូវសៀវភៅ ៖</span>
+                                <select id="role-library" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ជួយមិត្តរៀនយឺត ៖</span>
+                                <select id="role-tutor" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="duty-desc">
+                                <strong>ភារកិច្ច ៖</strong> ជួយចែកសៀវភៅសិក្សា ជំរុញការអាន និងជួយបង្រៀនមិត្តភក្តិ។
+                            </div>
+                        </div>
+
+                        <!-- CARD 5: កីឡា សិល្បៈ និងកម្សាន្ត -->
+                        <div class="role-card" style="border-top: 4px solid #06b6d4;">
+                            <div class="role-card-header">
+                                <span class="role-title" style="color: #0e7490;">⚽ កីឡា និងសិល្បៈ</span>
+                                <span class="role-badge" style="background: #ecfeff; color: #0e7490;">សុខភាព</span>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ប្រធានកីឡា ៖</span>
+                                <select id="role-sports" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ប្រធានសិល្បៈ/ចម្រៀង ៖</span>
+                                <select id="role-arts" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="duty-desc">
+                                <strong>ភារកិច្ច ៖</strong> រៀបចំជួរហាត់ប្រាណ ច្រៀងចម្រៀងជាតិ និងគ្រប់គ្រងសម្ភារកីឡា។
+                            </div>
+                        </div>
+
+                        <!-- CARD 6: ប្រធានក្រុមតុ/ក្រុមសិក្សា -->
+                        <div class="role-card" style="border-top: 4px solid #f59e0b;">
+                            <div class="role-card-header">
+                                <span class="role-title" style="color: #b45309;">👥 ប្រធានក្រុមសិក្សា</span>
+                                <span class="role-badge" style="background: #fffbeb; color: #b45309;">ក្រុមតុ</span>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ប្រធានក្រុមទី១ ៖</span>
+                                <select id="role-group1" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ប្រធានក្រុមទី២ ៖</span>
+                                <select id="role-group2" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ប្រធានក្រុមទី៣ ៖</span>
+                                <select id="role-group3" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                            <div class="role-item-row">
+                                <span class="role-item-label">❖ ប្រធានក្រុមទី៤ ៖</span>
+                                <select id="role-group4" class="role-item-input role-student-select">
+                                    <option value="">-- ជ្រើសរើសសិស្ស --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- BOTTOM SECTION: SIGNATURES -->
+                    <div class="duty-bottom-grid">
+                        <!-- Left: Principal Signature -->
+                        <div class="signatures-col-left">
+                            <div style="font-weight: bold; font-family: 'Moul', cursive; font-size: 10.5pt;">បានឃើញ និងឯកភាព</div>
+                            <div style="font-weight: bold; font-family: 'Moul', cursive; font-size: 10.5pt; margin-top: 4px; margin-bottom: 50px;">នាយកសាលា</div>
+                            <div style="font-weight: bold; text-decoration: underline;" id="sig-director">...................................................</div>
+                        </div>
+
+                        <!-- Right: Date & Teacher Signature -->
+                        <div class="signatures-col-right">
+                            <div id="lunar-date" style="white-space: nowrap; font-size: 9.5pt; color: #1e293b;">ថ្ងៃ............... ខែ............... ឆ្នាំ............... ព.ស ២៥៦...</div>
+                            <div id="solar-date" style="margin-top: 4px; font-size: 9.5pt; color: #1e293b;">............., ថ្ងៃទី......... ខែ......... ឆ្នាំ ២០២...</div>
+                            <div style="font-weight: bold; font-family: 'Moul', cursive; font-size: 10.5pt; margin-top: 18px; margin-bottom: 50px;">គ្រូបន្ទុកថ្នាក់</div>
+                            <div style="font-weight: bold; margin-left: 2cm;" id="sig-teacher">...................................................</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Student Select Datalist for autocomplete -->
+    <datalist id="student-name-datalist"></datalist>
+
+    <script src="chhankitek.js"></script>
+    <script src="student-duties.js"></script>
+    <script>
+        if (window.classManager && document.getElementById("global-class-selector")) {
+            window.classManager.renderClassSelector("global-class-selector");
+        }
+    </script>
+</body>
+</html>

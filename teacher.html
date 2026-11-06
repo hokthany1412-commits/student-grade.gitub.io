@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ប្រវត្តិរូបគ្រូ - Teacher Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tabs-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--surface-border);
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s;
+        }
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+        .tab-btn.active {
+            color: var(--primary);
+        }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px 3px 0 0;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #info .table-section {
+            margin-top: 2rem;
+        }
+    </style>
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <div id="global-class-selector" style="margin-right: 15px;"></div>
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="margin-right: auto; padding: 0.5rem 1rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    ត្រឡប់ក្រោយ
+                </button>
+                <div class="logo-icon" style="background: #475569;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </div>
+                <h1>ប្រវត្តិរូបគ្រូបង្រៀន</h1>
+                <div style="width: 100px;"></div> <!-- Spacer -->
+            </div>
+            <p class="subtitle">Teacher Profile Management</p>
+        </header>
+
+        <main class="main-content">
+            <!-- TABS NAVIGATION -->
+            <div class="tabs-container">
+                <button class="tab-btn active" data-tab="info">ព័ត៌មាន (Information)</button>
+                <button class="tab-btn" data-tab="school">បង្រៀននៅសាលា (School)</button>
+                <button class="tab-btn" data-tab="collection">កម្រងសាលា (School Gallery)</button>
+            </div>
+
+            <!-- TAB CONTENT: INFO -->
+            <div class="tab-content active" id="info">
+            <section class="form-section glass-panel">
+                <h2>បញ្ចូលទិន្នន័យគ្រូថ្មី</h2>
+                <form id="teacher-form">
+                    <div style="display: grid; grid-template-columns: 140px 1fr; gap: 20px; align-items: start; margin-bottom: 1.25rem;">
+                        <!-- PHOTO UPLOAD CARD -->
+                        <div class="photo-uploader-card" style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                            <label style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary); text-align: center;">រូបថតគ្រូ (4x6)</label>
+                            <div id="teacher-photo-dropzone" style="width: 120px; height: 150px; border-radius: 8px; border: 2px dashed #94a3b8; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; position: relative; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.06);" onclick="document.getElementById('teacher-photo-file-input').click()" ondragover="event.preventDefault(); this.style.borderColor='var(--primary)';" ondragleave="this.style.borderColor='#94a3b8';" ondrop="handleTeacherPhotoDrop(event)" title="ចុចដើម្បីជ្រើសរើស ឬអូសទម្លាក់រូបថតទីនេះ">
+                                <img id="teacher-photo-preview" src="" alt="រូបថតគ្រូ" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                                <div id="teacher-photo-placeholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; text-align: center; color: #64748b;">
+                                    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 4px; color: #94a3b8;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                    <span style="font-size: 0.76rem; font-weight: 600; line-height: 1.3; color: #64748b;">ចុច ឬទម្លាក់<br>រូបថតទីនេះ</span>
+                                </div>
+                            </div>
+                            <input type="file" id="teacher-photo-file-input" accept="image/*" style="display: none;" onchange="handleTeacherPhotoFileInput(this)">
+                            <div style="display: flex; gap: 4px; width: 100%; justify-content: center;">
+                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('teacher-photo-file-input').click()" style="padding: 4px 8px; font-size: 0.78rem; flex: 1; border-radius: 6px; background: #eff6ff; color: #2563eb; border-color: #bfdbfe; font-weight: 600;">
+                                    📷 រូបថត
+                                </button>
+                                <button type="button" id="remove-teacher-photo-btn" class="btn btn-secondary" onclick="removeTeacherPhoto()" style="padding: 4px 8px; font-size: 0.78rem; border-radius: 6px; background: #fef2f2; color: #dc2626; border-color: #fecaca; display: none;" title="លុបរូបថតចេញ">
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- INPUTS GRID -->
+                        <div class="grades-grid" style="margin: 0;">
+                            <div class="form-group">
+                                <label for="teacher-id">អត្តលេខគ្រូ (ID)</label>
+                                <input type="text" id="teacher-id" placeholder="ឧ. T-001" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="teacher-name">ឈ្មោះគ្រូ (Name)</label>
+                                <input type="text" id="teacher-name" placeholder="បញ្ជូលឈ្មោះគ្រូ" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">ភេទ (Gender)</label>
+                                <select id="gender" required style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem;">
+                                    <option value="ប្រុស">ប្រុស</option>
+                                    <option value="ស្រី">ស្រី</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="dob">ថ្ងៃខែឆ្នាំកំណើត (DOB)</label>
+                                <input type="date" id="dob" required style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem;">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">លេខទូរស័ព្ទ (Phone)</label>
+                                <input type="text" id="phone" placeholder="012 345 678" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="class-name">ថ្នាក់បន្ទុក (Class)</label>
+                                <input type="text" id="class-name" placeholder="ឧ. ទី៥ ក" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" style="background: #475569;">
+                            <span>រក្សាទុកទិន្នន័យ</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        </button>
+                        <button type="button" id="clear-btn" class="btn btn-secondary">ជម្រះទិន្នន័យទាំងអស់</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="table-section glass-panel">
+                <div class="section-header">
+                    <h2>បញ្ជីឈ្មោះគ្រូបង្រៀន</h2>
+                    <div class="search-box">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="search-input" placeholder="ស្វែងរកគ្រូ...">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="teachers-table">
+                        <thead>
+                            <tr>
+                                <th>ល.រ</th>
+                                <th style="text-align: center; width: 60px;">រូបថត</th>
+                                <th>អត្តលេខ</th>
+                                <th>ឈ្មោះគ្រូ</th>
+                                <th>ភេទ</th>
+                                <th>ថ្ងៃខែឆ្នាំកំណើត</th>
+                                <th>លេខទូរស័ព្ទ</th>
+                                <th>ថ្នាក់បន្ទុក</th>
+                                <th>សកម្មភាព</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="empty-state" class="empty-state hidden">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <p>មិនទាន់មានទិន្នន័យគ្រូនៅឡើយទេ</p>
+                </div>
+            </section>
+            </div> <!-- End of Info Tab -->
+
+            <!-- TAB CONTENT: SCHOOL -->
+            <div class="tab-content" id="school">
+                <section class="form-section glass-panel">
+                    <h2>បង្រៀននៅសាលា</h2>
+                    <form id="school-form">
+                        <div class="grades-grid">
+                            <div class="form-group">
+                                <label for="district-office">ការិយាល័យអប់រំស្រុក (District Office)</label>
+                                <input type="text" id="district-office" placeholder="ឧ. កា.រិ.ស្រុក..." required>
+                            </div>
+                            <div class="form-group">
+                                <label for="school-cluster">កម្រង (Cluster)</label>
+                                <input type="text" id="school-cluster" placeholder="ឧ. កម្រងអូរក្រូច" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="school-name">ឈ្មោះសាលា (School Name)</label>
+                                <input type="text" id="school-name" placeholder="ឧ. សាលាបឋមសិក្សា ផ្លុង" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="school-province">ខេត្ត-ក្រុង (Province)</label>
+                                <input type="text" id="school-province" placeholder="ឧ. កំពង់ធំ" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="teaching-level">កម្រិតសិក្សា (Level)</label>
+                                <select id="teaching-level" required style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem;">
+                                    <option value="បឋមសិក្សា">បឋមសិក្សា (Primary)</option>
+                                    <option value="អនុវិទ្យាល័យ">អនុវិទ្យាល័យ (Secondary)</option>
+                                    <option value="វិទ្យាល័យ">វិទ្យាល័យ (High School)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="teaching-subject">មុខវិជ្ជាបង្រៀន (Subject)</label>
+                                <input type="text" id="teaching-subject" placeholder="ឧ. មុខវិជ្ជាទូទៅ" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="teaching-hours">ម៉ោងបង្រៀន/សប្តាហ៍ (Hours/Week)</label>
+                                <input type="number" id="teaching-hours" placeholder="ឧ. ២០" required>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" style="background: #475569;">
+                                <span>រក្សាទុកព័ត៌មានសាលា</span>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            <!-- TAB CONTENT: COLLECTION -->
+            <div class="tab-content" id="collection">
+                <section class="form-section glass-panel">
+                    <h2>កម្រងសាលា (School Gallery)</h2>
+                    <form id="collection-form">
+                        <div class="grades-grid">
+                            <div class="form-group">
+                                <label for="gallery-title">ចំណងជើងសកម្មភាព (Activity Title)</label>
+                                <input type="text" id="gallery-title" placeholder="ឧ. ទិវាបរិស្ថានសាលា" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="gallery-date">កាលបរិច្ឆេទ (Date)</label>
+                                <input type="date" id="gallery-date" required style="background: var(--surface); border: 2px solid var(--input-border); color: var(--text-primary); padding: 0.8rem 1rem; border-radius: 10px; font-family: inherit; font-size: 1rem;">
+                            </div>
+                            <div class="form-group">
+                                <label for="gallery-location">ទីតាំង (Location)</label>
+                                <input type="text" id="gallery-location" placeholder="ឧ. ទីធ្លាសាលា" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="gallery-participants">អ្នកចូលរួម (Participants)</label>
+                                <input type="text" id="gallery-participants" placeholder="ឧ. គ្រូ និងសិស្សានុសិស្ស" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="gallery-image">ឯកសារភ្ជាប់/រូបភាព (Image URL/File)</label>
+                                <input type="text" id="gallery-image" placeholder="បញ្ចូលតំណភ្ជាប់រូបភាព (URL)">
+                            </div>
+                            <div class="form-group">
+                                <label for="gallery-desc">ការពិពណ៌នា (Description)</label>
+                                <input type="text" id="gallery-desc" placeholder="ពិពណ៌នាខ្លីៗពីសកម្មភាព">
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" style="background: #475569;">
+                                <span>រក្សាទុកកម្រងសាលា</span>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Gallery Table -->
+                <section class="glass-panel" style="margin-top: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="margin: 0;">បញ្ជីកម្រងសាលា</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">ល.រ</th>
+                                    <th>កាលបរិច្ឆេទ</th>
+                                    <th>ចំណងជើងសកម្មភាព</th>
+                                    <th>ទីតាំង</th>
+                                    <th>អ្នកចូលរួម</th>
+                                    <th style="width: 60px;">សកម្មភាព</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gallery-table-body">
+                                <!-- Gallery Data will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="gallery-empty-state" class="empty-state hidden">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <p>មិនទាន់មានទិន្នន័យកម្រងសាលានៅឡើយទេ</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script src="teacher.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+
+                    btn.classList.add('active');
+                    const tabId = btn.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // Handle School Level Change
+            const teachingLevel = document.getElementById('teaching-level');
+            const teachingSubject = document.getElementById('teaching-subject');
+            
+            if (teachingLevel && teachingSubject) {
+                // Initialize on load
+                if (teachingLevel.value === 'បឋមសិក្សា' && !teachingSubject.value) {
+                    teachingSubject.value = 'មុខវិជ្ជាទូទៅ';
+                }
+                
+                teachingLevel.addEventListener('change', function() {
+                    if (this.value === 'បឋមសិក្សា') {
+                        teachingSubject.value = 'មុខវិជ្ជាទូទៅ';
+                    } else if (teachingSubject.value === 'មុខវិជ្ជាទូទៅ') {
+                        teachingSubject.value = '';
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script>
+        if (window.classManager && document.getElementById("global-class-selector")) {
+            window.classManager.renderClassSelector("global-class-selector");
+        }
+    </script>
+</body>
+</html>

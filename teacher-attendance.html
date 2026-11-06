@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បញ្ជីវត្តមានសម្រាប់គ្រូ - Teacher Attendance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Battambang:wght@400;700&family=Moul&family=Moulpali&family=Khmer+OS+Muol+Light&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .moul-font {
+            font-family: 'Moul', cursive;
+        }
+        
+        .print-area {
+            background: white;
+            padding: 20px;
+            color: black;
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Battambang', sans-serif;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .attendance-table th, 
+        .attendance-table td {
+            border: 1px solid black;
+            padding: 8px 4px;
+            text-align: center;
+            vertical-align: middle;
+            color: black;
+        }
+
+        .attendance-table th {
+            font-weight: normal;
+        }
+        
+        .text-left {
+            text-align: left !important;
+            padding-left: 8px !important;
+        }
+        
+        .header-container {
+            margin-bottom: 20px;
+            color: black;
+        }
+        
+        .nation-header {
+            text-align: center;
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            font-size: 32px;
+        }
+        
+        .school-info {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        
+        .report-title {
+            text-align: center;
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive;
+            margin-bottom: 5px;
+            font-size: 36px;
+        }
+        
+        .report-date {
+            text-align: center;
+            font-family: 'Battambang', sans-serif;
+            margin-bottom: 15px;
+        }
+        
+        .footer-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-family: 'Battambang', sans-serif;
+            color: black;
+            font-size: 14px;
+        }
+
+        .footer-stat-row {
+            display: flex;
+            align-items: end;
+            margin: 5px 0;
+            padding-left: 15px;
+            position: relative;
+            width: 300px;
+        }
+        
+        .footer-stat-row::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            bottom: 2px;
+        }
+        
+        .footer-stat-label {
+            white-space: nowrap;
+        }
+        
+        .footer-stat-dots {
+            flex-grow: 1;
+            border-bottom: 1px dotted black;
+            margin: 0 5px;
+            height: 14px;
+        }
+        
+        .footer-stat-unit {
+            white-space: nowrap;
+        }
+        
+        .footer-right {
+            text-align: center;
+            margin-right: 150px;
+        }
+        
+        .footer-right h4 {
+            font-family: 'Moul', cursive;
+            margin: 0 0 50px 0;
+        }
+
+        .form-control-panel {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .editable-cell {
+            outline: none;
+            transition: background-color 0.15s ease, box-shadow 0.15s ease;
+            border-radius: 2px;
+        }
+        .editable-cell:hover {
+            background-color: #f0fdf4 !important;
+            box-shadow: inset 0 0 0 1px #10b981;
+            cursor: text;
+        }
+        .editable-cell:focus {
+            background-color: #ecfdf5 !important;
+            box-shadow: inset 0 0 0 2px #059669;
+        }
+        .action-col {
+            width: 45px;
+            text-align: center;
+        }
+        .btn-delete-row {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #dc2626;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 3px 7px;
+            font-size: 11px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .btn-delete-row:hover {
+            background: #dc2626;
+            color: white;
+            border-color: #dc2626;
+        }
+        .table-toolbar-hint {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .save-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+            color: #059669;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .save-indicator.show {
+            opacity: 1;
+        }
+
+        @media print {
+            @page { size: A4 landscape; margin: 8mm 8mm 8mm 20mm; }
+            .app-header, .form-control-panel, .no-print, .action-col, .table-toolbar-hint { display: none !important; }
+            body { background: white; padding: 0; }
+            .app-container { max-width: 100%; padding: 0; margin: 0; }
+            .print-area { 
+                padding: 0;
+                box-shadow: none;
+                border: none;
+                overflow: visible;
+                height: auto;
+            }
+            .editable-cell {
+                background: transparent !important;
+                box-shadow: none !important;
+            }
+            .batch-page {
+                page-break-after: always;
+            }
+            .batch-page:last-child {
+                page-break-after: auto;
+            }
+            .header-container { margin-bottom: 15px !important; }
+            .report-title { margin-top: 70px !important; font-size: 13px !important; }
+            .attendance-table { margin-bottom: 10px !important; }
+            .attendance-table th, .attendance-table td {
+                font-size: 10pt;
+                padding: 4px 2px !important;
+            }
+            .footer-section {
+                font-size: 11pt;
+                margin-top: 10px;
+            }
+            .footer-right h4 {
+                margin: 0 0 30px 0 !important;
+            }
+        }
+    </style>
+
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+
+    <script src="theme.js"></script>
+    <script src="auto-restore-data.js"></script>
+    <script src="classManager.js"></script>
+
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+            <div class="logo-area" style="display: flex; align-items: center;">
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="margin-right: 15px; padding: 0.5rem 1rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    ត្រឡប់ក្រោយ
+                </button>
+                <div class="logo-icon" style="background: #8b5cf6;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <h1>បញ្ជីវត្តមានសម្រាប់គ្រូ</h1>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <a href="attendance-cover.html" class="btn btn-secondary" style="text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                    ក្របអវត្តមាន (Cover)
+                </a>
+                <a href="parent-contact.html" class="btn btn-secondary" style="text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    សៀវភៅទំនាក់ទំនង
+                </a>
+                <button class="btn btn-primary" onclick="window.print()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 5px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    បោះពុម្ព (Print)
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="form-control-panel" style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="display: flex; gap: 15px; align-items: end; flex-wrap: wrap;">
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label style="font-weight: 500; font-size: 0.9rem;">បោះពុម្ពជាស៊េរីច្រើនថ្ងៃ (ជ្រើសរើស ថ្ងៃចាប់ផ្តើម - ថ្ងៃបញ្ចប់)៖</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="date" id="batch-start-date" class="form-control">
+                            <span> ដល់ </span>
+                            <input type="date" id="batch-end-date" class="form-control">
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+                        <input type="checkbox" id="skip-sunday" checked>
+                        <label for="skip-sunday" style="font-size: 0.9rem;">រំលងថ្ងៃអាទិត្យ</label>
+                    </div>
+                    <button class="btn btn-primary" onclick="generateBatchPrint()" style="white-space: nowrap; background: #10b981; border-color: #10b981;">បង្កើតសន្លឹកស្វ័យប្រវត្តិ និងបោះពុម្ព (Generate & Print)</button>
+                </div>
+            </div>
+
+            <div class="table-toolbar-hint no-print">
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 0.92rem; color: #334155;">
+                    <span style="font-size: 1.2rem;">💡</span>
+                    <span><strong>ការណែនាំ៖</strong> លោកគ្រូ-អ្នកគ្រូអាចចុចកែប្រែដោយផ្ទាល់លើ <strong>ឈ្មោះគ្រូ</strong>, <strong>ភេទ</strong>, <strong>ថ្នាក់ទី/តួនាទី</strong>, និង <strong>ចំនួនសិស្ស (សរុប/ស្រី)</strong> ក្នុងតារាងខាងក្រោមបានយ៉ាងងាយស្រួល។</span>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                    <span id="save-indicator" class="save-indicator">✓ បានរក្សាទុកស្វ័យប្រវត្តិ</span>
+                    <button type="button" class="btn btn-secondary" onclick="addTeacherRow()" style="padding: 0.4rem 0.8rem; font-size: 0.88rem; display: flex; align-items: center; gap: 4px; background: #e0e7ff; color: #4338ca; border-color: #c7d2fe;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        បន្ថែមជួរគ្រូ
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="saveTeachersData(true)" style="padding: 0.4rem 0.8rem; font-size: 0.88rem; display: flex; align-items: center; gap: 4px;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        រក្សាទុក
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetTeachersToDefault()" style="padding: 0.4rem 0.8rem; font-size: 0.88rem; color: #dc2626;" title="កំណត់ទិន្នន័យដើមឡើងវិញ">
+                        🔄 កំណត់ដើមឡើងវិញ
+                    </button>
+                </div>
+            </div>
+
+            <div class="print-area" id="print-area">
+                <div class="header-container" style="position: relative; margin-bottom: 25px;">
+                    <div class="nation-header" style="text-align: center; font-family: 'Khmer OS Muol Light', 'Moulpali', 'Moul', cursive; line-height: 1.5; font-size: 14px;">
+                        ព្រះរាជាណាចក្រកម្ពុជា<br>
+                        ជាតិ&nbsp;&nbsp;&nbsp;សាសនា&nbsp;&nbsp;&nbsp;ព្រះមហាក្សត្រ
+                    </div>
+                    
+                    <div class="school-info" style="position: absolute; top: 40px; left: 0; text-align: left; font-family: 'Khmer OS Muol Light', 'Moulpali', 'Moul', cursive; line-height: 1.5; font-size: 12px;">
+                        ការិយាល័យអប់រំយុវជន និងកីឡាស្រុក <span id="display-district" class="editable-cell" contenteditable="true" title="ចុចដើម្បីកែប្រែ">សន្ទុក</span><br>
+                        កម្រងសាលារៀន <span id="display-cluster" class="editable-cell" contenteditable="true" title="ចុចដើម្បីកែប្រែ">ទីពោ</span><br>
+                        សាលាបឋមសិក្សា <span id="display-school" class="editable-cell" contenteditable="true" title="ចុចដើម្បីកែប្រែ">ផ្លុង</span>
+                    </div>
+                    
+                    <div class="report-title" style="text-align: center; font-family: 'Khmer OS Muol Light', 'Moulpali', 'Moul', cursive; margin-top: 70px; font-size: 12px;">
+                        បញ្ជីស្រង់វត្តមាន/អវត្តមានប្រចាំថ្ងៃមន្ត្រីរាជការស៊ីវិល មន្ត្រីកិច្ចសន្យា គ្រូបង្រៀនជាប់កិច្ចសន្យា និងសម្រង់កិច្ចតែងការ
+                    </div>
+                    <div class="report-date" id="display-date" style="text-align: center; font-family: 'Battambang', sans-serif; margin-bottom: 15px; margin-top: 5px;">
+                        ថ្ងៃអង្គារ ០៣កើត ខែបឋមាសាឍ ឆ្នាំ រោង ឆស័ក ព.ស ២៥៦៨ ត្រូវនឹងថ្ងៃទី ១៦ ខែ មិថុនា ឆ្នាំ ២០២៤
+                    </div>
+                </div>
+
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="3" style="width: 30px;">ល.រ</th>
+                            <th rowspan="3" style="width: 120px;">គោត្តនាម-នាម</th>
+                            <th rowspan="3" style="width: 40px;">ភេទ</th>
+                            <th rowspan="3" style="width: 60px;">តួនាទី</th>
+                            <th colspan="2">សិស្សសរុប</th>
+                            <th colspan="2">សិស្ស<br>អវត្តមាន</th>
+                            <th colspan="8">ហត្ថលេខា</th>
+                            <th rowspan="3" style="width: 60px; font-size: 11px;">លិខិតបញ្ជាក់<br>(សុំច្បាប់/<br>ច្បាប់ឈប់<br>លល)</th>
+                            <th rowspan="3" style="width: 40px;">ចំនួន<br>កិច្ច<br>តែង<br>ការ</th>
+                            <th rowspan="3" class="no-print action-col" style="width: 45px;">សកម្មភាព</th>
+                        </tr>
+                        <tr>
+                            <th rowspan="2" style="width: 35px;">សរុប</th>
+                            <th rowspan="2" style="width: 30px;">ស្រី</th>
+                            <th rowspan="2" style="width: 35px;">សរុប</th>
+                            <th rowspan="2" style="width: 30px;">ស្រី</th>
+                            <th colspan="4">ពេលព្រឹក</th>
+                            <th colspan="4">ពេលរសៀល</th>
+                        </tr>
+                        <tr>
+                            <th style="font-size: 11px; width: 45px;">ចូលម៉ោង</th>
+                            <th style="font-size: 11px; width: 85px;">ហត្ថលេខា</th>
+                            <th style="font-size: 11px; width: 45px;">ចេញម៉ោង</th>
+                            <th style="font-size: 11px; width: 85px;">ហត្ថលេខា</th>
+                            <th style="font-size: 11px; width: 45px;">ចូលម៉ោង</th>
+                            <th style="font-size: 11px; width: 85px;">ហត្ថលេខា</th>
+                            <th style="font-size: 11px; width: 45px;">ចេញម៉ោង</th>
+                            <th style="font-size: 11px; width: 85px;">ហត្ថលេខា</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendance-body">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                    <tfoot id="attendance-foot" style="font-weight: bold;">
+                        <!-- Totals will be populated here -->
+                    </tfoot>
+                </table>
+
+                <div class="footer-section">
+                    <div class="footer-left">
+                        <div class="footer-stat-row">
+                            <div class="footer-stat-label">សរុបបុគ្គលិក</div>
+                            <div class="footer-stat-dots"></div>
+                            <div class="footer-stat-unit">នាក់</div>
+                        </div>
+                        <div class="footer-stat-row">
+                            <div class="footer-stat-label">សរុបវត្តមាន</div>
+                            <div class="footer-stat-dots"></div>
+                            <div class="footer-stat-unit">នាក់</div>
+                        </div>
+                        <div class="footer-stat-row">
+                            <div class="footer-stat-label">មានច្បាប់</div>
+                            <div class="footer-stat-dots"></div>
+                            <div class="footer-stat-unit">នាក់</div>
+                        </div>
+                        <div class="footer-stat-row">
+                            <div class="footer-stat-label">ទំនេរគ្មានបៀវត្សរ៏</div>
+                            <div class="footer-stat-dots"></div>
+                            <div class="footer-stat-unit">នាក់</div>
+                        </div>
+                        <p style="font-size: 13px; margin-top: 10px; padding-left: 15px;">(ធ្វើគ្រប់សាលា។១ថ្ងៃធ្វើមួយសន្លឹកកឹប១ដុំសម្រាប់១ខែ)</p>
+                    </div>
+                    <div class="footer-right">
+                        <h4>នាយកសាលា</h4>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="auth.js"></script>
+    <script src="khmer-calendar.js"></script>
+    <script src="teacher-attendance.js"></script>
+</body>
+</html>

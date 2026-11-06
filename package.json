@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "khmer-chhankitek-calendar": "^1.2.1",
+    "pdf2json": "^4.0.3"
+  }
+}

@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ប័ណ្ណសរសើរ - Certificate of Commendation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700;900&family=Moul&family=Siemreap&family=Kantumruy+Pro:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Khmer Calendar for Buddhist Lunar Date -->
+    <script src="khmer-calendar.js"></script>
+    
+    <!-- Firebase Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="db-sync.js"></script>
+    <script src="auth.js"></script>
+    <script src="classManager.js"></script>
+    <script src="theme.js"></script>
+
+    <style>
+        :root {
+            --cert-gold: #c59b27;
+            --cert-blue: #0b3c75;
+            --cert-red: #d32f2f;
+            --cert-body-size: 11.5pt;
+            --cert-title-size: 30pt;
+            --cert-border-filter: none;
+        }
+
+        body {
+            background-color: #cbd5e1;
+            font-family: 'Battambang', sans-serif;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .moul-font { font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif; }
+        .kantumruy-font { font-family: 'Battambang', 'Khmer OS Battambang', sans-serif; }
+
+        /* Top Bar */
+        .top-navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-left-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: #f1f5f9;
+            color: #334155;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+        .back-btn:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .app-title-group, .app-title-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 1.1rem;
+        }
+
+        .app-title-badge span, .system-badge {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .nav-actions-group, .toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-action, .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+        }
+
+        .btn-action:hover, .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-reset { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+        .btn-reset:hover { background: #e2e8f0; color: #1e293b; }
+
+        .btn-png, .btn-download-img { background: #059669; color: #ffffff; }
+        .btn-png:hover, .btn-download-img:hover { background: #047857; }
+
+        .btn-batch { background: #7c3aed; color: #ffffff; }
+        .btn-batch:hover { background: #6d28d9; }
+
+        .btn-print { background: #2563eb; color: #ffffff; }
+        .btn-print:hover { background: #1d4ed8; }
+
+        /* Main Studio Layout */
+        .studio-container, .workspace-layout {
+            display: flex;
+            height: calc(100vh - 65px);
+            overflow: hidden;
+            width: 100%;
+        }
+
+        /* Left Settings Sidebar */
+        .controls-sidebar {
+            width: 380px;
+            min-width: 340px;
+            max-width: 420px;
+            background: #ffffff;
+            border-right: 1px solid #cbd5e1;
+            padding: 16px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .control-section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 6px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .control-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .control-input, .control-select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.9rem;
+            font-family: 'Battambang', sans-serif;
+            outline: none;
+            transition: all 0.2s;
+            background: #ffffff;
+        }
+
+        .control-input:focus, .control-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .theme-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .theme-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-align: center;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+
+        .theme-card:hover {
+            border-color: #94a3b8;
+            background: #f1f5f9;
+        }
+
+        .theme-card.active {
+            border-color: #2563eb;
+            background: #eff6ff;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        .theme-color-preview {
+            width: 100%;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .theme-card span {
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        /* Top Navbar Class Selector Styling */
+        .top-navbar .class-manager-dropdown {
+            background-color: #f1f5f9 !important;
+            border: 1px solid #cbd5e1 !important;
+            margin-top: 0 !important;
+            padding: 4px 8px !important;
+            border-radius: 8px !important;
+            min-width: 140px !important;
+        }
+        .top-navbar .class-manager-dropdown p {
+            color: #475569 !important;
+            font-size: 0.72rem !important;
+            font-weight: 600 !important;
+        }
+        .top-navbar .class-manager-dropdown select {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            font-size: 0.85rem !important;
+            padding: 3px 6px !important;
+            margin-bottom: 0 !important;
+        }
+        .top-navbar .class-manager-dropdown button {
+            color: #334155 !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        /* Toggle Switches */
+        .toggle-switch-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 0;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2563eb;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Right Preview Stage */
+        .preview-stage {
+            flex: 1;
+            background-color: #64748b;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 20px 20px, 20px 20px;
+            overflow: auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            box-sizing: border-box;
+        }
+
+        .preview-instruction-banner {
+            background: #fef9c3;
+            border: 1px solid #fde047;
+            color: #854d0e;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            max-width: 297mm;
+            box-sizing: border-box;
+        }
+
+        /* -------------------------------------------------------------
+           THE CERTIFICATE SHEET (A4 LANDSCAPE: 297mm x 210mm)
+           ------------------------------------------------------------- */
+        .cert-page-wrapper {
+            width: 297mm;
+            height: 210mm;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #000000;
+        }
+
+        /* Border Outer Image Frame */
+        .cert-border-frame-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            pointer-events: none;
+            z-index: 10;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: high-quality;
+            filter: var(--cert-border-filter, none);
+        }
+
+        /* Watermark Background */
+        .cert-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140mm;
+            height: 140mm;
+            background-image: url('images/moeys-logo.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.14;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Inner Printable Content (Nicely Padded Inside Border) */
+        .cert-inner-content {
+            position: relative;
+            z-index: 20;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 34mm 22mm 30mm 22mm;
+            box-sizing: border-box;
+        }
+
+        /* Header Row (Flex between Left & Right) */
+        .cert-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2mm;
+            padding: 0 10mm;
+        }
+
+        /* Header Left (Logo ON TOP of Hierarchy) */
+        .cert-header-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            font-size: 10pt;
+            font-weight: normal;
+            line-height: 1.5;
+            color: #000000;
+            min-width: 200px;
+        }
+
+        .cert-header-logo-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2mm;
+        }
+
+        .cert-moeys-emblem {
+            width: 21mm;
+            height: 21mm;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+        }
+
+        .cert-header-left .org-line-1,
+        .cert-header-left .org-line-2,
+        .cert-header-left .org-line-3 {
+            font-size: 9.5pt;
+            font-weight: normal;
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            white-space: nowrap;
+            line-height: 1.55;
+            margin: 1px 0;
+        }
+
+        /* Header Right (Kingdom & Motto) */
+        .cert-header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-width: 200px;
+            padding-top: 2mm;
+        }
+
+        .cert-kingdom-title {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: 12.5pt;
+            color: var(--cert-blue);
+            line-height: 1.35;
+        }
+
+        .cert-motto-title {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: 12.5pt;
+            color: var(--cert-blue);
+            line-height: 1.35;
+        }
+
+        .cert-header-divider {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1.5mm;
+        }
+        .cert-header-divider img {
+            height: 12px;
+            object-fit: contain;
+        }
+        .divider-tactical-khmer {
+            font-size: 14pt;
+            letter-spacing: 2px;
+            color: var(--cert-blue);
+        }
+
+        /* Main Certificate Title Area */
+        .cert-title-area {
+            text-align: center;
+            margin-top: -1mm;
+            margin-bottom: 2mm;
+        }
+
+        .cert-main-title {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: var(--cert-title-size, 30pt);
+            font-weight: normal;
+            color: #d32f2f;
+            text-shadow: 2px 2px 0px #ffebee, 3px 3px 2px rgba(185, 28, 28, 0.35);
+            letter-spacing: 1px;
+            line-height: 1.15;
+            margin: 0;
+            display: inline-block;
+        }
+
+        .cert-flower-flourish {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 1mm 0 1.5mm 0;
+            color: #1e3a8a;
+            font-size: 14pt;
+            line-height: 1;
+        }
+
+        .cert-issuer-title {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: 14pt;
+            font-weight: normal;
+            color: #0b2545;
+            line-height: 1.3;
+        }
+
+        /* Commendation Body Text */
+        .cert-body-content {
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            font-size: var(--cert-body-size, 11.5pt);
+            line-height: 1.65;
+            color: #000000;
+            text-align: center;
+            margin: 1mm 0;
+            width: 100%;
+        }
+
+        .cert-body-p {
+            margin: 0 0 1.5mm 0;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .cert-body-p-final {
+            margin: 0;
+            text-align: center;
+            font-size: var(--cert-body-size, 11.5pt);
+            white-space: nowrap;
+        }
+
+        .highlight-red {
+            color: #d32f2f;
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: var(--cert-body-size, 11.5pt);
+            font-weight: normal;
+            padding: 0 2px;
+        }
+        .highlight-bold-moul {
+            color: #d32f2f;
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: var(--cert-body-size, 11.5pt);
+            font-weight: normal;
+            padding: 0 2px;
+        }
+
+        .dot-underline {
+            border-bottom: none;
+            display: inline-block;
+            padding: 0 2px;
+        }
+
+        .cert-body-content .dot-underline {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: var(--cert-body-size, 11.5pt);
+            font-weight: normal;
+        }
+
+        /* Signatures & Dates Row */
+        .cert-signatures-row {
+            position: relative;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
+            margin-top: 1mm;
+            padding: 0 10mm;
+        }
+
+        .cert-sig-box {
+            text-align: center;
+            min-width: 60mm;
+        }
+
+        .cert-sig-left {
+            text-align: center;
+        }
+
+        .cert-sig-left .seen-text {
+            font-size: 11.5pt;
+            font-weight: 600;
+            margin-bottom: 1mm;
+        }
+
+        .cert-sig-left .cert-role-label {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: 12.5pt;
+            font-weight: normal;
+            color: #0b2545;
+        }
+
+        .cert-sig-right {
+            text-align: center;
+        }
+
+        .cert-sig-right .lunar-date {
+            font-size: 11pt;
+            font-weight: 500;
+            line-height: 1.45;
+            color: #000000;
+        }
+
+        .cert-sig-right .solar-date {
+            font-size: 11pt;
+            font-weight: 500;
+            line-height: 1.45;
+            color: #000000;
+            margin-bottom: 1mm;
+        }
+
+        .cert-sig-right .cert-role-label {
+            font-family: 'Khmer OS Muol Light', 'Moul', cursive, serif;
+            font-size: 12.5pt;
+            font-weight: normal;
+            color: #0b2545;
+        }
+
+        .sig-empty-space {
+            height: 7.5mm;
+        }
+
+        .cert-name-line {
+            font-family: 'Khmer OS Muol Light', 'Moul', 'Battambang', sans-serif;
+            font-size: 11.5pt;
+            font-weight: normal;
+            color: #000000;
+            line-height: 1.4;
+        }
+
+        .cert-sig-right .cert-name-line {
+            margin: 1mm auto 0 auto;
+            text-align: center;
+        }
+
+        /* Photo 4x6 Box */
+        .cert-photo-wrapper {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .photo-frame-box {
+            width: 25mm;
+            height: 33mm;
+            border: 1px dashed #94a3b8;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11pt;
+            color: #64748b;
+            background: rgba(255,255,255,0.75);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-frame-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Editable highlight outline on hover/focus */
+        [contenteditable="true"] {
+            outline: none;
+            border-radius: 3px;
+            transition: background-color 0.15s;
+        }
+        [contenteditable="true"]:hover {
+            background-color: rgba(59, 130, 246, 0.08);
+        }
+        [contenteditable="true"]:focus {
+            background-color: rgba(59, 130, 246, 0.15);
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+
+        /* Modal for Batch Printing */
+        .batch-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .batch-modal-content {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* =============================================================
+           PRINT STYLESHEET (100% CLEAN A4 LANDSCAPE PRINTING)
+           ============================================================= */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 0;
+            }
+
+            body {
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .top-navbar,
+            .controls-sidebar,
+            .preview-instruction-banner,
+            .batch-modal-overlay,
+            .no-print {
+                display: none !important;
+            }
+
+            .studio-container,
+            .workspace-layout {
+                display: block !important;
+                height: auto !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: none !important;
+                overflow: visible !important;
+            }
+
+            .preview-stage {
+                display: block !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                overflow: visible !important;
+                background: white !important;
+            }
+
+            #print-container {
+                display: block !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .cert-page-wrapper {
+                width: 297mm !important;
+                height: 210mm !important;
+                max-width: 297mm !important;
+                max-height: 210mm !important;
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                box-sizing: border-box !important;
+                background-color: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .cert-page-wrapper:last-child {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+            }
+
+            [contenteditable="true"] {
+                background-color: transparent !important;
+                box-shadow: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ultra-Sharp Color Matrix Engine (100% Crisp, All 16.7M Colors) -->
+    <svg width="0" height="0" style="position: absolute; width: 0; height: 0; pointer-events: none; overflow: hidden;" aria-hidden="true">
+        <defs>
+            <filter id="border-colorizer" color-interpolation-filters="sRGB">
+                <feColorMatrix type="matrix" id="fe-border-matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Top Action Navbar -->
+    <header class="top-navbar">
+        <div class="nav-left-group">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                ត្រឡប់ទៅផ្ទាំងគ្រប់គ្រង
+            </a>
+            <div class="app-title-badge">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                <strong>ប័ណ្ណសរសើរផ្លូវការ (Praise Certificate)</strong>
+                <span>គំរូដើមក្រសួង ១០០%</span>
+            </div>
+            <div id="global-class-selector" style="margin-left: 8px;"></div>
+        </div>
+
+        <div class="toolbar-actions">
+            <button type="button" class="action-btn btn-reset" onclick="resetCertificateTemplate()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                កំណត់ដើមវិញ
+            </button>
+            <button type="button" class="action-btn btn-download-img" onclick="exportAsImage()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                ទាញយករូបភាព (PNG)
+            </button>
+            <button type="button" class="action-btn btn-batch" onclick="openBatchModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                បោះពុម្ពជាក្រុម (Batch Print)
+            </button>
+            <button type="button" class="action-btn btn-print" onclick="printSingleCertificate()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                បោះពុម្ពបណ្ណនេះ (Print A4)
+            </button>
+        </div>
+    </header>
+
+    <!-- Workspace -->
+    <div class="studio-container">
+        
+        <!-- Left Controls Sidebar -->
+        <aside class="controls-sidebar no-print">
+            
+            <!-- 1. Student Selection & Rank Filtering -->
+            <div>
+                <h4 class="control-section-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    ជ្រើសរើសសិស្ស & ចំណាត់ថ្នាក់
+                </h4>
+
+                <!-- Quick Rank 1 to 5 Buttons -->
+                <div style="margin-bottom: 8px;">
+                    <label class="control-label" style="margin-bottom: 4px; display: block; font-weight: 600; color: #0f172a;">🏆 ជ្រើសរើសចំណាត់ថ្នាក់លឿន (លេខ ១ ដល់ ៥)៖</label>
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;">
+                        <button type="button" onclick="selectStudentByRank(1)" class="rank-quick-btn rank-btn-1" style="padding: 6px 2px; font-size: 0.8rem; font-weight: 700; border-radius: 6px; border: 1.5px solid #ca8a04; background: #fef08a; color: #854d0e; cursor: pointer;" title="សិស្សចំណាត់ថ្នាក់លេខ ១">🥇 លេខ ១</button>
+                        <button type="button" onclick="selectStudentByRank(2)" class="rank-quick-btn rank-btn-2" style="padding: 6px 2px; font-size: 0.8rem; font-weight: 700; border-radius: 6px; border: 1.5px solid #94a3b8; background: #f1f5f9; color: #334155; cursor: pointer;" title="សិស្សចំណាត់ថ្នាក់លេខ ២">🥈 លេខ ២</button>
+                        <button type="button" onclick="selectStudentByRank(3)" class="rank-quick-btn rank-btn-3" style="padding: 6px 2px; font-size: 0.8rem; font-weight: 700; border-radius: 6px; border: 1.5px solid #d97706; background: #ffedd5; color: #9a3412; cursor: pointer;" title="សិស្សចំណាត់ថ្នាក់លេខ ៣">🥉 លេខ ៣</button>
+                        <button type="button" onclick="selectStudentByRank(4)" class="rank-quick-btn rank-btn-4" style="padding: 6px 2px; font-size: 0.8rem; font-weight: 700; border-radius: 6px; border: 1.5px solid #93c5fd; background: #eff6ff; color: #1e40af; cursor: pointer;" title="សិស្សចំណាត់ថ្នាក់លេខ ៤">លេខ ៤</button>
+                        <button type="button" onclick="selectStudentByRank(5)" class="rank-quick-btn rank-btn-5" style="padding: 6px 2px; font-size: 0.8rem; font-weight: 700; border-radius: 6px; border: 1.5px solid #86efac; background: #f0fdf4; color: #166534; cursor: pointer;" title="សិស្សចំណាត់ថ្នាក់លេខ ៥">លេខ ៥</button>
+                    </div>
+                </div>
+
+                <!-- Filter Toggle (All Students vs Top 5 vs Top 10) -->
+                <div style="display: flex; gap: 4px; margin-bottom: 8px; background: #f1f5f9; padding: 3px; border-radius: 8px;">
+                    <button type="button" id="filter-all-btn" onclick="setStudentFilter('all')" style="flex: 1; border: none; background: #fff; color: #0f172a; font-size: 0.78rem; font-weight: 600; padding: 4px 6px; border-radius: 6px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.08);">ទាំងអស់</button>
+                    <button type="button" id="filter-top5-btn" onclick="setStudentFilter('top5')" style="flex: 1; border: none; background: transparent; color: #64748b; font-size: 0.78rem; font-weight: 600; padding: 4px 6px; border-radius: 6px; cursor: pointer;">🏆 លេខ ១-៥</button>
+                    <button type="button" id="filter-top10-btn" onclick="setStudentFilter('top10')" style="flex: 1; border: none; background: transparent; color: #64748b; font-size: 0.78rem; font-weight: 600; padding: 4px 6px; border-radius: 6px; cursor: pointer;">🥇 លេខ ១-១០</button>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="student-select">បញ្ជីឈ្មោះសិស្ស (បង្ហាញចំណាត់ថ្នាក់ស្វ័យប្រវត្ត)</label>
+                    <select id="student-select" class="control-select" onchange="onStudentChange(this.value)">
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- 2. Evaluation Period & Rank -->
+            <div>
+                <h4 class="control-section-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                    កាលបរិច្ឆេទ និងចំណាត់ថ្នាក់
+                </h4>
+                <div class="control-group" style="margin-bottom: 8px;">
+                    <label class="control-label" for="period-type-select">ជ្រើសរើសប្រភេទការវាយតម្លៃ</label>
+                    <select id="period-type-select" class="control-select" onchange="onPeriodTypeChange()">
+                        <option value="annual">ប្រចាំឆ្នាំសិក្សា (Annual)</option>
+                        <option value="semester1">ប្រចាំឆមាសទី១ (Semester 1)</option>
+                        <option value="semester2">ប្រចាំឆមាសទី២ (Semester 2)</option>
+                        <option value="monthly">ប្រចាំខែ (Monthly)</option>
+                    </select>
+                </div>
+
+                <div class="control-group" id="month-selector-group" style="display: none; margin-bottom: 8px;">
+                    <label class="control-label" for="month-select">ជ្រើសរើសខែ</label>
+                    <select id="month-select" class="control-select" onchange="onMonthChange()">
+                        <option value="មករា">មករា</option>
+                        <option value="កុម្ភៈ">កុម្ភៈ</option>
+                        <option value="មីនា">មីនា</option>
+                        <option value="មេសា">មេសា</option>
+                        <option value="ឧសភា">ឧសភា</option>
+                        <option value="មិថុនា">មិថុនា</option>
+                        <option value="កក្កដា">កក្កដា</option>
+                        <option value="សីហា">សីហា</option>
+                        <option value="កញ្ញា">កញ្ញា</option>
+                        <option value="តុលា">តុលា</option>
+                        <option value="វិច្ឆិកា">វិច្ឆិកា</option>
+                        <option value="ធ្នូ">ធ្នូ</option>
+                    </select>
+                </div>
+
+                <div class="control-group" style="margin-bottom: 8px;">
+                    <label class="control-label" for="cert-input-grade">កម្រិតថ្នាក់ (ថ្នាក់ទី)</label>
+                    <input type="text" id="cert-input-grade" class="control-input" value="៥" oninput="updateGradeFromInput(this.value)">
+                </div>
+
+                <div class="control-group" style="margin-bottom: 8px;">
+                    <label class="control-label" for="cert-input-rank">ចំណាត់ថ្នាក់លេខ</label>
+                    <input type="text" id="cert-input-rank" class="control-input" value="១" oninput="updateRankFromInput(this.value)">
+                </div>
+
+                <!-- Score / Total / Average Display Controls -->
+                <div class="control-group" style="margin-bottom: 8px;">
+                    <label class="control-label" for="score-display-mode-select">ការបង្ហាញបន្ទុកពិន្ទុ / មធ្យមភាគ (Scores)</label>
+                    <select id="score-display-mode-select" class="control-select" onchange="onScoreDisplayModeChange(this.value)">
+                        <option value="both" selected>បង្ហាញមធ្យមភាគ និងពិន្ទុសរុប (Avg + Total)</option>
+                        <option value="avg">បង្ហាញតែមធ្យមភាគ (Average Only)</option>
+                        <option value="none">មិនបង្ហាញពិន្ទុ (បង្ហាញតែចំណាត់ថ្នាក់)</option>
+                    </select>
+                </div>
+
+                <div class="control-group" id="score-inputs-group" style="margin-bottom: 8px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                        <div>
+                            <label class="control-label" for="cert-input-score">មធ្យមភាគ (Avg)</label>
+                            <input type="text" id="cert-input-score" class="control-input" value="៨.៧៩" oninput="updateScoreFromInput(this.value)">
+                        </div>
+                        <div>
+                            <label class="control-label" for="cert-input-total">ពិន្ទុសរុប (Total)</label>
+                            <input type="text" id="cert-input-total" class="control-input" value="១០៥.៥" oninput="updateTotalFromInput(this.value)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="cert-input-academic-year">ឆ្នាំសិក្សា</label>
+                    <input type="text" id="cert-input-academic-year" class="control-input" value="២០២៥-២០២៦" oninput="updateAcademicYear(this.value)">
+                </div>
+            </div>
+
+            <!-- 3. Border Template Style & Custom Color -->
+            <div>
+                <h4 class="control-section-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+                    ម៉ូដក្បូរក្បាច់ និងពណ៌ស៊ុម (Styles)
+                </h4>
+                <div class="theme-selector-grid" style="grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">
+                    <div class="theme-card active" onclick="setCertStyle(1, this)">
+                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #b45309, #fbbf24);"></div>
+                        <span>១. ស៊ុមមាសបុរាណ (ទំព័រ ៩-១២)</span>
+                    </div>
+                    <div class="theme-card" onclick="setCertStyle(2, this)">
+                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #d97706, #f59e0b);"></div>
+                        <span>២. ស៊ុមមាសផ្កាភ្ញី (Border 6)</span>
+                    </div>
+                    <div class="theme-card" onclick="setCertStyle(3, this)">
+                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #1d4ed8, #0284c7);"></div>
+                        <span>៣. ខៀវផ្កាភ្ញី (ទំព័រ ៣-៤)</span>
+                    </div>
+                    <div class="theme-card" onclick="setCertStyle(4, this)">
+                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #b45309, #38bdf8);"></div>
+                        <span>៤. មាស & ផ្កាខៀវ (ទំព័រ ៥-៦)</span>
+                    </div>
+                    <div class="theme-card" onclick="setCertStyle(5, this)">
+                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #d97706, #16a34a);"></div>
+                        <span>៥. មាស & បៃតង (ទំព័រ ៧-៨)</span>
+                    </div>
+
+                    <div class="theme-card" onclick="setCertStyle(7, this)">
+                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #0284c7, #1e40af);"></div>
+                        <span>៧. ខៀវបុរាណ (ទំព័រ ១៤)</span>
+                    </div>
+                </div>
+
+                <!-- Custom Border Color Tint Section (100% Quality Any Color) -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span class="control-label" style="display: flex; align-items: center; gap: 4px; color: #0f172a; font-weight: 700;">
+                            🎨 ផ្លាស់ប្ដូរពណ៌ស៊ុម (គ្រប់ពណ៌ ១០០%)
+                        </span>
+                        <button type="button" onclick="resetBorderColor()" style="font-size: 0.78rem; color: #475569; background: #e2e8f0; border: none; padding: 3px 10px; border-radius: 6px; cursor: pointer; font-weight: 600;">ដើមវិញ</button>
+                    </div>
+
+                    <!-- Interactive Color Picker & Hex Display -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; margin-bottom: 10px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="color" id="cert-border-color-picker" value="#c59b27" oninput="onCustomColorPick(this.value)" style="width: 32px; height: 32px; border: none; border-radius: 6px; cursor: pointer; padding: 0; background: transparent;">
+                            <span style="font-size: 0.82rem; font-weight: 600; color: #334155;">ជ្រើសពណ៌តាមចិត្ត៖</span>
+                        </div>
+                        <span id="color-hex-display" style="font-family: monospace; font-size: 0.85rem; font-weight: 700; color: #2563eb; background: #eff6ff; padding: 2px 8px; border-radius: 4px;">#C59B27</span>
+                    </div>
+
+                    <!-- 12 Preset Color Chips -->
+                    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-bottom: 10px;">
+                        <button type="button" onclick="applyCustomBorderColor('#c59b27')" style="height: 26px; border-radius: 6px; background: linear-gradient(135deg, #eab308, #ca8a04); border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer;" title="មាស (Royal Gold)"></button>
+                        <button type="button" onclick="applyCustomBorderColor('#a16207')" style="height: 26px; border-radius: 6px; background: linear-gradient(135deg, #ca8a04, #854d0e); border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer;" title="សំរឹទ្ធ (Bronze)"></button>
+                        <button type="button" onclick="applyCustomBorderColor('#1e40af')" style="height: 26px; border-radius: 6px; background: linear-gradient(135deg, #2563eb, #1e40af); border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer;" title="ខៀវរាជការ (Royal Navy)"></button>
+                        <button type="button" onclick="applyCustomBorderColor('#0284c7')" style="height: 26px; border-radius: 6px; background: linear-gradient(135deg, #38bdf8, #0284c7); border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer;" title="ខៀវស្រាល (Ocean Blue)"></button>
+                        <button type="button" onclick="applyCustomBorderColor('#15803d')" style="height: 26px; border-radius: 6px; background: linear-gradient(135deg, #22c55e, #15803d); border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer;" title="បៃតងត្បូង (Emerald Green)"></button>
+                        <button type="button" onclick="applyCustomBorderColor('#166534')" style="height: 26px; border-radius: 6px; background: linear-gradient(135deg, #16a34a, #14532d); border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer;" title="បៃតងចាស់ (Forest Green)"></button>
+                        <button type="button" onclick="applyCustomBorderColor('#b91c1c')" style="height: 26px; border-radius: 6px; background: linear-gradient(135deg, #ef4444, #b91c1c); border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer;" title="ក្រហមទទឹម (Ruby Red)"></button>
+                        <button type="button" onclick="applyCustomBorderColor('#991b1b')" style="height: 26px; border-radius: 6px; background: linear-gradient(135deg, #dc2626, #7f1d1d); border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer;" title="ក្រហមឈាមជ្រូក (Crimson)"></button>
+                        <button type="button" onclick="applyCustomBorderColor('#7e22ce')" style="height: 26px; border-radius: 6px; background: linear-gradient(135deg, #a855f7, #7e22ce); border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer;" title="ស្វាយ (Royal Purple)"></button>
+                        <button type="button" onclick="applyCustomBorderColor('#be185d')" style="height: 26px; border-radius: 6px; background: linear-gradient(135deg, #ec4899, #be185d); border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer;" title="ផ្កាឈូកក្រម៉ៅ (Magenta)"></button>
+                        <button type="button" onclick="applyCustomBorderColor('#0f766e')" style="height: 26px; border-radius: 6px; background: linear-gradient(135deg, #14b8a6, #0f766e); border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer;" title="ខៀវទង់ដែង (Teal)"></button>
+                        <button type="button" onclick="applyCustomBorderColor('#334155')" style="height: 26px; border-radius: 6px; background: linear-gradient(135deg, #64748b, #1e293b); border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer;" title="ខ្មៅបុរាណ (Slate Charcoal)"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Font Size Customizer Section -->
+            <div>
+                <h4 class="control-section-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                    ទំហំអក្សរ (Font Size)
+                </h4>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <label class="control-label" style="margin: 0; color: #1e293b;">ទំហំអក្សរតួសេចក្ដី (Body Size)</label>
+                            <span id="display-body-font-size" style="font-size: 0.85rem; font-weight: bold; color: #0284c7; background: #e0f2fe; padding: 2px 8px; border-radius: 4px;">11.5 pt</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button type="button" onclick="adjustBodyFontSize(-0.5)" style="width: 28px; height: 28px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem;">-</button>
+                            <input type="range" id="body-font-size-slider" min="9" max="15" step="0.5" value="11.5" style="flex: 1; accent-color: #0284c7; cursor: pointer;" oninput="setBodyFontSize(this.value)">
+                            <button type="button" onclick="adjustBodyFontSize(0.5)" style="width: 28px; height: 28px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem;">+</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <label class="control-label" style="margin: 0; color: #1e293b;">ទំហំចំណងជើង "ប័ណ្ណសរសើរ"</label>
+                            <span id="display-title-font-size" style="font-size: 0.85rem; font-weight: bold; color: #dc2626; background: #fee2e2; padding: 2px 8px; border-radius: 4px;">30 pt</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button type="button" onclick="adjustTitleFontSize(-2)" style="width: 28px; height: 28px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem;">-</button>
+                            <input type="range" id="title-font-size-slider" min="20" max="40" step="1" value="30" style="flex: 1; accent-color: #dc2626; cursor: pointer;" oninput="setTitleFontSize(this.value)">
+                            <button type="button" onclick="adjustTitleFontSize(2)" style="width: 28px; height: 28px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem;">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Date & Location Setting -->
+            <div>
+                <h4 class="control-section-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    កាលបរិច្ឆេទចេញបណ្ណ (ចេញស្វ័យប្រវត្តិ)
+                </h4>
+                <div class="control-group" style="margin-bottom: 8px;">
+                    <label class="control-label" for="cert-date-picker">ជ្រើសរើសថ្ងៃខែឆ្នាំ (សុរិយគតិ)</label>
+                    <input type="date" id="cert-date-picker" class="control-input" onchange="onCertDateChange(this.value)">
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="cert-input-district-location">ទីតាំងចេញបណ្ណ</label>
+                    <input type="text" id="cert-input-district-location" class="control-input" value="ផ្លុង" oninput="updateLocation(this.value)">
+                </div>
+            </div>
+
+            <!-- 5. Optional Toggles -->
+            <div>
+                <h4 class="control-section-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    ការកំណត់បន្ថែម
+                </h4>
+                <div class="toggle-switch-group" style="margin-bottom: 8px;">
+                    <span class="control-label">បង្ហាញប្រអប់រូបថត (៤×៦)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-photo-box" onchange="togglePhotoBox(this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-switch-group">
+                    <span class="control-label">ទម្រង់ក្បាលលិខិត ៣ ជួរ</span>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-header-3lines" onchange="toggleHeaderLayout(this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Right Preview Workspace -->
+        <main class="preview-stage">
+            
+            <div class="preview-instruction-banner no-print">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span><strong>ការណែនាំ៖</strong> លោកគ្រូ-អ្នកគ្រូអាចចុចកែប្រែអក្សរដោយផ្ទាល់នៅលើប័ណ្ណសរសើរបានគ្រប់កន្លែង (Live Edit) ឬប្រើផ្ទាំងខាងឆ្វេង។</span>
+            </div>
+
+            <!-- Single Certificate Container / Target for Print & Export -->
+            <div id="print-container">
+                <div class="cert-page-wrapper" id="single-cert-page">
+                    
+                    <!-- High-Res Ultra Sharp Ornate Border Image -->
+                    <img src="images/praise_frame_style_1.png" class="cert-border-frame-img" id="cert-border-img" alt="Official Frame">
+
+                    <!-- Inner SVG Blue Double Border with Notch (For Style 1) -->
+                    <svg id="cert-inner-blue-frame" width="100%" height="100%" viewBox="0 0 1060 740" preserveAspectRatio="none" style="position: absolute; inset: 0; pointer-events: none; z-index: 8;">
+                        <path d="M 94 88 L 966 88 L 966 652 L 575 652 Q 575 618 530 618 Q 485 618 485 652 L 94 652 Z" fill="none" stroke="#003366" stroke-width="2.5" />
+                        <path d="M 98 92 L 962 92 L 962 648 L 573 648 Q 573 622 530 622 Q 487 622 487 648 L 98 648 Z" fill="none" stroke="#003366" stroke-width="1.2" />
+                    </svg>
+
+                    <!-- Watermark Logo -->
+                    <div class="cert-watermark"></div>
+
+                    <!-- Inner Content -->
+                    <div class="cert-inner-content">
+                        
+                        <!-- Top Header Row -->
+                        <div class="cert-header-row">
+                            <!-- Left: Logo ON TOP of School Hierarchy -->
+                            <div class="cert-header-left" id="cert-header-hierarchy">
+                                <div class="cert-header-logo-wrapper">
+                                    <img src="images/moeys-logo.png" alt="MoEYS Emblem" class="cert-moeys-emblem">
+                                </div>
+                                <div class="org-line-1" id="header-line-1">ការិយាល័យអប់រំ យុវជន និងកីឡា <span contenteditable="true" id="cert-org-district">ស្រុកសន្ទុក</span></div>
+                                <div class="org-line-2" id="header-line-2">សាលាបឋមសិក្សា <span contenteditable="true" id="cert-org-school">ផ្លុង</span></div>
+                            </div>
+
+                            <!-- Right: Kingdom & Motto -->
+                            <div class="cert-header-right">
+                                <div class="cert-kingdom-title">ព្រះរាជាណាចក្រកម្ពុជា</div>
+                                <div class="cert-motto-title">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+                                <div class="cert-header-divider">
+                                    <img src="images/header-divider.png" alt="Tactical Divider" style="height: 12px; max-width: 140px;" onerror="this.outerHTML='<span class=\\'divider-tactical-khmer\\'>៚៚៚ ៚ ៚៚៚</span>'">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main Certificate Title -->
+                        <div class="cert-title-area">
+                            <h1 class="cert-main-title">ប័ណ្ណសរសើរ</h1>
+                            <div class="cert-flower-flourish">
+                                <span>✿</span>
+                                <span>✿</span>
+                                <span>✿</span>
+                                <span>✿</span>
+                                <span>✿</span>
+                            </div>
+                            <div class="cert-issuer-title">
+                                <span>នាយកសាលាបឋមសិក្សា</span> <span class="dot-underline" contenteditable="true" id="cert-director-school-title">ផ្លុង</span>
+                            </div>
+                        </div>
+
+                        <!-- Commendation Body Text (Exact wording as MoEYS original) -->
+                        <div class="cert-body-content">
+                            <p class="cert-body-p">
+                                សូមសរសើរចំពោះសិស្សឈ្មោះ <span class="highlight-bold-moul" contenteditable="true" id="cert-display-name">ម៉ៅ សុខិត្រា</span>
+                                ភេទ <span class="highlight-red" contenteditable="true" id="cert-display-gender">ប្រុស</span>
+                                កើតនៅថ្ងៃទី<span class="highlight-red" contenteditable="true" id="cert-display-dob-day">១១</span>
+                                ខែ<span class="highlight-red" contenteditable="true" id="cert-display-dob-month">កុម្ភៈ</span>
+                                ឆ្នាំ<span class="highlight-red" contenteditable="true" id="cert-display-dob-year">២០១២</span>
+                                រៀនថ្នាក់ទី<span class="highlight-red" contenteditable="true" id="cert-display-grade">៥</span>
+                                នៃសាលាបឋមសិក្សា <span class="highlight-red" contenteditable="true" id="cert-display-school">ផ្លុង</span>
+                            </p>
+                            <p class="cert-body-p" id="cert-body-achievement-line">
+                                ដែលបានខិតខំរៀនសូត្ររហូតទទួលបានលទ្ធផលល្អក្នុងការសិក្សា និងទទួលបានចំណាត់ថ្នាក់លេខ <span class="highlight-bold-moul" contenteditable="true" id="cert-display-rank">១</span><span id="cert-display-score-wrapper" style="display: inline;"> <span id="cert-display-score-label">មធ្យមភាគ</span> <span class="highlight-bold-moul" contenteditable="true" id="cert-display-score">៨.៧៩</span><span id="cert-display-total-wrapper"> (ពិន្ទុសរុប <span class="highlight-bold-moul" contenteditable="true" id="cert-display-total">១០៥.៥</span>)</span></span>
+                                ប្រចាំ<span class="highlight-bold-moul" contenteditable="true" id="cert-display-period">ឆ្នាំសិក្សា ២០២៥-២០២៦</span> ។
+                            </p>
+                            <p class="cert-body-p-final">
+                                ប័ណ្ណសរសើរនេះប្រគល់ជូនសាមីខ្លួនប្រើប្រាស់តាមការដែលអាចប្រើបាន។
+                            </p>
+                        </div>
+
+                        <!-- Signatures and Dates Row (School Principal Signature Only) -->
+                        <div class="cert-signatures-row">
+
+                            <!-- Optional Photo 4x6 Box -->
+                            <div class="cert-photo-wrapper" id="cert-photo-container" style="display: none;">
+                                <div class="photo-frame-box" id="cert-photo-box" onclick="triggerPhotoUpload()">
+                                    <span id="photo-placeholder-text">៤×៦</span>
+                                    <img id="cert-student-photo-img" src="" alt="" style="display: none;">
+                                </div>
+                                <input type="file" id="cert-photo-input" accept="image/*" style="display: none;" onchange="handlePhotoUploaded(event)">
+                            </div>
+
+                            <!-- Right Signature (School Principal & Dates) -->
+                            <div class="cert-sig-box cert-sig-right">
+                                <div class="lunar-date" contenteditable="true" id="cert-display-lunar-date">ថ្ងៃសៅរ៍ ១៤ កើត ខែអស្សុជ ឆ្នាំថោះ បញ្ចស័ក ព.ស.២៥៦៧</div>
+                                <div class="solar-date">
+                                    <span class="dot-underline" contenteditable="true" id="cert-display-location">ផ្លុង</span> ត្រូវនឹងថ្ងៃទី<span contenteditable="true" id="cert-display-solar-day">២៨</span> ខែ<span contenteditable="true" id="cert-display-solar-month">តុលា</span> ឆ្នាំ<span contenteditable="true" id="cert-display-solar-year">២០២៦</span>
+                                </div>
+                                <div class="cert-role-label" contenteditable="true" id="cert-director-role-label">នាយកសាលា</div>
+                                <div class="sig-empty-space"></div>
+                                <div class="cert-name-line" contenteditable="true" id="cert-director-signature-name"></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Batch Print Modal -->
+    <div class="batch-modal-overlay" id="batch-modal" onclick="if(event.target===this) closeBatchModal()">
+        <div class="batch-modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #2563eb;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.15rem; color: #0f172a; font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;">បោះពុម្ពប័ណ្ណសរសើរជាក្រុម (Batch Print)</h3>
+                        <p style="margin: 0; font-size: 0.8rem; color: #64748b;">បង្កើតប័ណ្ណសរសើរសម្រាប់សិស្សច្រើននាក់ក្នុងពេលតែមួយ</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeBatchModal()" style="border: none; background: #f1f5f9; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; color: #64748b;">&times;</button>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                
+                <div class="control-group">
+                    <label class="control-label">ជ្រើសរើសជម្រើសសិស្សដែលត្រូវចេញបណ្ណ</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
+                        <button type="button" class="action-btn" onclick="selectBatchRange('top5')" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; justify-content: center;">
+                            ចំណាត់ថ្នាក់លេខ ១ ដល់ ៥
+                        </button>
+                        <button type="button" class="action-btn" onclick="selectBatchRange('top10')" style="background: #fdf4ff; color: #86198f; border: 1.5px solid #f5d0fe; justify-content: center;">
+                            ចំណាត់ថ្នាក់លេខ ១ ដល់ ១០
+                        </button>
+                        <button type="button" class="action-btn" onclick="selectBatchRange('all')" style="background: #f0fdf4; color: #15803d; border: 1.5px solid #bbf7d0; justify-content: center; grid-column: span 2;">
+                            សិស្សទាំងអស់ក្នុងថ្នាក់ (All Students)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label class="control-label">បញ្ជីសិស្សដែលបានជ្រើសរើស (<span id="batch-selected-count">0</span> នាក់)</label>
+                        <button type="button" onclick="toggleSelectAllBatch(true)" style="background: none; border: none; color: #2563eb; font-size: 0.82rem; cursor: pointer; font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;">ជ្រើសរើសទាំងអស់</button>
+                    </div>
+                    <div id="batch-students-checklist" style="max-height: 220px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 6px; background: #f8fafc;">
+                        <!-- Checkboxes inserted by JS -->
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 14px;">
+                    <button type="button" class="action-btn btn-reset" onclick="closeBatchModal()">បោះបង់</button>
+                    <button type="button" class="action-btn btn-print" onclick="executeBatchPrint()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                        ចាប់ផ្តើមបោះពុម្ព (Print Batch)
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Batch Container for Print -->
+    <div id="batch-print-container" style="display: none;"></div>
+
+    <script src="praise-certificate.js"></script>
+</body>
+</html>
+
+
